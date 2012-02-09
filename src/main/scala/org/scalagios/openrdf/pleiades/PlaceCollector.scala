@@ -1,12 +1,14 @@
-package org.scalagios.rdf.pleiades
+package org.scalagios.openrdf.pleiades
 
 import scala.collection.mutable.HashMap
+
 import org.openrdf.rio.helpers.RDFHandlerBase
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDFS
+
 import org.scalagios.model.Place
 import org.scalagios.model.impl.DefaultPlace
-
+import org.scalagios.openrdf.ParseStats
 import org.scalagios.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
 
 class PlaceCollector extends RDFHandlerBase with ParseStats {

@@ -1,8 +1,6 @@
-package org.scalagios.rdf.pleiades
+package org.scalagios.openrdf
 
-import org.openrdf.rio.helpers.RDFHandlerBase
-
-private[rdf] trait ParseStats {
+private[openrdf] trait ParseStats {
   
   /**
    * Total number of triples counted in RDF document

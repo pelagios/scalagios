@@ -1,5 +1,6 @@
 package org.scalagios.rdf.pleiades
 
+import org.scalagios.openrdf.pleiades.PlaceCollector;
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -8,7 +9,7 @@ import java.util.zip.GZIPInputStream
 import org.openrdf.rio.turtle.TurtleParserFactory
 
 @RunWith(classOf[JUnitRunner])
-class PleiadesReaderTest extends FunSuite {
+class PleiadesParserTest extends FunSuite {
   
   test("Pleiades RDF Import") {
     println("Starting Pleiades import")
