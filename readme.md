@@ -1,6 +1,17 @@
 # Scalagios
 
-Welcome to Scalagios, a utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on the Java Virtual Machine.
+Scalagios is a utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on the Java Virtual Machine. Scalagios provides
+
+* Domain model classes for Pelagios' core data primitives: _Places_, _Datasets_ and _GeoAnnotations_
+
+* Custom RDFHandlers for the [OpenRDF](http://www.openrdf.org/) Rio parser toolkit to read Pelagios
+  data and Pleiades dump files
+
+* Graph database bindings for the model classes based on [Tinkerpop](http://tinkerpop.com/) 
+  [Frames](https://github.com/tinkerpop/frames/wiki)
+
+* More to come...
+  
 
 ## License
 
@@ -12,7 +23,6 @@ Scalagios is written in [Scala](http://www.scala-lang.org) and built with [Gradl
 (Download and installation instructions for Gradle are [here](http://www.gradle.org/installation.html)). 
 
 * To build and test the project, run `gradle build`. (Test reports will be at `build/reports/tests`)
-
 
 * To generate a jar package, run `gradle jar`. (The jar will be in the `build/libs` folder.)
 
