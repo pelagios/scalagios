@@ -15,8 +15,8 @@ class PlaceCollector extends RDFHandlerBase with ParseStats {
   
   private val placesBuffer = new HashMap[String, DefaultPlace]
   
+  def placesTotal = placesBuffer.size
   def getPlaces = placesBuffer.values
-  
   def getPlace(uri: String) = placesBuffer.get(uri)
   
   override def handleStatement(statement: Statement) : Unit = {
@@ -42,8 +42,6 @@ class PlaceCollector extends RDFHandlerBase with ParseStats {
       case _ => triplesSkipped += 1
     }
   }
-  
-  def placesTotal = placesBuffer.size
 
   private def getOrCreate(uri: String): DefaultPlace = {   
     placesBuffer.get(uri) match {

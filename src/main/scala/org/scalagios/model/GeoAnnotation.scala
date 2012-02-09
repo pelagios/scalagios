@@ -7,5 +7,7 @@ trait GeoAnnotation {
   def body: String
   
   def target: String
+  
+  def isValid: Boolean = (uri != null && target != null && body != null) 
 
 }
