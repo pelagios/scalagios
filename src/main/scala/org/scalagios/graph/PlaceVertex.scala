@@ -1,8 +1,15 @@
-package org.scalagios.model.impl
+package org.scalagios.graph
 
 import com.tinkerpop.frames.Property
+import org.scalagios.api.Place
 
-trait Neo4jPlace {
+/**
+ * An implementation of the Pelagios <em>Place</em> model primitive
+ * backed by a Tinkerpop Graph Vertex.
+ * 
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
+trait PlaceVertex extends Place {
   
   @Property("id")
   def id: String

@@ -6,8 +6,7 @@ import org.openrdf.rio.helpers.RDFHandlerBase
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDFS
 
-import org.scalagios.model.Place
-import org.scalagios.model.impl.DefaultPlace
+import org.scalagios.api.{Place, DefaultPlace}
 import org.scalagios.rdf.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
 
 class PlaceCollector extends RDFHandlerBase with ParseStats {

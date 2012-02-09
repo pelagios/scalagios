@@ -7,7 +7,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 
 import org.scalagios.rdf.vocab.OAC
-import org.scalagios.model.impl.DefaultGeoAnnotation
+import org.scalagios.api.DefaultGeoAnnotation
 
 class AnnotationCollector extends RDFHandlerBase with ParseStats {
   
