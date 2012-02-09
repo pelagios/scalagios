@@ -18,4 +18,15 @@ trait Place {
   
   def geometryWKT: String
 
+  def isValid: Boolean = {
+    if (uri == null) 
+      // null URI not allowed
+      false
+    else if (within == null && (lon == 0 && lat == 0) && geometryWKT == null)
+      // Place must either have 'within' OR non-null lon/lat OR WKT geometry
+      false
+      
+    true
+  }
+  
 }

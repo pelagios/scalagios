@@ -15,6 +15,8 @@ class PlaceCollector extends RDFHandlerBase with ParseStats {
   
   def getPlaces = placesBuffer.values
   
+  def getPlace(uri: String) = placesBuffer.get(uri)
+  
   override def handleStatement(statement: Statement) : Unit = {
     triplesTotal += 1
     
