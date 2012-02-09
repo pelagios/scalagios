@@ -1,4 +1,4 @@
-package org.scalagios.openrdf.parser
+package org.scalagios.rdf.parser
 
 private[parser] trait ParseStats {
   

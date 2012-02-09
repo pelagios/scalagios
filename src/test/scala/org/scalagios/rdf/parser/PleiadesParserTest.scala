@@ -1,4 +1,4 @@
-package org.scalagios.openrdf.parser
+package org.scalagios.rdf.parser
 
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
