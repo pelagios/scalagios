@@ -4,8 +4,8 @@ Scalagios is a utility library for working with data from the [PELAGIOS project]
 
 * Domain model classes for Pelagios' core data primitives: _Places_, _Datasets_ and _GeoAnnotations_
 
-* Custom RDFHandlers for the [OpenRDF](http://www.openrdf.org/) Rio parser toolkit to read Pelagios
-  data and Pleiades dump files
+* Custom RDF handlers for the [OpenRDF](http://www.openrdf.org/) Rio parser toolkit to read Pelagios
+  data and Pleiades dump files with low memory overhead
 
 * Graph database bindings for the model classes based on [Tinkerpop](http://tinkerpop.com/) 
   [Frames](https://github.com/tinkerpop/frames/wiki)
