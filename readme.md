@@ -22,12 +22,12 @@ Scalagios is licensed under the [GNU General Public License v3.0](http://www.gnu
 Scalagios is written in [Scala](http://www.scala-lang.org) and built with [Gradle](http://www.gradle.org).
 (Download and installation instructions for Gradle are [here](http://www.gradle.org/installation.html)). 
 
-* To build and test the project, run `gradle build`. (Test reports will be at `build/reports/tests`)
+* To build and test the project, run `gradle build`. (Test reports will be in `build/reports/tests`)
 
-* To generate a jar package, run `gradle jar`. (The jar will be in the `build/libs` folder.)
+* To generate a jar package, run `gradle jar`. (The jar will be in `build/libs`)
 
-* To generate an Eclipse project, run `gradle eclipse`.
+* To generate an Eclipse project, run `gradle eclipse`
 
-* To generate ScalaDoc, run `gradle scaladoc`.  (Docs will be in the `build/docs` folder.)
+* To generate ScalaDoc, run `gradle scaladoc`.  (Docs will be in `build/docs`)
 
 __Note:__ dependency download may take a while the first time you build the project!
