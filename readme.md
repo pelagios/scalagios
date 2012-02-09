@@ -26,7 +26,7 @@ Scalagios is written in [Scala](http://www.scala-lang.org) and built with [Gradl
 
 * To generate a jar package, run `gradle jar`. (The jar will be in `build/libs`)
 
-* To generate an Eclipse project, run `gradle eclipse`
+* To generate an Eclipse project, run `gradle eclipse`.
 
 * To generate ScalaDoc, run `gradle scaladoc`.  (Docs will be in `build/docs`)
 
