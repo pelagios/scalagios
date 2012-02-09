@@ -1,6 +1,6 @@
 # Scalagios
 
-Welcome to Scalagios, a Scala-based utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on the Java Virtual Machine.
+Welcome to Scalagios, a utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on the Java Virtual Machine.
 
 ## License
 
