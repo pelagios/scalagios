@@ -9,6 +9,13 @@ import org.openrdf.rio.helpers.RDFHandlerBase
 import org.scalagios.rdf.vocab.OAC
 import org.scalagios.api.DefaultGeoAnnotation
 
+/**
+ * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
+ * implementation collects GeoAnnotations from a Pelagios RDF data file
+ * into a List.
+ * 
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
 class AnnotationCollector extends RDFHandlerBase with ParseStats {
   
   private val annotationBuffer = new HashMap[String, DefaultGeoAnnotation]

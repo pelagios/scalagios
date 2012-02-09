@@ -9,6 +9,12 @@ import org.openrdf.model.vocabulary.RDFS
 import org.scalagios.api.{Place, DefaultPlace}
 import org.scalagios.rdf.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
 
+/**
+ * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
+ * implementation collects Places from a Pleiades RDF dump into a List.
+ * 
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
 class PlaceCollector extends RDFHandlerBase with ParseStats {
   
   private val placesBuffer = new HashMap[String, DefaultPlace]

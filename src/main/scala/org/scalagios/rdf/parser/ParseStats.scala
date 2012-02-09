@@ -1,5 +1,11 @@
 package org.scalagios.rdf.parser
 
+/**
+ * A helper trait that provides simple stats tracking
+ * functionality for the RDFHandler implementations.
+ * 
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
 private[parser] trait ParseStats {
   
   /**
