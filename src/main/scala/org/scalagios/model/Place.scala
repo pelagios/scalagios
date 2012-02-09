@@ -2,7 +2,7 @@ package org.scalagios.model
 
 trait Place {
   
-  def id: String
+  def uri: String
   
   def label: String
 
@@ -14,6 +14,8 @@ trait Place {
 
   def lat: Double
 
+  def within: String
+  
   def geometryWKT: String
 
 }
