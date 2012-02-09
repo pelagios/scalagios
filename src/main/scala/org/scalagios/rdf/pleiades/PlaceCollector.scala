@@ -5,13 +5,13 @@ import org.openrdf.rio.helpers.RDFHandlerBase
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDFS
 import org.scalagios.model.Place
-import org.scalagios.model.impl.PlaceImpl
+import org.scalagios.model.impl.DefaultPlace
 
 import org.scalagios.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
 
 class PlaceCollector extends RDFHandlerBase with ParseStats {
   
-  private val placesBuffer = new HashMap[String, PlaceImpl]
+  private val placesBuffer = new HashMap[String, DefaultPlace]
   
   def getPlaces = placesBuffer.values
   
@@ -43,11 +43,11 @@ class PlaceCollector extends RDFHandlerBase with ParseStats {
   
   def placesTotal = placesBuffer.size
 
-  private def getOrCreate(uri: String): PlaceImpl = {   
+  private def getOrCreate(uri: String): DefaultPlace = {   
     placesBuffer.get(uri) match {
       case Some(place) => place
       case None => {
-        val place = new PlaceImpl(uri)
+        val place = new DefaultPlace(uri)
         placesBuffer.put(uri, place)
         place
       }

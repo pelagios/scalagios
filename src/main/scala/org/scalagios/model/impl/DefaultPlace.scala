@@ -3,7 +3,7 @@ package org.scalagios.model.impl
 import org.scalagios.model.Place
 import scala.collection.mutable.ListBuffer
 
-class PlaceImpl(var uri: String) extends Place {
+class DefaultPlace(var uri: String) extends Place {
   
   var label: String = _
 
