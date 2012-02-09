@@ -1,0 +1,33 @@
+apply plugin: 'scala'
+apply plugin: 'eclipse'
+
+files("src")
+
+repositories {
+    mavenCentral()
+    mavenRepo urls: 'http://repository.jboss.org/nexus/content/groups/public/'
+    mavenRepo urls: 'http://tinkerpop.com/maven2/'
+    mavenRepo urls: 'http://repo.aduna-software.org/maven2/releases/'
+}
+
+eclipse {
+    classpath {
+        classesOutputDir = file('src/main/webapp/WEB-INF/classes')
+        containers = [
+            "org.scala-ide.sdt.launching.SCALA_CONTAINER"
+        ]
+        minusConfigurations = [configurations.scalaTools]
+    }
+}
+
+dependencies {
+    scalaTools 'org.scala-lang:scala-compiler:2.9.1'
+    scalaTools 'org.scala-lang:scala-library:2.9.1'
+
+    compile 'org.openrdf.sesame:sesame-rio-n3:2.6.3'
+    compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.6.3'
+    compile 'com.vividsolutions:jts:1.8'
+
+    testCompile 'junit:junit:4.8.2'
+    testCompile 'org.scalatest:scalatest_2.9.0:1.6.1'
+}
