@@ -1,4 +1,4 @@
-package org.scalagios.vocab
+package org.scalagios.openrdf.vocab
 
 /**
  * OAC Annotation vocabulary terms.

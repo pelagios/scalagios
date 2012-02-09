@@ -1,4 +1,4 @@
-package org.scalagios.openrdf.annotation
+package org.scalagios.openrdf.parser
 
 import scala.collection.mutable.HashMap
 
@@ -6,9 +6,8 @@ import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 
-import org.scalagios.openrdf.ParseStats
+import org.scalagios.openrdf.vocab.OAC
 import org.scalagios.model.impl.DefaultGeoAnnotation
-import org.scalagios.vocab.OAC
 
 class AnnotationCollector extends RDFHandlerBase with ParseStats {
   

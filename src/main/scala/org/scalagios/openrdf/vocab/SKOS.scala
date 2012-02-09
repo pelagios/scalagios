@@ -1,4 +1,4 @@
-package org.scalagios.vocab
+package org.scalagios.openrdf.vocab
 
 /**
  * SKOS vocabulary terms.

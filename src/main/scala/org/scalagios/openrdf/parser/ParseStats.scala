@@ -1,6 +1,6 @@
-package org.scalagios.openrdf
+package org.scalagios.openrdf.parser
 
-private[openrdf] trait ParseStats {
+private[parser] trait ParseStats {
   
   /**
    * Total number of triples counted in RDF document

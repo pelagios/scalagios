@@ -1,4 +1,4 @@
-package org.scalagios.vocab
+package org.scalagios.openrdf.vocab
 
 import org.openrdf.model.impl.ValueFactoryImpl
 

@@ -1,6 +1,5 @@
-package org.scalagios.rdf.pleiades
+package org.scalagios.openrdf.parser
 
-import org.scalagios.openrdf.pleiades.PlaceCollector;
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

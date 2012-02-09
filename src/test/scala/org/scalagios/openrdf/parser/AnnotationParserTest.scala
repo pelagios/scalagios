@@ -1,10 +1,9 @@
-package org.scalagios.rdf.annotation
+package org.scalagios.openrdf.parser
 
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.openrdf.rio.n3.N3ParserFactory
-import org.scalagios.openrdf.annotation.AnnotationCollector
 import java.io.FileInputStream
 import java.io.File
 
