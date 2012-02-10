@@ -7,8 +7,12 @@ Scalagios is a utility library for working with data from the [PELAGIOS project]
 * Custom RDF handlers for the [OpenRDF](http://www.openrdf.org/) Rio parser toolkit to read Pelagios
   data and Pleiades dump files with low memory overhead
 
-* Graph database bindings for the model classes based on [Tinkerpop](http://tinkerpop.com/) 
-  [Frames](https://github.com/tinkerpop/frames/wiki)
+* Graph database support:
+
+  * Graph access and batch import utilities for [Neo4j](http://neo4j.org/) based on
+    [Tinkerpop Blueprints](http://tinkerpop.com/).  
+
+  * Domain model bindings based on [Tinkerpop Frames](https://github.com/tinkerpop/frames/wiki)
 
 * More to come...
   

@@ -93,7 +93,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     // TODO
   }
   
-  test("Verify Graph Setup") {
+  test("Verify Graph Structure") {
     // TODO
   }
   
