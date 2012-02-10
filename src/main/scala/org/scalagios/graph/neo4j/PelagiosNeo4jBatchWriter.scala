@@ -1,4 +1,4 @@
-package org.scalagios.graph.io
+package org.scalagios.graph.neo4j
 
 import com.weiglewilczek.slf4s.Logging
 
@@ -19,7 +19,7 @@ import org.scalagios.graph.Constants._
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class Neo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
+class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
   
   // Get (or lazily create) the place index
   private val placeIndex = 
@@ -47,7 +47,10 @@ class Neo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
       
       // Create ANNOTATION -- hasBody --> PLACE relation 
       val places = placeIndex.get(PLACE_URI, annotation.body)
-      if (places.hasNext()) graph.addEdge(null, vertex, places.next(), RELATION_HASBODY)   
+      if (places.hasNext())
+        graph.addEdge(null, vertex, places.next(), RELATION_HASBODY)
+      else
+        logger.warn("Place referenced in Annotation body not found!")
     })
   }
   

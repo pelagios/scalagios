@@ -15,7 +15,7 @@ import org.scalagios.graph.Constants.{ANNOTATION_URI, INDEX_FOR_ANNOTATIONS}
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class Neo4jWriter(graph: Neo4jGraph) extends Logging {
+class PelagiosNeo4jWriter(graph: Neo4jGraph) extends Logging {
       
   /**
    * Drops all GeoAnnotations with a URI starting with the specified 

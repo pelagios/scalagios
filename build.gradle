@@ -23,6 +23,7 @@ dependencies {
     scalaTools 'org.scala-lang:scala-library:2.9.1'
 
     compile 'com.weiglewilczek.slf4s:slf4s_2.9.1:1.0.7'
+    compile 'org.slf4j:slf4j-simple:1.6.4'
     compile 'org.scala-lang:scala-library:2.9.1'
     compile 'org.openrdf.sesame:sesame-rio-n3:2.6.3'
     compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.6.3'
