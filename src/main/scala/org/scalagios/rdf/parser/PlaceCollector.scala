@@ -17,11 +17,10 @@ import org.scalagios.rdf.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
  */
 class PlaceCollector extends RDFHandlerBase with ParseStats {
   
-  private val placesBuffer = new HashMap[String, DefaultPlace]
+  private[parser] val placesBuffer = new HashMap[String, DefaultPlace]
   
   def placesTotal = placesBuffer.size
   def getPlaces = placesBuffer.values
-  def getPlace(uri: String) = placesBuffer.get(uri)
   
   override def handleStatement(statement: Statement) : Unit = {
     triplesTotal += 1

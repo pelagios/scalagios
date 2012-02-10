@@ -42,7 +42,7 @@ class PleiadesParserTest extends FunSuite {
       assert(place.isValid)
       if (place.within != null) {
         counter += 1
-        assert(placeCollector.getPlace(place.within) != null, 
+        assert(placeCollector.placesBuffer.get(place.within) != null, 
             place.uri + " is within " + place.within + " - but target not found in dataset")
       }
     })
