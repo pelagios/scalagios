@@ -22,11 +22,8 @@ Scalagios is written in [Scala](http://www.scala-lang.org) and built with [Gradl
 (Download and installation instructions for Gradle are [here](http://www.gradle.org/installation.html)). 
 
 * To build and test the project, run `gradle build`. (Test reports will be in `build/reports/tests`)
-
 * To generate a jar package, run `gradle jar`. (The jar will be in `build/libs`)
-
 * To generate an Eclipse project, run `gradle eclipse`.
-
 * To generate ScalaDoc, run `gradle scaladoc`.  (Docs will be in `build/docs`)
 
 __Note:__ dependency download may take a while the first time you build the project!
