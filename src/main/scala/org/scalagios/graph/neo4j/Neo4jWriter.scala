@@ -5,6 +5,16 @@ import com.weiglewilczek.slf4s.Logging
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.Constants.{ANNOTATION_URI, INDEX_FOR_ANNOTATIONS}
 
+/**
+ * Provides Pelagios-specific write functionality for modifying
+ * a <em>Neo4jGraph<em>, including
+ * 
+ * <ul>
+ * <li>dropping a dataset from the graph</li>
+ * </ul>
+ * 
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
 class Neo4jWriter(graph: Neo4jGraph) extends Logging {
       
   /**
