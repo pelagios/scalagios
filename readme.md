@@ -7,7 +7,7 @@ Scalagios is a utility library for working with data from the [PELAGIOS project]
   data and Pleiades dump files with low memory overhead
 * Graph database support:
   * Graph access and batch import utilities for [Neo4j](http://neo4j.org/) based on
-   [Tinkerpop Blueprints](http://tinkerpop.com/).  
+   [Tinkerpop Blueprints](http://tinkerpop.com/)
   * Domain model bindings based on [Tinkerpop Frames](https://github.com/tinkerpop/frames/wiki)
 * More to come...
   
