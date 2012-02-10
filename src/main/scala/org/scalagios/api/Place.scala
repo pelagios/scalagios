@@ -1,7 +1,6 @@
 package org.scalagios.api
 
 import scala.collection.mutable.ListBuffer
-import java.net.URL
 
 /**
  * Pelagios <em>Place</em> model primitive.
@@ -45,9 +44,7 @@ trait Place {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultPlace(private val _uri: String) extends Place {
-  
-  var uri = normalizeURL(_uri)
+class DefaultPlace(var uri: String) extends Place {
   
   var label: String = _
 
@@ -66,19 +63,8 @@ class DefaultPlace(private val _uri: String) extends Place {
 
   var lat: Double = _
   
-  private var _within: String = _
-  
-  // Getter
-  def within: String = _within
-  
-  // Setter
-  def within_=(url: String) = normalizeURL(url)
-  
+  var within: String = _
+    
   var geometryWKT: String = _
-  
-  private def normalizeURL(s: String): String = {
-    val url = new URL(s)
-    url.getProtocol + "://" + url.getHost + url.getPath
-  }
-  
+    
 }

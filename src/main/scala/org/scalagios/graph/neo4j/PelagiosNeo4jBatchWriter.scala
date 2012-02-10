@@ -1,5 +1,6 @@
 package org.scalagios.graph.neo4j
 
+import java.net.URL
 import com.tinkerpop.blueprints.pgm.Vertex
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.api.{Place, GeoAnnotation}
@@ -55,8 +56,10 @@ class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) {
   
   def insertPlaces(places: Iterable[Place]): Unit = {
     places.foreach(place => {
+      val normalizedURL = normalizeURL(place.uri)
+      
       val vertex = graph.addVertex(null)
-      vertex.setProperty(PLACE_URI, place.uri)
+      vertex.setProperty(PLACE_URI, normalizedURL)
       if (place.label != null) vertex.setProperty(PLACE_LABEL, place.label)
       if (place.comment != null) vertex.setProperty(PLACE_COMMENT, place.comment)
       if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels)
@@ -65,25 +68,33 @@ class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) {
       vertex.setProperty(PLACE_LAT, place.lat)
       
       // Add to index
-      placeIndex.put(PLACE_URI, place.uri, vertex)
+      placeIndex.put(PLACE_URI, normalizedURL, vertex)
       if (place.label != null) placeIndex.put(PLACE_LABEL, place.label, vertex)
     })
     
     // Create PLACE -- within --> PLACE relations
     places.filter(place => place.within != null).foreach(place => {
+      val normalizedURL = normalizeURL(place.uri)
+      val normalizedWithin = normalizeURL(place.within)
+      
       val origin =
-        if (placeIndex.count(PLACE_URI, place.uri) > 0) placeIndex.get(PLACE_URI, place.uri).next()
+        if (placeIndex.count(PLACE_URI, normalizedURL) > 0) placeIndex.get(PLACE_URI, normalizedURL).next()
         else null
         
       val destination = 
-        if (placeIndex.count(PLACE_URI, place.within) > 0) placeIndex.get(PLACE_URI, place.within).next()
+        if (placeIndex.count(PLACE_URI, normalizedWithin) > 0) placeIndex.get(PLACE_URI, normalizedWithin).next()
         else null
         
       if (origin == null || destination == null)
-        throw UnknownPlaceException("Could not create relation: " + place.uri + " WITHIN " + place.within)
+        throw UnknownPlaceException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
       else
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
   }
   
+  private def normalizeURL(s: String): String = {
+    val url = new URL(s)
+    url.getProtocol + "://" + url.getHost + url.getPath
+  }
+ 
 }
