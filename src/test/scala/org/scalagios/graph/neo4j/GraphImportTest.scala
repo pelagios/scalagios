@@ -70,7 +70,6 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     graph.shutdown();
     
     println("Imported " + placeCollector.getPlaces.size + " places. Took " + (System.currentTimeMillis - startTime)/1000 + " seconds")
-    assert(true)
   }
   
   test("Batch Annotation Import with Neo4j") {
@@ -88,12 +87,14 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     graph.shutdown();
     
     println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")
-    assert(true)
   }
   
-  
   test("Dropping Datasets from Neo4j") {
-    
+    // TODO
+  }
+  
+  test("Verify Graph Setup") {
+    // TODO
   }
   
 }

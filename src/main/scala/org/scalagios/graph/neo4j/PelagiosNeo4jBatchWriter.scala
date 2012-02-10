@@ -1,12 +1,11 @@
 package org.scalagios.graph.neo4j
 
-import com.weiglewilczek.slf4s.Logging
-
 import com.tinkerpop.blueprints.pgm.Vertex
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
-
 import org.scalagios.api.{Place, GeoAnnotation}
 import org.scalagios.graph.Constants._
+import org.scalagios.graph.exception.UnknownPlaceException
+import org.scalagios.graph.exception.UnknownPlaceException
 
 /**
  * Provides Pelagios-specific batch-write functionality for modifying
@@ -19,7 +18,7 @@ import org.scalagios.graph.Constants._
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
+class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) {
   
   // Get (or lazily create) the place index
   private val placeIndex = 
@@ -50,7 +49,7 @@ class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
       if (places.hasNext())
         graph.addEdge(null, vertex, places.next(), RELATION_HASBODY)
       else
-        logger.warn("Place referenced in Annotation body not found!")
+        throw UnknownPlaceException("Annotation references Place " + annotation.body + " but was not found in graph")
     })
   }
   
@@ -81,7 +80,7 @@ class PelagiosNeo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
         else null
         
       if (origin == null || destination == null)
-        logger.warn("Could not create relation: " + place.uri + " WITHIN " + place.within)
+        throw UnknownPlaceException("Could not create relation: " + place.uri + " WITHIN " + place.within)
       else
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
