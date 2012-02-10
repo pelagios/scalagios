@@ -27,6 +27,7 @@ dependencies {
     compile 'org.openrdf.sesame:sesame-rio-n3:2.6.3'
     compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.6.3'
     compile 'com.tinkerpop:frames:0.6'
+    compile 'com.tinkerpop.blueprints:blueprints-neo4j-graph:1.1'
     compile 'com.tinkerpop.blueprints:blueprints-neo4jbatch-graph:1.1'
 
     testCompile 'junit:junit:4.8.2'
