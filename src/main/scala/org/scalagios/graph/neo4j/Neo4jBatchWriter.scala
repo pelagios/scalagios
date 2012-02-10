@@ -8,6 +8,17 @@ import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.api.{Place, GeoAnnotation}
 import org.scalagios.graph.Constants._
 
+/**
+ * Provides Pelagios-specific batch-write functionality for modifying
+ * a <em>Neo4jBatchGraph<em>, including
+ * 
+ * <ul>
+ * <li>inserting GeoAnnotations</li>
+ * <li>inserting Places</li>
+ * </ul>
+ * 
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
 class Neo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
   
   // Get (or lazily create) the place index
@@ -24,37 +35,40 @@ class Neo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
     else
       graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
 
-  def insertAnnotation(annotation: GeoAnnotation): Unit = {
-    val vertex = graph.addVertex(null)
-    vertex.setProperty(ANNOTATION_URI, annotation.uri)
-    vertex.setProperty(ANNOTATION_BODY, annotation.body)
-    vertex.setProperty(ANNOTATION_TARGET, annotation.target)
+  def insertAnnotations(annotations: Iterable[GeoAnnotation]): Unit = {
+    annotations.foreach(annotation => {
+      val vertex = graph.addVertex(null)
+      vertex.setProperty(ANNOTATION_URI, annotation.uri)
+      vertex.setProperty(ANNOTATION_BODY, annotation.body)
+      vertex.setProperty(ANNOTATION_TARGET, annotation.target)
     
-    annotationIndex.put(ANNOTATION_URI, annotation.uri, vertex)
-    
-    val places = placeIndex.get(PLACE_URI, annotation.body)
-    
-    if (places.hasNext())
-      graph.addEdge(null, vertex, places.next(), RELATION_HASBODY)      
+      // Add to index
+      annotationIndex.put(ANNOTATION_URI, annotation.uri, vertex)
+      
+      // Create ANNOTATION -- hasBody --> PLACE relation 
+      val places = placeIndex.get(PLACE_URI, annotation.body)
+      if (places.hasNext()) graph.addEdge(null, vertex, places.next(), RELATION_HASBODY)   
+    })
   }
   
-  def insertPlace(place: Place): Unit = {
-    val vertex = graph.addVertex(null)
-    vertex.setProperty(PLACE_URI, place.uri)
-    if (place.label != null) vertex.setProperty(PLACE_LABEL, place.label)
-    if (place.comment != null) vertex.setProperty(PLACE_COMMENT, place.comment)
-    if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels)
-    if (place.geometryWKT != null) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT)    
-    vertex.setProperty(PLACE_LON, place.lon)
-    vertex.setProperty(PLACE_LAT, place.lat)
+  def insertPlaces(places: Iterable[Place]): Unit = {
+    places.foreach(place => {
+      val vertex = graph.addVertex(null)
+      vertex.setProperty(PLACE_URI, place.uri)
+      if (place.label != null) vertex.setProperty(PLACE_LABEL, place.label)
+      if (place.comment != null) vertex.setProperty(PLACE_COMMENT, place.comment)
+      if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels)
+      if (place.geometryWKT != null) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT)    
+      vertex.setProperty(PLACE_LON, place.lon)
+      vertex.setProperty(PLACE_LAT, place.lat)
+      
+      // Add to index
+      placeIndex.put(PLACE_URI, place.uri, vertex)
+      if (place.label != null) placeIndex.put(PLACE_LABEL, place.label, vertex)
+    })
     
-    // Add to index
-    placeIndex.put(PLACE_URI, place.uri, vertex)
-    if (place.label != null) placeIndex.put(PLACE_LABEL, place.label, vertex)
-  }
-  
-  def createWithinRelation(place: Place): Unit = {
-    if (place.within != null) {
+    // Create PLACE -- within --> PLACE relations
+    places.filter(place => place.within != null).foreach(place => {
       val origin =
         if (placeIndex.count(PLACE_URI, place.uri) > 0) placeIndex.get(PLACE_URI, place.uri).next()
         else null
@@ -66,8 +80,8 @@ class Neo4jBatchWriter(graph: Neo4jBatchGraph) extends Logging {
       if (origin == null || destination == null)
         logger.warn("Could not create relation: " + place.uri + " WITHIN " + place.within)
       else
-        graph.addEdge(null, origin, destination, RELATION_WITHIN)
-    }
+        graph.addEdge(null, origin, destination, RELATION_WITHIN)      
+    })
   }
   
 }
