@@ -3,8 +3,10 @@ package org.scalagios.graph.io
 import java.net.URL
 import com.tinkerpop.blueprints.pgm.Vertex
 import com.tinkerpop.blueprints.pgm.IndexableGraph
+import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
 import org.scalagios.api.{Place, GeoAnnotation}
 import org.scalagios.graph.Constants._
+import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
 /**
  * Provides Pelagios-specific Graph DB I/O features, including
@@ -33,6 +35,12 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
 
   def insertAnnotations(annotations: Iterable[GeoAnnotation]): Unit = {
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+    
     annotations.foreach(annotation => {
       val vertex = graph.addVertex(null)
       vertex.setProperty(ANNOTATION_URI, annotation.uri)
@@ -49,9 +57,18 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       else
         throw UnknownPlaceException("Annotation references Place " + annotation.body + " but was not found in graph")
     })
+    
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
   def insertPlaces(places: Iterable[Place]): Unit = {
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+
     places.foreach(place => {
       val normalizedURL = normalizeURL(place.uri)
       
@@ -87,6 +104,9 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       else
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
+    
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
   private def normalizeURL(s: String): String = {

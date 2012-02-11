@@ -16,6 +16,7 @@ import org.openrdf.rio.turtle.TurtleParserFactory
 import org.neo4j.kernel.impl.util.FileUtils
 
 import info.aduna.io.FileUtil
+import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 
 import org.scalagios.rdf.parser.AnnotationCollector
@@ -28,24 +29,52 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
   private val ANNOTATION_BASEURI = "http://googleancientplaces.wordpress.com/"
   
-  private def deleteNeo4j = {
-    val neo4j = new File(NEO4J_DIR)
-    if (neo4j.exists()) {
-      try {
-        println("Removing Neo4j test DB")
-        FileUtils.deleteRecursively(new File(NEO4J_DIR))
-        println("Done.")
-      } catch {
-        case t: Throwable => { println("WARNING: Could not delete Neo4j test DB") }
-      }
-    }
-  }
-  
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
   override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
+  
+  test("Transactional Place import with Neo4j") {
     
-  test("Batch Place Import with Neo4j") {
+  }
+  
+  test("Drop all Places from Neo4j") {
+    
+  }
+  
+  test("Batch Place import with Neo4j") {
     println("Importing Pleiades RDF dump from the Web")
+    importPlaces(new Neo4jBatchGraph(NEO4J_DIR))        
+  }
+
+  test("Transactional Annotation import with Neo4j") {
+    
+  }
+  
+  test("Drop Annotations from Neo4j") {
+    // TODO
+  }
+  
+  test("Batch Annotation import with Neo4j") {
+    println("Importing OAC Annotations to Neo4j at " + NEO4J_DIR)
+    val startTime = System.currentTimeMillis
+    
+    val parser = new N3ParserFactory().getParser()
+    val annotationCollector = new AnnotationCollector()
+    parser.setRDFHandler(annotationCollector)
+    parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
+    
+    val graph = new Neo4jBatchGraph(NEO4J_DIR)
+    val writer = new PelagiosGraphWriter(graph) 
+    writer.insertAnnotations(annotationCollector.getAnnotations)
+    graph.shutdown();
+    
+    println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")
+  }
+    
+  test("Verify graph structure") {
+    // TODO
+  }
+  
+  def importPlaces(graph: IndexableGraph) = {
     val startTime = System.currentTimeMillis   
 
     // Get GZIPped Turtle stream directly from Pleiades site
@@ -64,37 +93,24 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("Importing to graph")
     
     // Add to graph
-    val graph = new Neo4jBatchGraph(NEO4J_DIR)
     val writer = new PelagiosGraphWriter(graph)
     writer.insertPlaces(placeCollector.getPlaces)
-    graph.shutdown();
+    graph.shutdown();    
     
     println("Imported " + placeCollector.getPlaces.size + " places. Took " + (System.currentTimeMillis - startTime)/1000 + " seconds")
   }
-  
-  test("Batch Annotation Import with Neo4j") {
-    println("Importing OAC Annotations to Neo4j at " + NEO4J_DIR)
-    val startTime = System.currentTimeMillis
-    
-    val parser = new N3ParserFactory().getParser()
-    val annotationCollector = new AnnotationCollector()
-    parser.setRDFHandler(annotationCollector)
-    parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
-    
-    val graph = new Neo4jBatchGraph(NEO4J_DIR)
-    val writer = new PelagiosGraphWriter(graph) 
-    writer.insertAnnotations(annotationCollector.getAnnotations)
-    graph.shutdown();
-    
-    println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")
-  }
-  
-  test("Dropping Datasets from Neo4j") {
-    // TODO
-  }
-  
-  test("Verify Graph Structure") {
-    // TODO
+
+  private def deleteNeo4j = {
+    val neo4j = new File(NEO4J_DIR)
+    if (neo4j.exists()) {
+      try {
+        println("Removing Neo4j test DB")
+        FileUtils.deleteRecursively(new File(NEO4J_DIR))
+        println("Done.")
+      } catch {
+        case t: Throwable => { println("WARNING: Could not delete Neo4j test DB") }
+      }
+    }
   }
   
 }
