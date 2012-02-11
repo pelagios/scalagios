@@ -1,4 +1,4 @@
-package org.scalagios.graph.neo4j
+package org.scalagios.graph.io
 
 import scala.collection.JavaConverters._
 import com.weiglewilczek.slf4s.Logging
@@ -6,16 +6,12 @@ import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.Constants.{ANNOTATION_URI, INDEX_FOR_ANNOTATIONS}
 
 /**
- * Provides Pelagios-specific write functionality for modifying
- * a <em>Neo4jGraph<em>, including
- * 
- * <ul>
- * <li>dropping a dataset from the graph</li>
- * </ul>
+ * Provides Pelagios-specific Graph DB I/O features that are only supported
+ * by Neo4j, but not the default Tinkerpop graph DB abstraction.
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class PelagiosNeo4jWriter(graph: Neo4jGraph) extends Logging {
+class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) with Logging {
       
   /**
    * Drops all GeoAnnotations with a URI starting with the specified 

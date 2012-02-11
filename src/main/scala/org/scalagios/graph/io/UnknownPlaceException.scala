@@ -1,3 +1,3 @@
-package org.scalagios.graph.exception
+package org.scalagios.graph.io
 
 case class UnknownPlaceException(msg: String) extends Exception(msg) 

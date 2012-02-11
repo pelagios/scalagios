@@ -1,4 +1,4 @@
-package org.scalagios.graph.neo4j
+package org.scalagios.graph.io
 
 import java.io.File
 import java.io.FileInputStream
@@ -65,7 +65,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
     // Add to graph
     val graph = new Neo4jBatchGraph(NEO4J_DIR)
-    val writer = new PelagiosNeo4jBatchWriter(graph)
+    val writer = new PelagiosGraphWriter(graph)
     writer.insertPlaces(placeCollector.getPlaces)
     graph.shutdown();
     
@@ -82,7 +82,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
     
     val graph = new Neo4jBatchGraph(NEO4J_DIR)
-    val writer = new PelagiosNeo4jBatchWriter(graph) 
+    val writer = new PelagiosGraphWriter(graph) 
     writer.insertAnnotations(annotationCollector.getAnnotations)
     graph.shutdown();
     
