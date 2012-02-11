@@ -1,7 +1,6 @@
 package org.scalagios.graph.io
 
-import java.io.File
-import java.io.FileInputStream
+import java.io.{File, FileInputStream}
 import java.net.URL
 import java.util.zip.GZIPInputStream
 
@@ -17,17 +16,17 @@ import org.neo4j.kernel.impl.util.FileUtils
 
 import info.aduna.io.FileUtil
 import com.tinkerpop.blueprints.pgm.IndexableGraph
+import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 
-import org.scalagios.rdf.parser.AnnotationCollector
-import org.scalagios.rdf.parser.PlaceCollector
+import org.scalagios.rdf.parser.{PlaceCollector, AnnotationCollector}
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
 
   private val NEO4J_DIR = "neo4j-test"
   private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
-  private val ANNOTATION_BASEURI = "http://googleancientplaces.wordpress.com/"
+  private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
   override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
@@ -41,33 +40,26 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   }
   
   test("Batch Place import with Neo4j") {
-    println("Importing Pleiades RDF dump from the Web")
+    println("Batch-importing Pleiades RDF dump from the Web")
     importPlaces(new Neo4jBatchGraph(NEO4J_DIR))        
   }
 
   test("Transactional Annotation import with Neo4j") {
-    
+    println("Importing OAC Annotations")
+    importAnnotations(new Neo4jGraph(NEO4J_DIR))
   }
   
   test("Drop Annotations from Neo4j") {
-    // TODO
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    val writer = new PelagiosNeo4jWriter(graph)
+    val annotationsDropped = writer.dropDataset(ANNOTATION_BASEURI)
+    graph.shutdown()
+    println("Dropped " + annotationsDropped + " from graph")
   }
   
   test("Batch Annotation import with Neo4j") {
-    println("Importing OAC Annotations to Neo4j at " + NEO4J_DIR)
-    val startTime = System.currentTimeMillis
-    
-    val parser = new N3ParserFactory().getParser()
-    val annotationCollector = new AnnotationCollector()
-    parser.setRDFHandler(annotationCollector)
-    parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
-    
-    val graph = new Neo4jBatchGraph(NEO4J_DIR)
-    val writer = new PelagiosGraphWriter(graph) 
-    writer.insertAnnotations(annotationCollector.getAnnotations)
-    graph.shutdown();
-    
-    println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")
+    println("Batch-importing OAC Annotations")
+    importAnnotations(new Neo4jBatchGraph(NEO4J_DIR))    
   }
     
   test("Verify graph structure") {
@@ -98,6 +90,21 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     graph.shutdown();    
     
     println("Imported " + placeCollector.getPlaces.size + " places. Took " + (System.currentTimeMillis - startTime)/1000 + " seconds")
+  }
+  
+  def importAnnotations(graph: IndexableGraph) = {
+    val startTime = System.currentTimeMillis
+    
+    val parser = new N3ParserFactory().getParser()
+    val annotationCollector = new AnnotationCollector()
+    parser.setRDFHandler(annotationCollector)
+    parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
+    
+    val writer = new PelagiosGraphWriter(graph) 
+    writer.insertAnnotations(annotationCollector.getAnnotations)
+    graph.shutdown();
+    
+    println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")    
   }
 
   private def deleteNeo4j = {
