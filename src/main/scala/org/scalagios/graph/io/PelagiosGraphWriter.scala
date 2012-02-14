@@ -62,10 +62,6 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
-  def dropPlaces(): Unit = {
-    
-  }
-  
   def insertPlaces(places: Iterable[Place]): Unit = {
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]

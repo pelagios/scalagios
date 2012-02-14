@@ -3,7 +3,7 @@ package org.scalagios.graph.io
 import scala.collection.JavaConverters._
 import com.weiglewilczek.slf4s.Logging
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
-import org.scalagios.graph.Constants.{ANNOTATION_URI, INDEX_FOR_ANNOTATIONS}
+import org.scalagios.graph.Constants._
 
 /**
  * Provides Pelagios-specific Graph DB I/O features that are only supported
@@ -14,7 +14,37 @@ import org.scalagios.graph.Constants.{ANNOTATION_URI, INDEX_FOR_ANNOTATIONS}
 class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) with Logging {
   
   private val referenceNode = graph.getRawGraph().getReferenceNode()
-      
+  
+  def dropPlaces(): Int = {
+    // TODO eliminate code duplication
+    
+    // Note: we need to use the native Neo4j index, since the Tinkerpop
+    // abstraction does not support full Lucene query syntax (d'oh!)
+    val neo4j = graph.getRawGraph()
+    val index = neo4j.index().forNodes(INDEX_FOR_PLACES)
+
+    val transaction = neo4j.beginTx()
+    var ctr = 0
+    try {
+      index.query(PLACE_URI, "*").iterator().asScala.foreach(node => {
+        node.getRelationships().asScala.foreach(_.delete())
+        node.delete()
+        ctr += 1
+      })
+      transaction.success()
+    } catch {
+      case t: Throwable => {
+        transaction.failure()
+        ctr = 0
+        logger.error(t.getMessage())
+      }
+    } finally {
+      transaction.finish()
+    }
+    
+    ctr
+  }
+  
   /**
    * Drops all GeoAnnotations with a URI starting with the specified 
    * base URI.
@@ -22,7 +52,7 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
    */
   def dropDataset(baseURI: String): Int = {
     // Note: we need to use the native Neo4j index, since the Tinkerpop
-    // abstraction does not support wildcard searches (d'oh!)
+    // abstraction does not support full Lucene query syntax (d'oh!)
     val neo4j = graph.getRawGraph()
     val index = neo4j.index().forNodes(INDEX_FOR_ANNOTATIONS)
     
