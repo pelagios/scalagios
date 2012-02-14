@@ -25,6 +25,7 @@ import org.scalagios.rdf.parser.{PlaceCollector, AnnotationCollector}
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
 
   private val NEO4J_DIR = "neo4j-test"
+  private val PLEIADES_DUMP = "src/test/resources/places-20120212.ttl.gz"
   private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples"
   
@@ -40,7 +41,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   }
   
   test("Batch Place import with Neo4j") {
-    println("Batch-importing Pleiades RDF dump from the Web")
+    println("Batch-importing Pleiades RDF dump")
     importPlaces(new Neo4jBatchGraph(NEO4J_DIR))        
   }
 
@@ -68,20 +69,13 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   
   def importPlaces(graph: IndexableGraph) = {
     val startTime = System.currentTimeMillis   
-
-    // Get GZIPped Turtle stream directly from Pleiades site
-    val connection = 
-      new URL("http://atlantides.org/downloads/pleiades/rdf/places-latest.ttl.gz")
-      .openConnection()
       
-    val inputStream = new GZIPInputStream(connection.getInputStream())
-
-    // Download and parse 
+    val inputStream = new GZIPInputStream(new FileInputStream(PLEIADES_DUMP))
     val parser = new TurtleParserFactory().getParser()
     val placeCollector = new PlaceCollector
     parser.setRDFHandler(placeCollector);
     parser.parse(inputStream, "http://pleiades.stoa.org")
-    println("File download complete. Took " + (System.currentTimeMillis() - startTime)/1000 + " seconds")
+    println("Pleiades RDF parsed. Took " + (System.currentTimeMillis() - startTime)/1000 + " seconds")
     println("Importing to graph")
     
     // Add to graph

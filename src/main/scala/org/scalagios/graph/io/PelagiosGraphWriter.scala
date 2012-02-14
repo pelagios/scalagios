@@ -33,7 +33,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       graph.createManualIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
     else
       graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
-
+      
   def insertAnnotations(annotations: Iterable[GeoAnnotation]): Unit = {
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
@@ -60,6 +60,10 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
     
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+  }
+  
+  def dropPlaces(): Unit = {
+    
   }
   
   def insertPlaces(places: Iterable[Place]): Unit = {

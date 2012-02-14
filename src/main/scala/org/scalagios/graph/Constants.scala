@@ -31,6 +31,9 @@ object Constants {
   val ANNOTATION_BODY = "body"
   val ANNOTATION_TARGET = "target"
     
+  val RELATION_PLACE_SUBREF = "places"
+  val RELATION_ANNOTATION_SUBREF = "geoannotations"
+    
   /**
    * Graph relationship type 'within' relation Place -> Place
    */
