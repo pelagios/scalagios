@@ -13,8 +13,6 @@ import org.scalagios.graph.Constants._
  */
 class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) with Logging {
   
-  private val referenceNode = graph.getRawGraph().getReferenceNode()
-  
   def dropPlaces(): Int = {
     // TODO eliminate code duplication
     

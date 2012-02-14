@@ -33,11 +33,17 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
   
   test("Transactional Place import with Neo4j") {
-    
+    println("Importing Pleiades RDF dump")
+    importPlaces(new Neo4jGraph(NEO4J_DIR))
   }
   
   test("Drop all Places from Neo4j") {
-    
+    val startTime = System.currentTimeMillis()
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    val writer = new PelagiosNeo4jWriter(graph)
+    val placesDropped = writer.dropPlaces()
+    graph.shutdown()
+    println("Dropped " + placesDropped + " Places from graph. Took " + (System.currentTimeMillis() - startTime) + " milliseconds")    
   }
   
   test("Batch Place import with Neo4j") {
