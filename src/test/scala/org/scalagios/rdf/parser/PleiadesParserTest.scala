@@ -6,20 +6,18 @@ import org.scalatest.junit.JUnitRunner
 import java.net.URL
 import java.util.zip.GZIPInputStream
 import org.openrdf.rio.turtle.TurtleParserFactory
+import java.io.FileInputStream
 
 @RunWith(classOf[JUnitRunner])
 class PleiadesParserTest extends FunSuite {
+  
+  val PLEIADES_DUMP = "src/test/resources/places-20120212.ttl.gz"
   
   test("Pleiades RDF Import") {
     println("Starting Pleiades import")
     val startTime = System.currentTimeMillis   
 
-    // Get GZIPped Turtle stream directly from Pleiades site
-    val connection = 
-      new URL("http://atlantides.org/downloads/pleiades/rdf/places-latest.ttl.gz")
-      .openConnection()
-      
-    val inputStream = new GZIPInputStream(connection.getInputStream())
+    val inputStream = new GZIPInputStream(new FileInputStream(PLEIADES_DUMP))
 
     // Parse with RIO RDF Parser
     val parser = new TurtleParserFactory().getParser()
