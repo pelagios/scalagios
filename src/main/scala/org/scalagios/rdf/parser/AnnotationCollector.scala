@@ -7,7 +7,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 
 import org.scalagios.rdf.vocab.OAC
-import org.scalagios.api.DefaultGeoAnnotation
+import org.scalagios.api.{DefaultGeoAnnotation, DefaultAnnotationTarget}
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -26,28 +26,16 @@ class AnnotationCollector extends RDFHandlerBase with ParseStats {
   override def handleStatement(statement: Statement): Unit = {
     triplesTotal += 1
     
-    val subj = statement.getSubject().stringValue()
-    val obj = statement.getObject()
+    val (subj, obj) = (statement.getSubject().stringValue(), statement.getObject())
     
-    val annotation = (statement.getPredicate(), obj) match {
+    (statement.getPredicate(), obj) match {
       case (RDF.TYPE, OAC.ANNOTATION)  => getOrCreate(subj)
       
-      case (OAC.HAS_TARGET, _) => {
-        val a = getOrCreate(subj)
-        a.target = obj.stringValue()
-        a
-      }
+      case (OAC.HAS_TARGET, _) => getOrCreate(subj).target = new DefaultAnnotationTarget(obj.stringValue())
       
-      case (OAC.HAS_BODY, _) => {
-        val a = getOrCreate(subj)
-        a.body = obj.stringValue()
-        a
-      }
+      case (OAC.HAS_BODY, _) => getOrCreate(subj).body = obj.stringValue()
       
-      case _ => {
-        triplesSkipped += 1
-        null
-      }
+      case _ => triplesSkipped += 1
     }
   }
    

@@ -1,7 +1,6 @@
 package org.scalagios.graph
 
 import com.tinkerpop.frames.Property
-
 import org.scalagios.api.GeoAnnotation
 
 /**
@@ -21,7 +20,7 @@ trait GeoAnnotationVertex extends GeoAnnotation {
   @Property("body")
   def body: String
   
-  @Property("target")
-  def target: String
+  // TODO wire this up with the relation to the target vertex
+  def target: AnnotationTargetVertex;
 
 }
