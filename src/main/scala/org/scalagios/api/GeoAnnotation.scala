@@ -9,6 +9,8 @@ trait GeoAnnotation {
   
   def uri: String
   
+  def title: String
+  
   def body: String
   
   def target: String
@@ -25,6 +27,8 @@ trait GeoAnnotation {
  */
 class DefaultGeoAnnotation(var uri: String) extends GeoAnnotation {
 
+  var title: String = _
+  
   var body: String = _
   
   var target: String = _

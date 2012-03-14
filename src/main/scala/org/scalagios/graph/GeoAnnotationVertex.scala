@@ -15,6 +15,9 @@ trait GeoAnnotationVertex extends GeoAnnotation {
   @Property("uri")
   def uri: String
   
+  @Property("title")
+  def title: String
+  
   @Property("body")
   def body: String
   
