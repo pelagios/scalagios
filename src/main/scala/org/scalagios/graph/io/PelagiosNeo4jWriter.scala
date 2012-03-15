@@ -4,6 +4,7 @@ import scala.collection.JavaConverters._
 import com.weiglewilczek.slf4s.Logging
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.Constants._
+import org.neo4j.graphdb.index.IndexManager
 
 /**
  * Provides Pelagios-specific Graph DB I/O features that are only supported
@@ -13,9 +14,7 @@ import org.scalagios.graph.Constants._
  */
 class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) with Logging {
   
-  def dropPlaces(): Int = {
-    // TODO eliminate code duplication
-    
+  def dropPlaces(): Int = {    
     // Note: we need to use the native Neo4j index, since the Tinkerpop
     // abstraction does not support full Lucene query syntax (d'oh!)
     val neo4j = graph.getRawGraph()
@@ -78,6 +77,10 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
     }
     
     ctr
+  }
+  
+  private def dropVertices(index: IndexManager, query: String): Unit = {
+    // TODO eliminate code duplication by putting common stuff in this method!
   }
   
 }

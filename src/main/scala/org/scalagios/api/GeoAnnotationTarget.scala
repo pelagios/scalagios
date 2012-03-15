@@ -5,7 +5,7 @@ package org.scalagios.api
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-trait AnnotationTarget {
+trait GeoAnnotationTarget {
   
   def uri: String
   
@@ -19,7 +19,7 @@ trait AnnotationTarget {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultAnnotationTarget(var uri: String) extends AnnotationTarget {
+class DefaultGeoAnnotationTarget(var uri: String) extends GeoAnnotationTarget {
   
   var title: String = _
   

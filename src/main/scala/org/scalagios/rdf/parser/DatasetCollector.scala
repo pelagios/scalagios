@@ -6,6 +6,7 @@ import org.openrdf.model.Statement
 import org.scalagios.api.DefaultDataset
 import org.openrdf.model.vocabulary.RDF
 import org.scalagios.rdf.vocab.{VoID, DCTerms, FOAF}
+import org.scalagios.rdf.vocab.Formats
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -13,7 +14,7 @@ import org.scalagios.rdf.vocab.{VoID, DCTerms, FOAF}
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DatasetBuilder extends RDFHandlerBase with ParseStats {
+class DatasetCollector extends RDFHandlerBase with ParseStats {
   
   private val datasetBuffer = new HashMap[String, DefaultDataset]
   
@@ -27,14 +28,25 @@ class DatasetBuilder extends RDFHandlerBase with ParseStats {
     
     (pred, obj) match {
       case (RDF.TYPE, VoID.Dataset) => getOrCreate(subj)
-      
       case (DCTerms.title, _) => getOrCreate(subj).title = obj.stringValue()
-      
       case (DCTerms.description, _) => getOrCreate(subj).description = obj.stringValue()
-      
       case (DCTerms.license, _) => getOrCreate(subj).license = obj.stringValue()
-      
       case (FOAF.homepage, _) => getOrCreate(subj).homepage = obj.stringValue()
+      case (VoID.uriSpace, _) => getOrCreate(subj).uriSpace = obj.stringValue()
+      
+      case (VoID.dataDump, _) => {
+        val d = getOrCreate(subj)
+        d.datadump = (obj.stringValue(), d.datadump._2)
+      }
+      
+      case (VoID.feature, _) => {
+        val d = getOrCreate(subj)
+        val format = Formats.toRDFFormat(obj)
+        if (format.isDefined)
+        	d.datadump = (d.datadump._1, format.get)        
+      }
+      
+      case _ => triplesSkipped += 1
     }
 
   }

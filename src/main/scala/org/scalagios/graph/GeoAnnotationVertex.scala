@@ -21,6 +21,6 @@ trait GeoAnnotationVertex extends GeoAnnotation {
   def body: String
   
   // TODO wire this up with the relation to the target vertex
-  def target: AnnotationTargetVertex;
+  def target: GeoAnnotationTargetVertex;
 
 }

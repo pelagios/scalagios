@@ -7,7 +7,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 
 import org.scalagios.rdf.vocab.OAC
-import org.scalagios.api.{DefaultGeoAnnotation, DefaultAnnotationTarget}
+import org.scalagios.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -30,11 +30,8 @@ class AnnotationCollector extends RDFHandlerBase with ParseStats {
     
     (statement.getPredicate(), obj) match {
       case (RDF.TYPE, OAC.ANNOTATION)  => getOrCreate(subj)
-      
-      case (OAC.HAS_TARGET, _) => getOrCreate(subj).target = new DefaultAnnotationTarget(obj.stringValue())
-      
-      case (OAC.HAS_BODY, _) => getOrCreate(subj).body = obj.stringValue()
-      
+      case (OAC.HAS_TARGET, _) => getOrCreate(subj).target = new DefaultGeoAnnotationTarget(obj.stringValue())
+      case (OAC.HAS_BODY, _) => getOrCreate(subj).body = obj.stringValue()      
       case _ => triplesSkipped += 1
     }
   }

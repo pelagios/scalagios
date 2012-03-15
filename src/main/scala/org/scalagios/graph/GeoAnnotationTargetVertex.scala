@@ -1,6 +1,6 @@
 package org.scalagios.graph
 
-import org.scalagios.api.AnnotationTarget
+import org.scalagios.api.GeoAnnotationTarget
 import com.tinkerpop.frames.Property
 
 /**
@@ -9,7 +9,7 @@ import com.tinkerpop.frames.Property
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-trait AnnotationTargetVertex extends AnnotationTarget {
+trait GeoAnnotationTargetVertex extends GeoAnnotationTarget {
   
   @Property("uri")
   def uri: String

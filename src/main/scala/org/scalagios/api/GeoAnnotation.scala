@@ -13,7 +13,7 @@ trait GeoAnnotation {
   
   def body: String
   
-  def target: AnnotationTarget
+  def target: GeoAnnotationTarget
   
   def isValid: Boolean = (!uri.isEmpty() && target != null && !body.isEmpty()) 
 
@@ -31,6 +31,6 @@ class DefaultGeoAnnotation(var uri: String) extends GeoAnnotation {
   
   var body: String = _
   
-  var target: AnnotationTarget = _
+  var target: GeoAnnotationTarget = _
   
 }

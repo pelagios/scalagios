@@ -1,4 +1,5 @@
 package org.scalagios.api
+import org.openrdf.rio.RDFFormat
 
 /**
  * Pelagios <em>Dataset</em> model primitive.
@@ -17,7 +18,11 @@ trait Dataset {
   
   def homepage: String
   
+  def datadump: (String, RDFFormat)
+  
   def subsets: List[Dataset]
+  
+  def uriSpace: String
   
   def isValid: Boolean = (!uri.isEmpty() && !title.isEmpty())
 
@@ -38,6 +43,10 @@ class DefaultDataset(var uri: String) extends Dataset {
   var license: String = _
   
   var homepage: String = _
+  
+  var datadump: (String, RDFFormat) = _
+  
+  var uriSpace: String = _
   
   var subsets: List[Dataset] = List.empty[Dataset]
   

@@ -70,7 +70,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   }
     
   test("Verify graph structure") {
-    // TODO
+    // TODO Implement test to verify graph structure
   }
   
   def importPlaces(graph: IndexableGraph) = {
