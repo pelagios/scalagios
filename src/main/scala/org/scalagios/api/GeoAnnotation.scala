@@ -15,7 +15,7 @@ trait GeoAnnotation {
   
   def target: GeoAnnotationTarget
   
-  def isValid: Boolean = (!uri.isEmpty() && target != null && !body.isEmpty()) 
+  def isValid: Boolean = (!uri.isEmpty() && !body.isEmpty() && target != null && target.isValid) 
 
 }
 

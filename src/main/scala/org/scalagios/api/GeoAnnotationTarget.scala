@@ -11,6 +11,8 @@ trait GeoAnnotationTarget {
   
   def title: String
 
+  def isValid: Boolean = (uri != null)
+  
 }
 
 /**

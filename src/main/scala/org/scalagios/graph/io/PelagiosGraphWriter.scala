@@ -42,18 +42,24 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
     }
     
     annotations.foreach(annotation => {
-      val vertex = graph.addVertex(null)
-      vertex.setProperty(ANNOTATION_URI, annotation.uri)
-      vertex.setProperty(ANNOTATION_BODY, annotation.body)
-      vertex.setProperty(ANNOTATION_TARGET, annotation.target)
+      val annotationVertex = graph.addVertex(null)
+      annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
+      annotationVertex.setProperty(ANNOTATION_BODY, annotation.body)
+      
+      val annotationTargetVertx = graph.addVertex(null)
+      annotationTargetVertx.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
+      if (annotation.target.title != null)
+        annotationTargetVertx.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title)
+      
+      graph.addEdge(null, annotationVertex, annotationTargetVertx, RELATION_HASTARGET)
     
       // Add to index
-      annotationIndex.put(ANNOTATION_URI, annotation.uri, vertex)
+      annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
       
       // Create ANNOTATION -- hasBody --> PLACE relation 
       val places = placeIndex.get(PLACE_URI, annotation.body)
       if (places.hasNext())
-        graph.addEdge(null, vertex, places.next(), RELATION_HASBODY)
+        graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
       else
         throw UnknownPlaceException("Annotation references Place " + annotation.body + " but was not found in graph")
     })
