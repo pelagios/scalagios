@@ -18,7 +18,9 @@ trait Dataset {
   
   def homepage: String
   
-  def datadump: (String, RDFFormat)
+  def datadump: String
+  
+  def dumpFormat: RDFFormat
   
   def subsets: List[Dataset]
   
@@ -44,7 +46,9 @@ class DefaultDataset(var uri: String) extends Dataset {
   
   var homepage: String = _
   
-  var datadump: (String, RDFFormat) = _
+  var datadump: String = _
+  
+  var dumpFormat: RDFFormat = _
   
   var uriSpace: String = _
   

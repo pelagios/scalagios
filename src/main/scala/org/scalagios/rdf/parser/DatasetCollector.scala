@@ -33,17 +33,12 @@ class DatasetCollector extends RDFHandlerBase with ParseStats {
       case (DCTerms.license, _) => getOrCreate(subj).license = obj.stringValue()
       case (FOAF.homepage, _) => getOrCreate(subj).homepage = obj.stringValue()
       case (VoID.uriSpace, _) => getOrCreate(subj).uriSpace = obj.stringValue()
-      
-      case (VoID.dataDump, _) => {
-        val d = getOrCreate(subj)
-        d.datadump = (obj.stringValue(), d.datadump._2)
-      }
-      
+      case (VoID.dataDump, _) => getOrCreate(subj).datadump = obj.stringValue()
       case (VoID.feature, _) => {
         val d = getOrCreate(subj)
         val format = Formats.toRDFFormat(obj)
         if (format.isDefined)
-        	d.datadump = (d.datadump._1, format.get)        
+        	d.dumpFormat = format.get        
       }
       
       case _ => triplesSkipped += 1

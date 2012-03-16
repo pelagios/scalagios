@@ -1,3 +1,4 @@
+@prefix : <http://gap.alexandriaarchive.org/bookdata/GAPtriples> .
 @prefix void: <http://rdfs.org/ns/void#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -24,6 +25,7 @@
     void:subset :gap_book_0005;
     void:subset :gap_book_0006;
     void:subset :gap_book_0007;
+    .
     
  :gap_book_0001 a void:Dataset;
     dcterms:title "Dictionary of Greek and Roman Geography";
@@ -555,7 +557,7 @@
         dcterms:title "Dictionary of Greek and Roman Geography, Page 1468";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/1/page1468";    
     ];
-    
+    .
         
  :gap_book_0002 a void:Dataset;
     dcterms:title "The Works of Cornelius Tacitus: The History";
@@ -619,7 +621,7 @@
         dcterms:title "The Works of Cornelius Tacitus: The History, Page 385";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/2/page385";    
     ];
-    
+ .   
         
  :gap_book_0003 a void:Dataset;
     dcterms:title "The History of the Peloponnesian War";
@@ -1068,14 +1070,12 @@
         dcterms:title "The History of the Peloponnesian War, Page 370";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/3/page370";    
     ];
-    
             
     void:subset [ 
         a void:Dataset;
         dcterms:title "The History of the Peloponnesian War, Page 373";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/3/page373";    
     ];
-    
             
     void:subset [ 
         a void:Dataset;
@@ -1173,7 +1173,7 @@
         dcterms:title "The History of the Peloponnesian War, Page 387";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/3/page387";    
     ];
-    
+    .
         
  :gap_book_0004 a void:Dataset;
     dcterms:title "The History of Rome";
@@ -1656,7 +1656,7 @@
         dcterms:title "The History of Rome, Page 535";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/4/page535";    
     ];
-    
+   . 
         
  :gap_book_0005 a void:Dataset;
     dcterms:title "The History of the Decline and Fall of the Roman Empire,";
@@ -2090,7 +2090,7 @@
         dcterms:title "The History of the Decline and Fall of the Roman Empire,, Page 421";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/5/page421";    
     ];
-    
+    .
         
  :gap_book_0006 a void:Dataset;
     dcterms:title "The Whole Genuine Works of Flavius Josephus, the Learned and Authentic Jewish Historian, and Celebrated Warrior";
@@ -2656,7 +2656,7 @@
         dcterms:title "The Whole Genuine Works of Flavius Josephus, the Learned and Authentic Jewish Historian, and Celebrated Warrior, Page 424";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/6/page424";    
     ];
-    
+    .
         
  :gap_book_0007 a void:Dataset;
     dcterms:title "Herodotus";
@@ -2888,4 +2888,4 @@
         dcterms:title "Herodotus, Page 51";
         void:uriSpace "http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/7/page51";    
     ];
-    
+   . 

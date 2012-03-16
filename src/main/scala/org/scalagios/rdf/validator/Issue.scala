@@ -1,5 +1,5 @@
 package org.scalagios.rdf.validator
 
-class Issue {
+class Issue(val message: String) {
 
 }
