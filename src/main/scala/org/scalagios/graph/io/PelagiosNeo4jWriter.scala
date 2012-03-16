@@ -14,9 +14,8 @@ import org.neo4j.graphdb.index.IndexManager
  */
 class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) with Logging {
   
-  def dropPlaces(): Int = {    
-    // Note: we need to use the native Neo4j index, since the Tinkerpop
-    // abstraction does not support full Lucene query syntax (d'oh!)
+  def dropPlaces(): Int = dropVertices(INDEX_FOR_PLACES, PLACE_URI, "*")
+    /*
     val neo4j = graph.getRawGraph()
     val index = neo4j.index().forNodes(INDEX_FOR_PLACES)
 
@@ -40,16 +39,17 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
     }
     
     ctr
-  }
+    
+  }*/
   
   /**
    * Drops all GeoAnnotations with a URI starting with the specified 
    * base URI.
    * @return the number of annotations successfully dropped
    */
-  def dropDataset(baseURI: String): Int = {
-    // Note: we need to use the native Neo4j index, since the Tinkerpop
-    // abstraction does not support full Lucene query syntax (d'oh!)
+  def dropDataset(baseURI: String): Int = dropVertices(INDEX_FOR_ANNOTATIONS, ANNOTATION_URI, baseURI.replace(":", "\\:") + "*")
+    
+    /*
     val neo4j = graph.getRawGraph()
     val index = neo4j.index().forNodes(INDEX_FOR_ANNOTATIONS)
     
@@ -78,9 +78,34 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
     
     ctr
   }
+  */
   
-  private def dropVertices(index: IndexManager, query: String): Unit = {
-    // TODO eliminate code duplication by putting common stuff in this method!
+  private def dropVertices(indexName: String, field: String, query: String): Int = {
+    // Note: we need to use the native Neo4j index, since the Tinkerpop
+    // abstraction does not support full Lucene query syntax (d'oh!)
+    val neo4j = graph.getRawGraph()
+    val index = neo4j.index().forNodes(indexName)
+        
+    val transaction = neo4j.beginTx()
+    var ctr = 0
+    try {
+      index.query(field, query).iterator().asScala.foreach(node => {
+        node.getRelationships().asScala.foreach(_.delete())
+        node.delete()
+        ctr += 1
+      })
+      transaction.success()
+    } catch {
+      case t: Throwable => {
+        transaction.failure()
+        ctr = 0
+        logger.error(t.getMessage())
+      }
+    } finally {
+      transaction.finish()
+    }
+    
+    ctr
   }
   
 }
