@@ -2,6 +2,8 @@ package org.scalagios.graph
 
 import com.tinkerpop.frames.Property
 import org.scalagios.api.GeoAnnotation
+import com.tinkerpop.frames.Relation
+import com.tinkerpop.frames.Direction
 
 /**
  * An implementation of the Pelagios <em>GeoAnnotation</em> model primitive
@@ -20,7 +22,7 @@ trait GeoAnnotationVertex extends GeoAnnotation {
   @Property("body")
   def body: String
   
-  // TODO wire this up with the relation to the target vertex
+  @Relation(label="target", direction=Direction.STANDARD)
   def target: GeoAnnotationTargetVertex;
 
 }
