@@ -27,10 +27,6 @@ class VoIDParserTest extends FunSuite {
     println(datasetBuilder.datasetsTotal + " datasets in VoID description")
     
     // TODO asserts!
-    
-    datasetBuilder.debug.foreach(tuple => {
-      println(tuple._1.uri + " - subset: " + tuple._2.mkString(", "))
-    })
   }
   
 }

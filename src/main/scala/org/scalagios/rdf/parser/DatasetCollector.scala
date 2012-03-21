@@ -24,8 +24,6 @@ class DatasetCollector extends RDFHandlerBase with ParseStats {
   
   def datasetsTotal = datasetBuffer.size
   
-  def debug = datasetBuffer.values
-  
   /**
    * Returns the full Dataset hierarchy (starting with the top-level Dataset)
    * TODO return the top-level dataset
@@ -62,7 +60,16 @@ class DatasetCollector extends RDFHandlerBase with ParseStats {
   }
   
   override def endRDF(): Unit = {
-    
+    val rootDataset = {
+      if (datasetBuffer.size < 2) {
+        // The Dataset isn't partitioned at all
+        datasetBuffer.values.head._1
+      } else {
+        // Check only Datasets that have subsets
+        val datasets = datasetBuffer.filter{ case(uri, (dataset, subsets)) => subsets.size > 0 }
+        datasets.keySet.foreach(uri => println(uri))
+      }
+    }      
   }
     
   private def getOrCreate(uri: String): (DefaultDataset, List[String]) = {
