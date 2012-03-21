@@ -28,7 +28,9 @@ class VoIDParserTest extends FunSuite {
     
     // TODO asserts!
     
-    datasetBuilder.getDatasets.foreach(dataset => assert(dataset.isValid))
+    datasetBuilder.debug.foreach(tuple => {
+      println(tuple._1.uri + " - subset: " + tuple._2.mkString(", "))
+    })
   }
   
 }
