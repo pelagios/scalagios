@@ -25,6 +25,15 @@ object Constants {
   val PLACE_GEOMETRY = "geometry"
     
   /**
+   * Dataset vertex properties
+   */
+  val DATASET_URI = "uri"
+  val DATASET_TITLE = "title"
+  val DATASET_DESCRIPTION = "description"
+  val DATASET_LICENSE = "license"
+  val DATASET_HOMEPAGE = "homepage"
+    
+  /**
    * GeoAnnotation vertex properties
    */
   val ANNOTATION_URI = "uri"
@@ -38,9 +47,14 @@ object Constants {
   val ANNOTATION_TARGET_TITLE = "title"
     
   /**
-   * Graph relationship type 'within' relation Place -> Place
+   * Graph relationship type 'within': Place -> Place
    */
   val RELATION_WITHIN = "within"
+    
+  /**
+   * Graph relationship type 'subset': Dataset -> Dataset
+   */
+  val RELATION_SUBSET = "subset"
     
   /**
    * Graph relationship type 'hasBody': GeoAnnotation -> Place

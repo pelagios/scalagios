@@ -4,7 +4,7 @@ import java.net.URL
 import com.tinkerpop.blueprints.pgm.Vertex
 import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
-import org.scalagios.api.{Place, GeoAnnotation}
+import org.scalagios.api.{Dataset, GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
@@ -34,6 +34,44 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
     else
       graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
       
+      
+  def insertAnnotations(rootDatasets: Iterable[Dataset], annotations: Iterable[GeoAnnotation]): Unit = {
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+    
+    rootDatasets.foreach(dataset => insertDataset(dataset, annotations))
+    
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+  }
+  
+  private def insertDataset(dataset: Dataset, annotations: Iterable[GeoAnnotation]): Vertex = {
+    // Insert dataset into graph
+    val datasetVertex = graph.addVertex(null)
+    datasetVertex.setProperty(DATASET_URI, dataset.uri)
+    datasetVertex.setProperty(DATASET_TITLE, dataset.title)
+      
+    // Insert annotations which are children of this dataset
+    if (!dataset.uriSpace.isEmpty())
+      annotations.filter(_.uri.startsWith(dataset.uriSpace)).foreach(annotation => {
+        // TODO insert annotation into graph
+      })
+      
+    // Continue with this dataset's subsets
+    dataset.subsets.foreach(subset => {
+      val subsetVertex = insertDataset(subset, annotations)
+      graph.addEdge(null, datasetVertex, subsetVertex, RELATION_SUBSET)
+    })
+    
+    datasetVertex
+  }
+  
+  /**
+   * @deprecated Never insert annotations into the graph which are not part of a Dataset!
+   */
   def insertAnnotations(annotations: Iterable[GeoAnnotation]): Unit = {
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
@@ -46,12 +84,12 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
       annotationVertex.setProperty(ANNOTATION_BODY, annotation.body)
       
-      val annotationTargetVertx = graph.addVertex(null)
-      annotationTargetVertx.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
+      val annotationTargetVertex = graph.addVertex(null)
+      annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
       if (annotation.target.title != null)
-        annotationTargetVertx.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title)
+        annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title)
       
-      graph.addEdge(null, annotationVertex, annotationTargetVertx, RELATION_HASTARGET)
+      graph.addEdge(null, annotationVertex, annotationTargetVertex, RELATION_HASTARGET)
     
       // Add to index
       annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
