@@ -31,12 +31,6 @@ class DatasetCollector extends RDFHandlerBase with ParseStats {
   def datasetsTotal = datasetBuffer.size
   
   def getRootDatasets: List[Dataset] = rootDatasets 
-  
-  /**
-   * Returns the full Dataset hierarchy (starting with the top-level Dataset)
-   * TODO return the top-level dataset
-   */
-  def getDataset: Option[Dataset] = None
 
   override def handleStatement(statement: Statement): Unit = {
     triplesTotal += 1
