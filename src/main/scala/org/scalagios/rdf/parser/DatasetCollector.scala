@@ -17,12 +17,20 @@ import org.scalagios.rdf.vocab.Formats
 class DatasetCollector extends RDFHandlerBase with ParseStats {
   
   /**
-   * Create a map that maps a Dataset's URI to a tuple containing (i) the 
-   * Dataset itself, and (ii) a List of its subsets' URIs.
+   * Maps a Dataset's URI to the Dataset
    */
-  private val datasetBuffer = new HashMap[String, (DefaultDataset, List[String])]
+  private val datasetBuffer = new HashMap[String, DefaultDataset]
+  
+  /**
+   * Maps a Dataset's URI to the its parent Dataset
+   */
+  private val parentsBuffer = new HashMap[String, DefaultDataset]
+ 
+  private var rootDatasets: List[Dataset] = _
   
   def datasetsTotal = datasetBuffer.size
+  
+  def getRootDatasets: List[Dataset] = rootDatasets 
   
   /**
    * Returns the full Dataset hierarchy (starting with the top-level Dataset)
@@ -37,21 +45,18 @@ class DatasetCollector extends RDFHandlerBase with ParseStats {
     
     (pred, obj) match {
       case (RDF.TYPE, VoID.Dataset) => getOrCreate(subj)
-      case (DCTerms.title, _) => getOrCreate(subj)._1.title = obj.stringValue()
-      case (DCTerms.description, _) => getOrCreate(subj)._1.description = obj.stringValue()
-      case (DCTerms.license, _) => getOrCreate(subj)._1.license = obj.stringValue()
-      case (FOAF.homepage, _) => getOrCreate(subj)._1.homepage = obj.stringValue()
-      case (VoID.uriSpace, _) => getOrCreate(subj)._1.uriSpace = obj.stringValue()
-      case (VoID.dataDump, _) => getOrCreate(subj)._1.datadump = obj.stringValue()
+      case (DCTerms.title, _) => getOrCreate(subj).title = obj.stringValue()
+      case (DCTerms.description, _) => getOrCreate(subj).description = obj.stringValue()
+      case (DCTerms.license, _) => getOrCreate(subj).license = obj.stringValue()
+      case (FOAF.homepage, _) => getOrCreate(subj).homepage = obj.stringValue()
+      case (VoID.uriSpace, _) => getOrCreate(subj).uriSpace = obj.stringValue()
+      case (VoID.dataDump, _) => getOrCreate(subj).datadump = obj.stringValue()
+      case (VoID.subset, _) => parentsBuffer.put(obj.stringValue(), getOrCreate(subj))
       case (VoID.feature, _) => {
-        val d = getOrCreate(subj)._1
+        val d = getOrCreate(subj)
         val format = Formats.toRDFFormat(obj)
         if (format.isDefined)
         	d.dumpFormat = format.get        
-      }
-      case (VoID.subset, _) => {
-        val (dataset, subsets) = getOrCreate(subj)
-        datasetBuffer.put(subj, (dataset, obj.stringValue() :: subsets))
       }
       
       case _ => triplesSkipped += 1
@@ -60,23 +65,22 @@ class DatasetCollector extends RDFHandlerBase with ParseStats {
   }
   
   override def endRDF(): Unit = {
-    val rootDataset = {
-      if (datasetBuffer.size < 2) {
-        // The Dataset isn't partitioned at all
-        datasetBuffer.values.head._1
-      } else {
-        // Check only Datasets that have subsets
-        val datasets = datasetBuffer.filter{ case(uri, (dataset, subsets)) => subsets.size > 0 }
-        datasets.keySet.foreach(uri => println(uri))
-      }
-    }      
+    rootDatasets = List[Dataset]()
+    
+    datasetBuffer.values.foreach(dataset => {
+      val parent = parentsBuffer.remove(dataset.uri)
+      if (!parent.isEmpty)
+        parent.get.subsets = dataset :: parent.get.subsets
+      else
+        rootDatasets = dataset :: rootDatasets
+    })
   }
     
-  private def getOrCreate(uri: String): (DefaultDataset, List[String]) = {
+  private def getOrCreate(uri: String): DefaultDataset = {
     datasetBuffer.get(uri) match {
       case Some(d) => d
       case None =>  {
-        val d = (new DefaultDataset(uri), List[String]())
+        val d = new DefaultDataset(uri)
         datasetBuffer.put(uri, d)
         d
       }

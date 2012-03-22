@@ -6,6 +6,7 @@ import org.scalatest.junit.JUnitRunner
 import org.openrdf.rio.turtle.TurtleParserFactory
 import java.io.{File, FileInputStream}
 import org.openrdf.rio.RDFParserRegistry
+import org.scalagios.api.Dataset
 
 @RunWith(classOf[JUnitRunner])
 class VoIDParserTest extends FunSuite { 
@@ -26,7 +27,15 @@ class VoIDParserTest extends FunSuite {
     println(datasetBuilder.triplesProcessed + " triples processed during import")
     println(datasetBuilder.datasetsTotal + " datasets in VoID description")
     
-    // TODO asserts!
+    // TODO test should verify with asserts, not just print to screen
+    datasetBuilder.getRootDatasets.foreach(dataset => printToScreen(dataset, ""))
+  }
+  
+  private def printToScreen(dataset: Dataset, indent: String): Unit = {
+    println(indent + dataset.title)
+    dataset.subsets.sortBy(_.uri).foreach(subset => {
+      printToScreen(subset, "   " + indent)
+    })
   }
   
 }

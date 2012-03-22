@@ -54,4 +54,6 @@ class DefaultDataset(var uri: String) extends Dataset {
   
   var subsets: List[Dataset] = List.empty[Dataset]
   
+  override def toString: String = uri
+  
 }
