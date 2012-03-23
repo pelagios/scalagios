@@ -3,9 +3,7 @@ package org.scalagios.graph.io
 import java.io.{File, FileInputStream}
 import java.net.URL
 import java.util.zip.GZIPInputStream
-
 import scala.collection.JavaConverters._
-
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.BeforeAndAfterAll
@@ -13,19 +11,19 @@ import org.junit.runner.RunWith
 import org.openrdf.rio.n3.N3ParserFactory
 import org.openrdf.rio.turtle.TurtleParserFactory
 import org.neo4j.kernel.impl.util.FileUtils
-
 import info.aduna.io.FileUtil
 import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
-
-import org.scalagios.rdf.parser.{PlaceCollector, AnnotationCollector}
+import org.scalagios.rdf.parser._
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
 
   private val NEO4J_DIR = "neo4j-test"
   private val PLEIADES_DUMP = "src/test/resources/places-20120212.ttl.gz"
+   
+  private val SAMPLE_VOID = "src/test/resources/gap-void-sample.ttl"
   private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples"
   
@@ -94,12 +92,23 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   }
   
   def importAnnotations(graph: IndexableGraph) = {
-    val startTime = System.currentTimeMillis
+    var startTime = System.currentTimeMillis
     
-    val parser = new N3ParserFactory().getParser()
+    // Parse VoID
+    val ttlParser = new TurtleParserFactory().getParser()
+    val datasetCollector = new DatasetCollector()
+    ttlParser.setRDFHandler(datasetCollector)
+    ttlParser.parse(new FileInputStream(new File(SAMPLE_VOID)), ANNOTATION_BASEURI)
+    
+    println("Imported VoID with the following root datasets:\n" + datasetCollector.getRootDatasets.mkString("\n"))
+    println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds")
+    
+    // Parse annotations
+    startTime = System.currentTimeMillis()
+    val n3Parser = new N3ParserFactory().getParser()
     val annotationCollector = new AnnotationCollector()
-    parser.setRDFHandler(annotationCollector)
-    parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
+    n3Parser.setRDFHandler(annotationCollector)
+    n3Parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
     
     val writer = new PelagiosGraphWriter(graph) 
     writer.insertAnnotations(annotationCollector.getAnnotations)

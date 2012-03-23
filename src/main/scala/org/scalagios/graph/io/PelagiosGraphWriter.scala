@@ -55,10 +55,31 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
       
     // Insert annotations which are children of this dataset
-    if (!dataset.uriSpace.isEmpty())
+    if (!dataset.uriSpace.isEmpty()) {
       annotations.filter(_.uri.startsWith(dataset.uriSpace)).foreach(annotation => {
-        // TODO insert annotation into graph
+        // Create annotation (plus target) node
+        val annotationVertex = graph.addVertex(null)
+        annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
+        annotationVertex.setProperty(ANNOTATION_BODY, annotation.body)
+        
+        val annotationTargetVertex = graph.addVertex(null)
+        annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
+        if (annotation.target.title != null)
+          annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title)
+        
+        graph.addEdge(null, annotationVertex, annotationTargetVertex, RELATION_HASTARGET)
+        
+        // Add to index
+        annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
+        
+        // Create ANNOTATION -- hasBody --> PLACE relation 
+        val places = placeIndex.get(PLACE_URI, annotation.body)
+        if (places.hasNext())
+          graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
+        else
+          throw UnknownPlaceException("Annotation references Place " + annotation.body + " but was not found in graph")
       })
+    }
       
     // Continue with this dataset's subsets
     dataset.subsets.foreach(subset => {
