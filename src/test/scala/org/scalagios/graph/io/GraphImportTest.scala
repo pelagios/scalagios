@@ -41,7 +41,8 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val writer = new PelagiosNeo4jWriter(graph)
     val placesDropped = writer.dropPlaces()
     graph.shutdown()
-    println("Dropped " + placesDropped + " Places from graph. Took " + (System.currentTimeMillis() - startTime) + " milliseconds")    
+    println("Dropped " + placesDropped + " Places from graph. Took " + (System.currentTimeMillis() - startTime) + " milliseconds")
+    assert(placesDropped == 36115)
   }
   
   test("Batch Place import with Neo4j") {
@@ -60,6 +61,8 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val annotationsDropped = writer.dropDataset(ANNOTATION_BASEURI)
     graph.shutdown()
     println("Dropped " + annotationsDropped + " from graph")
+    // Note: data file currently invalid! 
+    // assert(annotationsDropped == 1849)
   }
   
   test("Batch Annotation import with Neo4j") {
@@ -111,7 +114,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     n3Parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
     
     val writer = new PelagiosGraphWriter(graph) 
-    writer.insertAnnotations(annotationCollector.getAnnotations)
+    writer.insertAnnotations(datasetCollector.getRootDatasets, annotationCollector.getAnnotations)
     graph.shutdown();
     
     println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")    

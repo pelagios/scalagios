@@ -90,6 +90,7 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
     var ctr = 0
     try {
       index.query(field, query).iterator().asScala.foreach(node => {
+        // TODO need to delete the annotation target node!
         node.getRelationships().asScala.foreach(_.delete())
         node.delete()
         ctr += 1

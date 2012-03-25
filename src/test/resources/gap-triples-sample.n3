@@ -1,7 +1,7 @@
 <http://www.google.com/books?id=-C0BAAAAQAAJ> <http://www.w3.org/2000/01/rdf-schema#label> "Dictionary of Greek and Roman Geography: Labadius-Zymethus. 1857." .
-<http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#annotation1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openannotation.org/ns/Annotation> .
-<http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#annotation1> <http://www.openannotation.org/ns/hasBody> <http://pleiades.stoa.org/places/874777> .
-<http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#annotation1> <http://www.openannotation.org/ns/hasTarget>  <http://gap.alexandriaarchive.org/gapvis/index.html#book/1/place/874777> .
+<http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/1/page11/annotation/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openannotation.org/ns/Annotation> .
+<http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/1/page11/annotation/1> <http://www.openannotation.org/ns/hasBody> <http://pleiades.stoa.org/places/874777> .
+<http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#book/1/page11/annotation/1> <http://www.openannotation.org/ns/hasTarget>  <http://gap.alexandriaarchive.org/gapvis/index.html#book/1/place/874777> .
 <http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#annotation2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openannotation.org/ns/Annotation> .
 <http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#annotation2> <http://www.openannotation.org/ns/hasBody> <http://pleiades.stoa.org/places/148142> .
 <http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3#annotation2> <http://www.openannotation.org/ns/hasTarget>  <http://gap.alexandriaarchive.org/gapvis/index.html#book/1/place/148142> .
