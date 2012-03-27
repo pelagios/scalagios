@@ -12,6 +12,15 @@ object Constants {
    */
   val INDEX_FOR_PLACES = "place-index"
   val INDEX_FOR_ANNOTATIONS = "annotation-index"
+    
+  /**
+   * Vertex types
+   */
+  val VERTEX_TYPE = "type"
+  val PLACE_VERTEX = "place"
+  val DATASET_VERTEX = "dataset"
+  val ANNOTATION_VERTEX = "geoannotation"
+  val ANNOTATION_TARGET_VERTEX = "geoannotation_target"
 
   /**
    * Place vertex properties

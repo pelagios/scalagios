@@ -1,6 +1,7 @@
 package org.scalagios.graph.io
 
 import java.net.URL
+import scala.collection.JavaConverters._
 import com.tinkerpop.blueprints.pgm.Vertex
 import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
@@ -51,6 +52,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
   private def insertDataset(dataset: Dataset, annotations: Iterable[GeoAnnotation]): Vertex = {
     // Insert dataset into graph
     val datasetVertex = graph.addVertex(null)
+    datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
     datasetVertex.setProperty(DATASET_URI, dataset.uri)
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
       
@@ -70,10 +72,12 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
   private def insertAnnotation(annotation: GeoAnnotation): Unit = {
     // Create annotation (plus target) node
     val annotationVertex = graph.addVertex(null)
+    annotationVertex.setProperty(VERTEX_TYPE, ANNOTATION_VERTEX)
     annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
     annotationVertex.setProperty(ANNOTATION_BODY, annotation.body)
         
     val annotationTargetVertex = graph.addVertex(null)
+    annotationTargetVertex.setProperty(VERTEX_TYPE, ANNOTATION_TARGET_VERTEX)
     annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
     if (annotation.target.title != null)
       annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title)
@@ -102,6 +106,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       val normalizedURL = normalizeURL(place.uri)
       
       val vertex = graph.addVertex(null)
+      vertex.setProperty(VERTEX_TYPE, PLACE_VERTEX)
       vertex.setProperty(PLACE_URI, normalizedURL)
       if (place.label != null) vertex.setProperty(PLACE_LABEL, place.label)
       if (place.comment != null) vertex.setProperty(PLACE_COMMENT, place.comment)
@@ -132,6 +137,11 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
         throw UnknownPlaceException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
       else
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
+    })
+    
+    graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(ANNOTATION_VERTEX)).foreach(v => {
+      // TODO re-wire connections between annotations and places
+      // TODO record floating annotations!
     })
     
     if (graph.isInstanceOf[TransactionalGraph])
