@@ -4,6 +4,7 @@ import scala.collection.JavaConverters._
 import com.weiglewilczek.slf4s.Logging
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.Constants._
+import org.neo4j.graphdb.DynamicRelationshipType
 import org.neo4j.graphdb.index.IndexManager
 
 /**
@@ -14,8 +15,9 @@ import org.neo4j.graphdb.index.IndexManager
  */
 class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) with Logging {
   
-  def dropPlaces(): Int = dropVertices(INDEX_FOR_PLACES, PLACE_URI, "*")
-    /*
+  private val hasTarget = DynamicRelationshipType.withName(RELATION_HASTARGET)
+  
+  def dropPlaces(): Int = {
     val neo4j = graph.getRawGraph()
     val index = neo4j.index().forNodes(INDEX_FOR_PLACES)
 
@@ -39,17 +41,14 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
     }
     
     ctr
-    
-  }*/
+  }
   
   /**
    * Drops all GeoAnnotations with a URI starting with the specified 
    * base URI.
    * @return the number of annotations successfully dropped
    */
-  def dropDataset(baseURI: String): Int = dropVertices(INDEX_FOR_ANNOTATIONS, ANNOTATION_URI, baseURI.replace(":", "\\:") + "*")
-    
-    /*
+  def dropDataset(baseURI: String): Int = {
     val neo4j = graph.getRawGraph()
     val index = neo4j.index().forNodes(INDEX_FOR_ANNOTATIONS)
     
@@ -61,38 +60,15 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
     var ctr = 0
     try {
       index.query(ANNOTATION_URI, query).iterator().asScala.foreach(node => {
-        node.getRelationships().asScala.foreach(_.delete())
-        node.delete()
-        ctr += 1
-      })
-      transaction.success()
-    } catch {
-      case t: Throwable => {
-        transaction.failure()
-        ctr = 0
-        logger.error(t.getMessage())
-      }
-    } finally {
-      transaction.finish()
-    }
-    
-    ctr
-  }
-  */
-  
-  private def dropVertices(indexName: String, field: String, query: String): Int = {
-    // Note: we need to use the native Neo4j index, since the Tinkerpop
-    // abstraction does not support full Lucene query syntax (d'oh!)
-    val neo4j = graph.getRawGraph()
-    val index = neo4j.index().forNodes(indexName)
+        // 1. remove annotation target node
+        node.getRelationships(hasTarget).asScala.foreach(_.getEndNode().delete())
         
-    val transaction = neo4j.beginTx()
-    var ctr = 0
-    try {
-      index.query(field, query).iterator().asScala.foreach(node => {
-        // TODO need to delete the annotation target node!
+        // 2. remove all relationships
         node.getRelationships().asScala.foreach(_.delete())
+        
+        // 3. remove the node
         node.delete()
+        
         ctr += 1
       })
       transaction.success()
