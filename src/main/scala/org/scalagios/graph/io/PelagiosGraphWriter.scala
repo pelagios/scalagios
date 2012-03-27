@@ -139,9 +139,15 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
     
-    graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(ANNOTATION_VERTEX)).foreach(v => {
-      // TODO re-wire connections between annotations and places
-      // TODO record floating annotations!
+    graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(ANNOTATION_VERTEX)).foreach(annotation => {
+      val hasBody = annotation.getProperty(ANNOTATION_BODY)
+      
+      if (placeIndex.count(PLACE_URI, hasBody) > 0) {
+        val place = placeIndex.get(PLACE_URI, hasBody).next()
+        graph.addEdge(null, annotation, place, RELATION_HASBODY)
+      } else {
+        // TODO record floating annotations!
+      }
     })
     
     if (graph.isInstanceOf[TransactionalGraph])
