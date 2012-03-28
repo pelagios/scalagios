@@ -15,7 +15,7 @@ import org.scalagios.rdf.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class PlaceCollector extends RDFHandlerBase with ParseStats {
+class PlaceCollector extends RDFHandlerBase with HasStatistics {
   
   private[parser] val placesBuffer = new HashMap[String, DefaultPlace]
   

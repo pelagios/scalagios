@@ -14,7 +14,7 @@ import org.scalagios.rdf.vocab.Formats
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DatasetCollector extends RDFHandlerBase with ParseStats {
+class DatasetCollector extends RDFHandlerBase with HasStatistics {
   
   /**
    * Maps a Dataset's URI to the Dataset

@@ -16,7 +16,7 @@ import org.scalagios.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class AnnotationCollector extends RDFHandlerBase with ParseStats {
+class AnnotationCollector extends RDFHandlerBase with HasStatistics {
   
   private val annotationBuffer = new HashMap[String, DefaultGeoAnnotation]
   

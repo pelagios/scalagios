@@ -6,7 +6,7 @@ package org.scalagios.rdf.parser
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-private[parser] trait ParseStats {
+private[parser] trait HasStatistics {
   
   /**
    * Total number of triples counted in RDF document
