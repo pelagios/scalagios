@@ -11,6 +11,7 @@ object Constants {
    *  Index names used by Neo4j
    */
   val INDEX_FOR_PLACES = "place-index"
+  val INDEX_FOR_DATASETS = "dataset-index"
   val INDEX_FOR_ANNOTATIONS = "annotation-index"
     
   /**

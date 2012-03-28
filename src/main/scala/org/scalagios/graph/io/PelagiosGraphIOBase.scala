@@ -1,9 +1,9 @@
 package org.scalagios.graph.io
 
-import com.tinkerpop.blueprints.pgm.IndexableGraph
 import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import java.net.URL
+import com.tinkerpop.blueprints.pgm.Index
 
 /**
  * Abstract base class that holds functionality common across readers and writers.
@@ -12,19 +12,17 @@ import java.net.URL
  */
 abstract class PelagiosGraphIOBase[T <: IndexableGraph](graph: T) {
 
-  // Get (or lazily create) the place index
-  protected val placeIndex = 
-    if (graph.getIndex(INDEX_FOR_PLACES, classOf[Vertex]) == null)
-      graph.createManualIndex(INDEX_FOR_PLACES, classOf[Vertex])
+  protected val placeIndex = getOrCreateIndex(INDEX_FOR_PLACES)  
+  protected val datasetIndex = getOrCreateIndex(INDEX_FOR_DATASETS)
+  protected val annotationIndex = getOrCreateIndex(INDEX_FOR_ANNOTATIONS)
+  
+  // Get (or lazily create) a named index  
+  private def getOrCreateIndex(name: String): Index[Vertex] = {
+    if (graph.getIndex(name, classOf[Vertex]) == null)
+      graph.createManualIndex(name, classOf[Vertex])
     else 
-      graph.getIndex(INDEX_FOR_PLACES, classOf[Vertex])
-    
-  // Get (or lazily create) the annotation index
-  protected val annotationIndex = 
-    if (graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex]) == null)
-      graph.createManualIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
-    else
-      graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])  
+      graph.getIndex(name, classOf[Vertex])
+  }
       
   protected def normalizeURL(s: String): String = {
     val url = new URL(s)

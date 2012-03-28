@@ -17,13 +17,39 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
   
   private val framesManager: FramesManager = new FramesManager(graph)
 
+  /**
+   * Returns an iterable over all Places in the Graph
+   */
   def getPlaces(): Iterable[Place] = getVertices(PLACE_VERTEX).map(vertex => framesManager.frame(vertex, classOf[PlaceVertex]))
   
-  def getPlace(uri: String): Place = null // TODO
+  /**
+   * Returns the Place with the specified URI
+   */
+  def getPlace(uri: String): Option[Place] = {
+    val idxHits = placeIndex.get(PLACE_URI, uri)
+    
+    if (idxHits.hasNext())
+      Some(framesManager.frame(idxHits.next(), classOf[PlaceVertex]))
+    else
+      None
+  }
 
+  /**
+   * Returns an iterable over all datasets in the Graph
+   */
   def getDatasets(): Iterable[Dataset] = getVertices(DATASET_VERTEX).map(vertex => framesManager.frame(vertex, classOf[DatasetVertex]))
 
-  def getDataset(uri: String): Dataset = null // TODO
+  /**
+   * Returns the Dataset with the specified URI
+   */
+  def getDataset(uri: String): Option[Dataset] = {
+    val idxHits = datasetIndex.get(DATASET_URI, uri)
+    
+    if (idxHits.hasNext())
+      Some(framesManager.frame(idxHits.next(), classOf[DatasetVertex]))
+    else
+      None    
+  }
   
   private def getVertices(vertexType: String) = graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
   

@@ -34,6 +34,9 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     datasetVertex.setProperty(DATASET_URI, dataset.uri)
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
       
+    // Add to index
+    datasetIndex.put(DATASET_URI, dataset.uri, datasetVertex)
+    
     // Insert annotations which are children of this dataset
     if (dataset.uriSpace != null)
       annotations.filter(_.uri.startsWith(dataset.uriSpace)).foreach(annotation => _insertAnnotation(annotation))
