@@ -73,7 +73,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       throw UnknownPlaceException("Annotation references Place " + annotation.body + " but was not found in graph")
   }
   
-  def insertPlaces(places: Iterable[Place]): Unit = {
+  def insertPlaces(places: Iterable[Place]): Unit = {    
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
       tGraph.setMaxBufferSize(0)
@@ -117,7 +117,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
     
-    // TODO this opperation IS NOT supported for Neo4jBatchGraphs!
+    // Warning: this operation IS NOT supported for Neo4jBatchGraphs!
     graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(ANNOTATION_VERTEX)).foreach(annotation => {
       val hasBody = annotation.getProperty(ANNOTATION_BODY)
       

@@ -35,6 +35,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     importPlaces(new Neo4jGraph(NEO4J_DIR))
   }
   
+  /*
   test("Drop all Places from Neo4j") {
     val startTime = System.currentTimeMillis()
     val graph = new Neo4jGraph(NEO4J_DIR)
@@ -49,12 +50,14 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("Batch-importing Pleiades RDF dump")
     importPlaces(new Neo4jBatchGraph(NEO4J_DIR))        
   }
-
+  */
+ 
   test("Transactional Annotation import with Neo4j") {
     println("Importing OAC Annotations")
     importAnnotations(new Neo4jGraph(NEO4J_DIR))
   }
   
+  /*
   test("Drop Annotations from Neo4j") {
     val graph = new Neo4jGraph(NEO4J_DIR)
     val writer = new PelagiosNeo4jWriter(graph)
@@ -69,6 +72,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("Batch-importing OAC Annotations")
     importAnnotations(new Neo4jBatchGraph(NEO4J_DIR))    
   }
+  */
     
   test("Verify graph structure") {
     // TODO Implement test to verify graph structure
