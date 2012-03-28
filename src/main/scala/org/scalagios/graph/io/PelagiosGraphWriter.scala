@@ -1,41 +1,19 @@
 package org.scalagios.graph.io
 
-import java.net.URL
 import scala.collection.JavaConverters._
-import com.tinkerpop.blueprints.pgm.Vertex
-import com.tinkerpop.blueprints.pgm.IndexableGraph
+import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
 import org.scalagios.api.{Dataset, GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
 /**
- * Provides Pelagios-specific Graph DB I/O features, including
- * 
- * <ul>
- * <li>inserting GeoAnnotations</li>
- * <li>inserting Places</li>
- * </ul>
+ * Provides Pelagios-specific Graph DB I/O (write) features.
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
-  
-  // Get (or lazily create) the place index
-  private val placeIndex = 
-    if (graph.getIndex(INDEX_FOR_PLACES, classOf[Vertex]) == null)
-      graph.createManualIndex(INDEX_FOR_PLACES, classOf[Vertex])
-    else 
-      graph.getIndex(INDEX_FOR_PLACES, classOf[Vertex])
-    
-  // Get (or lazily create) the annotation index
-  private val annotationIndex = 
-    if (graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex]) == null)
-      graph.createManualIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
-    else
-      graph.getIndex(INDEX_FOR_ANNOTATIONS, classOf[Vertex])
-      
-      
+class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIOBase(graph) {
+
   def insertAnnotations(rootDatasets: Iterable[Dataset], annotations: Iterable[GeoAnnotation]): Unit = {
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
@@ -43,13 +21,13 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       tGraph.startTransaction()
     }
     
-    rootDatasets.foreach(dataset => insertDataset(dataset, annotations))
+    rootDatasets.foreach(dataset => _insertDataset(dataset, annotations))
     
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
-  private def insertDataset(dataset: Dataset, annotations: Iterable[GeoAnnotation]): Vertex = {
+  private def _insertDataset(dataset: Dataset, annotations: Iterable[GeoAnnotation]): Vertex = {
     // Insert dataset into graph
     val datasetVertex = graph.addVertex(null)
     datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
@@ -58,18 +36,18 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
       
     // Insert annotations which are children of this dataset
     if (dataset.uriSpace != null)
-      annotations.filter(_.uri.startsWith(dataset.uriSpace)).foreach(annotation => insertAnnotation(annotation))
+      annotations.filter(_.uri.startsWith(dataset.uriSpace)).foreach(annotation => _insertAnnotation(annotation))
       
     // Continue with this dataset's subsets
     dataset.subsets.foreach(subset => {
-      val subsetVertex = insertDataset(subset, annotations)
+      val subsetVertex = _insertDataset(subset, annotations)
       graph.addEdge(null, datasetVertex, subsetVertex, RELATION_SUBSET)
     })
     
     datasetVertex
   }
 
-  private def insertAnnotation(annotation: GeoAnnotation): Unit = {
+  private def _insertAnnotation(annotation: GeoAnnotation): Unit = {
     // Create annotation (plus target) node
     val annotationVertex = graph.addVertex(null)
     annotationVertex.setProperty(VERTEX_TYPE, ANNOTATION_VERTEX)
@@ -153,10 +131,5 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) {
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
-  
-  private def normalizeURL(s: String): String = {
-    val url = new URL(s)
-    url.getProtocol + "://" + url.getHost + url.getPath
-  }
- 
+   
 }

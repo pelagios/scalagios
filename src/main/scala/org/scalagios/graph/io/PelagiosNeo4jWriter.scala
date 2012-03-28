@@ -8,7 +8,7 @@ import org.neo4j.graphdb.DynamicRelationshipType
 import org.neo4j.graphdb.index.IndexManager
 
 /**
- * Provides Pelagios-specific Graph DB I/O features that are only supported
+ * Provides Pelagios-specific Graph DB I/O (write) features that are only supported
  * by Neo4j, but not the default Tinkerpop graph DB abstraction.
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
