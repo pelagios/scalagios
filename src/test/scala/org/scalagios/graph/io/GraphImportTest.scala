@@ -50,7 +50,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     print("  Importing Places to graph. ")
     val writer = new PelagiosGraphWriter(graph)
     writer.insertPlaces(placeCollector.getPlaces)
-    graph.shutdown();  
+    graph.shutdown()
     println("Took " + (System.currentTimeMillis - startTime)/1000 + " seconds.")
     println("  " + placeCollector.placesTotal + " Places imported to Graph.")
   }
@@ -84,15 +84,33 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     print("  Importing GeoAnnotations to Graph. ")
     val writer = new PelagiosGraphWriter(graph) 
     writer.insertAnnotations(datasetCollector.getRootDatasets, annotationCollector.getAnnotations)
-    graph.shutdown();
+    graph.shutdown()
     println("Took " + (System.currentTimeMillis - startTime) + " milliseconds.")    
     println("  " + annotationCollector.getAnnotations.size + " GeoAnnnotations imported to Graph.")    
   }
     
   test("Verify graph structure") {
-    // TODO Implement test to verify graph structure
     println("Verifying Graph Structure")
-    assert(true)
+    
+    var startTime = System.currentTimeMillis
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    val reader = new PelagiosGraphReader(graph)
+    
+    val places = reader.getPlaces().size
+    println("  " + places + " Places.")
+    assert(places == 36115)
+    
+    val datasets = reader.getDatasets().size
+    println("  " + datasets + " Datasets")
+    assert(datasets == 410)
+    
+    // TODO dataset hierarchy
+    
+    // TODO check a few sample places and datasets via URI
+    
+    // TODO check annotations inside datasets
+    
+    graph.shutdown()
   }
 
   private def deleteNeo4j = {
