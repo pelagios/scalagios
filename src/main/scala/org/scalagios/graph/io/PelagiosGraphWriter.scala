@@ -117,7 +117,6 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
     
-    // Warning: this operation IS NOT supported for Neo4jBatchGraphs!
     graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(ANNOTATION_VERTEX)).foreach(annotation => {
       val hasBody = annotation.getProperty(ANNOTATION_BODY)
       

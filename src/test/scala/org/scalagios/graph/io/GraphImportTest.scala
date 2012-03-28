@@ -30,105 +30,77 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
   override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
   
-  test("Transactional Place import with Neo4j") {
-    println("Importing Pleiades RDF dump")
-    importPlaces(new Neo4jGraph(NEO4J_DIR))
-  }
-  
-  /*
-  test("Drop all Places from Neo4j") {
-    val startTime = System.currentTimeMillis()
-    val graph = new Neo4jGraph(NEO4J_DIR)
-    val writer = new PelagiosNeo4jWriter(graph)
-    val placesDropped = writer.dropPlaces()
-    graph.shutdown()
-    println("Dropped " + placesDropped + " Places from graph. Took " + (System.currentTimeMillis() - startTime) + " milliseconds")
-    assert(placesDropped == 36115)
-  }
-  
-  test("Batch Place import with Neo4j") {
-    println("Batch-importing Pleiades RDF dump")
-    importPlaces(new Neo4jBatchGraph(NEO4J_DIR))        
-  }
-  */
- 
-  test("Transactional Annotation import with Neo4j") {
-    println("Importing OAC Annotations")
-    importAnnotations(new Neo4jGraph(NEO4J_DIR))
-  }
-  
-  /*
-  test("Drop Annotations from Neo4j") {
-    val graph = new Neo4jGraph(NEO4J_DIR)
-    val writer = new PelagiosNeo4jWriter(graph)
-    val annotationsDropped = writer.dropDataset(ANNOTATION_BASEURI)
-    graph.shutdown()
-    println("Dropped " + annotationsDropped + " from graph")
-    // Note: data file currently invalid! 
-    // assert(annotationsDropped == 1849)
-  }
-  
-  test("Batch Annotation import with Neo4j") {
-    println("Batch-importing OAC Annotations")
-    importAnnotations(new Neo4jBatchGraph(NEO4J_DIR))    
-  }
-  */
+  test("Place import with Neo4j") {
+    println("Importing Pleiades Gazetteer")
     
-  test("Verify graph structure") {
-    // TODO Implement test to verify graph structure
-    assert(true)
-  }
-  
-  def importPlaces(graph: IndexableGraph) = {
     val startTime = System.currentTimeMillis   
-      
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    
+    // Parse RDF
+    print("  Parsing RDF dump. ")
     val inputStream = new GZIPInputStream(new FileInputStream(PLEIADES_DUMP))
     val parser = new TurtleParserFactory().getParser()
     val placeCollector = new PlaceCollector
     parser.setRDFHandler(placeCollector);
     parser.parse(inputStream, "http://pleiades.stoa.org")
-    println("Pleiades RDF parsed. Took " + (System.currentTimeMillis() - startTime)/1000 + " seconds")
-    println("Importing to graph")
+    assert(placeCollector.placesTotal == 36115)
+    println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
-    // Add to graph
+    // Import data to Graph
+    print("  Importing Places to graph. ")
     val writer = new PelagiosGraphWriter(graph)
     writer.insertPlaces(placeCollector.getPlaces)
-    graph.shutdown();    
-    
-    println("Imported " + placeCollector.getPlaces.size + " places. Took " + (System.currentTimeMillis - startTime)/1000 + " seconds")
+    graph.shutdown();  
+    println("Took " + (System.currentTimeMillis - startTime)/1000 + " seconds.")
+    println("  " + placeCollector.placesTotal + " Places imported to Graph.")
   }
-  
-  def importAnnotations(graph: IndexableGraph) = {
-    var startTime = System.currentTimeMillis
+ 
+  test("Annotation import with Neo4j") {
+    println("Importing GeoAnnotations")
     
-    // Parse VoID
+    var startTime = System.currentTimeMillis
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    
+    // Parse VoID RDF
+    print("  Parsing VoID. ")
     val ttlParser = new TurtleParserFactory().getParser()
     val datasetCollector = new DatasetCollector()
     ttlParser.setRDFHandler(datasetCollector)
     ttlParser.parse(new FileInputStream(new File(SAMPLE_VOID)), ANNOTATION_BASEURI)
+    assert(datasetCollector.datasetsTotal == 410)
+    println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
-    println("Imported VoID with the following root datasets:\n" + datasetCollector.getRootDatasets.mkString("\n"))
-    println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds")
-    
-    // Parse annotations
+    // Parse annotation RDF
+    print("  Parsing GeoAnnotation dump. ")
     startTime = System.currentTimeMillis()
     val n3Parser = new N3ParserFactory().getParser()
     val annotationCollector = new AnnotationCollector()
     n3Parser.setRDFHandler(annotationCollector)
     n3Parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
+    assert(annotationCollector.annotationsTotal == 1849)
+    println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
+    // Import data to Graph
+    print("  Importing GeoAnnotations to Graph. ")
     val writer = new PelagiosGraphWriter(graph) 
     writer.insertAnnotations(datasetCollector.getRootDatasets, annotationCollector.getAnnotations)
     graph.shutdown();
+    println("Took " + (System.currentTimeMillis - startTime) + " milliseconds.")    
+    println("  " + annotationCollector.getAnnotations.size + " GeoAnnnotations imported to Graph.")    
+  }
     
-    println("Imported " + annotationCollector.getAnnotations.size + " annotations. Took " + (System.currentTimeMillis - startTime) + " milliseconds")    
+  test("Verify graph structure") {
+    // TODO Implement test to verify graph structure
+    println("Verifying Graph Structure")
+    assert(true)
   }
 
   private def deleteNeo4j = {
     val neo4j = new File(NEO4J_DIR)
     if (neo4j.exists()) {
       try {
-        println("Removing Neo4j test DB")
+        println("Cleanup")
+        print("  Removing Neo4j test DB. ")
         FileUtils.deleteRecursively(new File(NEO4J_DIR))
         println("Done.")
       } catch {
