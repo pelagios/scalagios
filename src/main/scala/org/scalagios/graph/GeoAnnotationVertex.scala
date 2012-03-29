@@ -1,9 +1,9 @@
 package org.scalagios.graph
 
-import com.tinkerpop.frames.Property
 import org.scalagios.api.GeoAnnotation
-import com.tinkerpop.frames.Relation
-import com.tinkerpop.frames.Direction
+import org.scalagios.graph.Constants._
+import org.scalagios.graph.VertexUtils._
+import com.tinkerpop.blueprints.pgm.Vertex
 
 /**
  * An implementation of the Pelagios <em>GeoAnnotation</em> model primitive
@@ -11,18 +11,20 @@ import com.tinkerpop.frames.Direction
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-trait GeoAnnotationVertex extends GeoAnnotation {
+class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
   
-  @Property("uri")
-  def uri: String
+  def uri: String = vertex.getPropertyAsString(ANNOTATION_URI)
   
-  @Property("title")
-  def title: String
+  def title: String = vertex.getPropertyAsString(ANNOTATION_TITLE)
   
-  @Property("body")
-  def body: String
+  def body: String = vertex.getPropertyAsString(ANNOTATION_BODY)
   
-  @Relation(label="target", direction=Direction.STANDARD)
-  def target: GeoAnnotationTargetVertex;
+  def target: GeoAnnotationTargetVertex = {
+    val outEdges = vertex.getOutEdges(RELATION_HASTARGET).iterator
+    if (!outEdges.hasNext())
+      throw new RuntimeException("Graph corrupt: annotation " + uri + " disconnected from target")
+    
+    new GeoAnnotationTargetVertex(outEdges.next().getInVertex())
+  }
 
 }

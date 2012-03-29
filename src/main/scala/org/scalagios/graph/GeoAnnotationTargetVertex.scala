@@ -1,7 +1,9 @@
 package org.scalagios.graph
 
+import org.scalagios.graph.Constants._
+import org.scalagios.graph.VertexUtils._
 import org.scalagios.api.GeoAnnotationTarget
-import com.tinkerpop.frames.Property
+import com.tinkerpop.blueprints.pgm.Vertex
 
 /**
  * An implementation of the Pelagios <em>AnnotationTarget</em> model primitive
@@ -9,12 +11,10 @@ import com.tinkerpop.frames.Property
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-trait GeoAnnotationTargetVertex extends GeoAnnotationTarget {
+class GeoAnnotationTargetVertex(vertex: Vertex) extends GeoAnnotationTarget {
   
-  @Property("uri")
-  def uri: String
-  
-  @Property("title")
-  def title: String
+  def uri: String = vertex.getPropertyAsString(ANNOTATION_TARGET_URI)
+
+  def title: String = vertex.getPropertyAsString(ANNOTATION_TARGET_TITLE)
 
 }

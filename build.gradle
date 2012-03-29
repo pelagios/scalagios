@@ -27,7 +27,6 @@ dependencies {
     compile 'org.scala-lang:scala-library:2.9.1'
     compile 'org.openrdf.sesame:sesame-rio-n3:2.6.3'
     compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.6.3'
-    compile 'com.tinkerpop:frames:0.7'
     compile 'com.tinkerpop.blueprints:blueprints-neo4j-graph:1.2'
     compile 'com.tinkerpop.blueprints:blueprints-neo4jbatch-graph:1.2'
 

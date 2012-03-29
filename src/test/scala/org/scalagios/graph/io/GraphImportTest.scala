@@ -96,13 +96,15 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val graph = new Neo4jGraph(NEO4J_DIR)
     val reader = new PelagiosGraphReader(graph)
     
-    val places = reader.getPlaces().size
-    println("  " + places + " Places.")
-    assert(places == 36115)
+    val places = reader.getPlaces()
+    assert(places.size == 36115)
+    places.foreach(p => println(p.uri))
     
+    /*
     val datasets = reader.getDatasets().size
     println("  " + datasets + " Datasets")
     assert(datasets == 410)
+    */
     
     // TODO dataset hierarchy
     

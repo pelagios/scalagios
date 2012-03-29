@@ -32,6 +32,7 @@ object Constants {
   val PLACE_ALTLABELS = "altLabels"
   val PLACE_LON = "lon"
   val PLACE_LAT = "lat"
+  val PLACE_WITHIN = "within"
   val PLACE_GEOMETRY = "geometry"
     
   /**
@@ -47,6 +48,7 @@ object Constants {
    * GeoAnnotation vertex properties
    */
   val ANNOTATION_URI = "uri"
+  val ANNOTATION_TITLE = "title"
   val ANNOTATION_BODY = "body"
   val ANNOTATION_TARGET = "target"
     

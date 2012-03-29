@@ -1,4 +1,5 @@
 package org.scalagios.api
+
 import org.openrdf.rio.RDFFormat
 
 /**

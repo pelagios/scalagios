@@ -6,7 +6,6 @@ import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import org.scalagios.api.{Place, Dataset}
 import org.scalagios.graph.{PlaceVertex, DatasetVertex}
-import com.tinkerpop.frames.FramesManager
 
 /**
  * Provides Pelagios-specific Graph DB I/O (read) features.
@@ -14,13 +13,11 @@ import com.tinkerpop.frames.FramesManager
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
 class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIOBase(graph) {
-  
-  private val framesManager: FramesManager = new FramesManager(graph)
 
   /**
    * Returns an iterable over all Places in the Graph
    */
-  def getPlaces(): Iterable[Place] = getVertices(PLACE_VERTEX).map(vertex => framesManager.frame(vertex, classOf[PlaceVertex]))
+  def getPlaces(): Iterable[Place] = getVertices(PLACE_VERTEX).map(vertex => new PlaceVertex(vertex))
   
   /**
    * Returns the Place with the specified URI
@@ -29,7 +26,7 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     val idxHits = placeIndex.get(PLACE_URI, uri)
     
     if (idxHits.hasNext())
-      Some(framesManager.frame(idxHits.next(), classOf[PlaceVertex]))
+      Some(new PlaceVertex(idxHits.next()))
     else
       None
   }
@@ -37,7 +34,7 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
   /**
    * Returns an iterable over all datasets in the Graph
    */
-  def getDatasets(): Iterable[Dataset] = getVertices(DATASET_VERTEX).map(vertex => framesManager.frame(vertex, classOf[DatasetVertex]))
+  def getDatasets(): Iterable[Dataset] = getVertices(DATASET_VERTEX).map(vertex => new DatasetVertex(vertex))
 
   /**
    * Returns the Dataset with the specified URI
@@ -46,7 +43,8 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     val idxHits = datasetIndex.get(DATASET_URI, uri)
     
     if (idxHits.hasNext())
-      Some(framesManager.frame(idxHits.next(), classOf[DatasetVertex]))
+      // Some(framesManager.frame(idxHits.next(), classOf[DatasetVertex]))
+      None
     else
       None    
   }

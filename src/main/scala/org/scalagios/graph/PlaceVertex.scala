@@ -1,7 +1,9 @@
 package org.scalagios.graph
 
-import com.tinkerpop.frames.Property
 import org.scalagios.api.Place
+import org.scalagios.graph.Constants._
+import org.scalagios.graph.VertexUtils._
+import com.tinkerpop.blueprints.pgm.Vertex
 
 /**
  * An implementation of the Pelagios <em>Place</em> model primitive
@@ -9,27 +11,22 @@ import org.scalagios.api.Place
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-trait PlaceVertex extends Place {
+class PlaceVertex(vertex: Vertex) extends Place {
   
-  @Property("id")
-  def id: String
+  def uri: String = vertex.getPropertyAsString(PLACE_URI)
   
-  @Property("label")
-  def label: String
+  def label: String = vertex.getPropertyAsString(PLACE_LABEL)
   
-  @Property("comment")
-  def comment: String
+  def comment: String = vertex.getPropertyAsString(PLACE_COMMENT)
   
-  @Property("altLabels")
-  def altLabels: String
+  def altLabels: String = vertex.getPropertyAsString(PLACE_ALTLABELS)
   
-  @Property("lon")
-  def lon: Double
+  def lon: Double = vertex.getPropertyAsDouble(PLACE_LON)
   
-  @Property("lat")
-  def lat: Double
+  def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
   
-  @Property("geometry")
-  def geometryWKT: String
+  val within: String = vertex.getPropertyAsString(PLACE_WITHIN)
+  
+  def geometryWKT: String = vertex.getPropertyAsString(PLACE_GEOMETRY)
 
 }

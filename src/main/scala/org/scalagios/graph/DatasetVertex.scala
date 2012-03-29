@@ -1,9 +1,11 @@
 package org.scalagios.graph
 
+import scala.collection.JavaConverters._
+import org.openrdf.rio.RDFFormat
 import org.scalagios.api.Dataset
-import com.tinkerpop.frames.Property
-import com.tinkerpop.frames.Relation
-import com.tinkerpop.frames.Direction
+import org.scalagios.graph.Constants._
+import org.scalagios.graph.VertexUtils._
+import com.tinkerpop.blueprints.pgm.Vertex
 
 /**
  * An implementation of the Pelagios <em>Dataset</em> model primitive
@@ -11,24 +13,25 @@ import com.tinkerpop.frames.Direction
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-trait DatasetVertex extends Dataset {
+class DatasetVertex(vertex: Vertex)  extends Dataset {
   
-  @Property("uri")
-  def uri: String
+  def uri: String = vertex.getPropertyAsString(DATASET_URI)
   
-  @Property("title")
-  def title: String
+  def title: String = vertex.getPropertyAsString(DATASET_TITLE)
   
-  @Property("description")
-  def description: String
+  def description: String = vertex.getPropertyAsString(DATASET_DESCRIPTION)
   
-  @Property("license")
-  def license: String
+  def license: String = vertex.getPropertyAsString(DATASET_LICENSE)
   
-  @Property("homepage")
-  def homepage: String
+  def homepage: String = vertex.getPropertyAsString(DATASET_HOMEPAGE)
   
-  @Relation(label="subset", direction=Direction.STANDARD)
-  def subsets: List[DatasetVertex]
+  var datadump: String = _
+  
+  var dumpFormat: RDFFormat = _
+  
+  var uriSpace: String = _
+  
+  def subsets: List[DatasetVertex] = 
+    vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex())).toList
 
 }
