@@ -28,7 +28,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
-  override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
+  // override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
   
   test("Place import with Neo4j") {
     println("Importing Pleiades Gazetteer")
@@ -98,9 +98,11 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
     val places = reader.getPlaces()
     assert(places.size == 36115)
+    
+    // TODO finish graph verification
+    /*
     places.foreach(p => println(p.uri))
     
-    /*
     val datasets = reader.getDatasets().size
     println("  " + datasets + " Datasets")
     assert(datasets == 410)

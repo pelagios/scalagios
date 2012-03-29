@@ -4,6 +4,7 @@ import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import java.net.URL
 import com.tinkerpop.blueprints.pgm.Index
+import com.tinkerpop.blueprints.pgm.impls.Parameter
 
 /**
  * Abstract base class that holds functionality common across readers and writers.
@@ -19,7 +20,9 @@ abstract class PelagiosGraphIOBase[T <: IndexableGraph](graph: T) {
   // Get (or lazily create) a named index  
   private def getOrCreateIndex(name: String): Index[Vertex] = {
     if (graph.getIndex(name, classOf[Vertex]) == null)
-      graph.createManualIndex(name, classOf[Vertex])
+      graph.createManualIndex(name, classOf[Vertex], 
+          new Parameter("to_lower_case", "true"),
+          new Parameter("type", "fulltext"))
     else 
       graph.getIndex(name, classOf[Vertex])
   }
