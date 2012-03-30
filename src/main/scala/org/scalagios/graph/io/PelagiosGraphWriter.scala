@@ -106,7 +106,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     // Create PLACE -- within --> PLACE relations
     places.filter(place => place.within != null).foreach(place => {
       val normalizedURL = normalizeURL(place.uri)
-      val normalizedWithin = normalizeURL(place.within)
+      val normalizedWithin = normalizeURL(place.within.uri)
       
       val origin =
         if (placeIndex.count(PLACE_URI, normalizedURL) > 0) placeIndex.get(PLACE_URI, normalizedURL).next()

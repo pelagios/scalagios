@@ -25,7 +25,13 @@ class PlaceVertex(vertex: Vertex) extends Place {
   
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
   
-  val within: String = vertex.getPropertyAsString(PLACE_WITHIN)
+  val within: Place = {
+    val containingPlace = vertex.getNeighbour(RELATION_WITHIN)
+    if (containingPlace.isDefined)
+      new PlaceVertex(containingPlace.get)
+    else
+      null
+  }
   
   def geometryWKT: String = vertex.getPropertyAsString(PLACE_GEOMETRY)
 

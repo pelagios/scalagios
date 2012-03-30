@@ -19,5 +19,13 @@ class VertexUtils(vertex: Vertex) {
     val property = getPropertyAsString(key)
     if (property == null) 0 else property.toDouble
   }
+  
+  def getNeighbour(relation: String): Option[Vertex] = {
+    val outEdges = vertex.getOutEdges(relation).iterator
+    if (outEdges.hasNext())
+      Some(outEdges.next().getInVertex())
+    else
+      None
+  }
 
 }

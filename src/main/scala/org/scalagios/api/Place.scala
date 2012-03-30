@@ -21,7 +21,7 @@ trait Place {
 
   def lat: Double
 
-  def within: String
+  def within: Place
   
   def geometryWKT: String
 
@@ -63,7 +63,7 @@ class DefaultPlace(var uri: String) extends Place {
 
   var lat: Double = _
   
-  var within: String = _
+  var within: Place = _
     
   var geometryWKT: String = _
     

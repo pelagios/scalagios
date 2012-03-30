@@ -40,7 +40,7 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
       case SKOS.ALT_LABEL => place.addAltLabel(obj)
       case W3CGeo.LAT => place.lat = obj.toDouble
       case W3CGeo.LONG => place.lon = obj.toDouble
-      case OSSpatial.WITHIN => place.within = obj
+      case OSSpatial.WITHIN => place.within = getOrCreate(obj)
       case OSGeo.asWKT => place.geometryWKT = obj
       case _ => triplesSkipped += 1
     }

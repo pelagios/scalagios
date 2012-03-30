@@ -20,11 +20,11 @@ class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
   def body: String = vertex.getPropertyAsString(ANNOTATION_BODY)
   
   def target: GeoAnnotationTargetVertex = {
-    val outEdges = vertex.getOutEdges(RELATION_HASTARGET).iterator
-    if (!outEdges.hasNext())
+    val neighbour = vertex.getNeighbour(RELATION_HASTARGET)
+    if (neighbour.isDefined)
+      new GeoAnnotationTargetVertex(neighbour.get)
+    else      
       throw new RuntimeException("Graph corrupt: annotation " + uri + " disconnected from target")
-    
-    new GeoAnnotationTargetVertex(outEdges.next().getInVertex())
   }
 
 }
