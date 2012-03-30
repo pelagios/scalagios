@@ -23,10 +23,10 @@ trait Dataset {
   
   def dumpFormat: RDFFormat
   
-  def subsets: List[Dataset]
-  
   def uriSpace: String
-  
+
+  def subsets: List[Dataset]
+    
   def isValid: Boolean = (!uri.isEmpty() && !title.isEmpty())
 
 }

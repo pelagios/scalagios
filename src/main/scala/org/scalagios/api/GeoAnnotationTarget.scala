@@ -1,7 +1,7 @@
 package org.scalagios.api
 
 /**
- * Pelagios <em>AnnotationTarget</em> model primitive.
+ * Pelagios <em>GeoAnnotationTarget</em> model primitive.
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
@@ -17,7 +17,7 @@ trait GeoAnnotationTarget {
 
 /**
  * A default (POJO-style) implementation of the Pelagios
- * <em>AnnotationTarget</em> model primitive.
+ * <em>GeoAnnotationTarget</em> model primitive.
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
