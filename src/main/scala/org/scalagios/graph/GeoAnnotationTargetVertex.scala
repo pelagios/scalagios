@@ -1,7 +1,7 @@
 package org.scalagios.graph
 
 import org.scalagios.graph.Constants._
-import org.scalagios.graph.VertexUtils._
+import org.scalagios.graph.VertexExtensions._
 import org.scalagios.api.GeoAnnotationTarget
 import com.tinkerpop.blueprints.pgm.Vertex
 

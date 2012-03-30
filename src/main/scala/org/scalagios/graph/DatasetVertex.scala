@@ -4,7 +4,7 @@ import scala.collection.JavaConverters._
 import org.openrdf.rio.RDFFormat
 import org.scalagios.api.Dataset
 import org.scalagios.graph.Constants._
-import org.scalagios.graph.VertexUtils._
+import org.scalagios.graph.VertexExtensions._
 import com.tinkerpop.blueprints.pgm.Vertex
 
 /**

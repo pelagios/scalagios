@@ -2,13 +2,13 @@ package org.scalagios.graph
 
 import com.tinkerpop.blueprints.pgm.Vertex
 
-object VertexUtils {
+object VertexExtensions {
   
-  implicit def wrapVertex(vertex: Vertex) = new VertexUtils(vertex)
+  implicit def wrapVertex(vertex: Vertex) = new VertexExtensions(vertex)
 
 }
 
-class VertexUtils(vertex: Vertex) {
+class VertexExtensions(vertex: Vertex) {
   
   def getPropertyAsString(key: String): String = {
     val property = vertex.getProperty(key)

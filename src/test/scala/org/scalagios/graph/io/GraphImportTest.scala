@@ -28,7 +28,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
-  // override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
+  override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
   
   test("Place import with Neo4j") {
     println("Importing Pleiades Gazetteer")
