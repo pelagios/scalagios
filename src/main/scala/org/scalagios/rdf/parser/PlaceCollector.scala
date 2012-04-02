@@ -1,13 +1,11 @@
 package org.scalagios.rdf.parser
 
 import scala.collection.mutable.HashMap
-
 import org.openrdf.rio.helpers.RDFHandlerBase
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDFS
-
 import org.scalagios.api.{Place, DefaultPlace}
-import org.scalagios.rdf.vocab.{SKOS, W3CGeo, OSSpatial, OSGeo}
+import org.scalagios.rdf.vocab.{SKOS, DCTerms, W3CGeo, OSSpatial, OSGeo}
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -38,6 +36,7 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
       case RDFS.LABEL => place.label = obj
       case RDFS.COMMENT => place.comment = obj
       case SKOS.ALT_LABEL => place.addAltLabel(obj)
+      case DCTerms.coverage => place.coverage = obj
       case W3CGeo.LAT => place.lat = obj.toDouble
       case W3CGeo.LONG => place.lon = obj.toDouble
       case OSSpatial.WITHIN => place.within = getOrCreate(obj)

@@ -16,6 +16,8 @@ trait Place {
   def comment: String
 
   def altLabels: String
+  
+  def coverage: String
 
   def lon: Double
 
@@ -58,6 +60,8 @@ class DefaultPlace(var uri: String) extends Place {
   }
   
   def altLabels = altLabelsList.mkString(", ")
+  
+  var coverage: String = _
 
   var lon: Double = _
 

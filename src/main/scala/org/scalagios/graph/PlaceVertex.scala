@@ -21,6 +21,8 @@ class PlaceVertex(vertex: Vertex) extends Place {
   
   def altLabels: String = vertex.getPropertyAsString(PLACE_ALTLABELS)
   
+  def coverage: String = vertex.getPropertyAsString(PLACE_COVERAGE)
+  
   def lon: Double = vertex.getPropertyAsDouble(PLACE_LON)
   
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)

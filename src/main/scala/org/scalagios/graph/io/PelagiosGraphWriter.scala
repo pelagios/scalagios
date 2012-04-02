@@ -100,6 +100,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       placeIndex.put(PLACE_URI, normalizedURL, vertex)
       if (place.label != null) placeIndex.put(PLACE_LABEL, place.label, vertex)
       if (place.altLabels != null) placeIndex.put(PLACE_ALTLABELS, place.altLabels, vertex)
+      if (place.coverage != null) placeIndex.put(PLACE_COVERAGE, place.coverage, vertex)
     })
     
     // Create PLACE -- within --> PLACE relations

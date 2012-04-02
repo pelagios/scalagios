@@ -16,7 +16,8 @@ class PelagiosNeo4jReader(graph: Neo4jGraph) extends PelagiosGraphReader(graph) 
     val q = "*" + query + "*"
     val hits = 
       index.query(PLACE_LABEL, q).iterator.asScala ++ 
-      index.query(PLACE_ALTLABELS, q).iterator.asScala
+      index.query(PLACE_ALTLABELS, q).iterator.asScala ++
+      index.query(PLACE_COVERAGE, q).iterator.asScala
     
     val duplicatesRemoved = hits.toList.groupBy(node => node).keys
     

@@ -21,7 +21,7 @@ import org.scalagios.rdf.parser._
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
 
   private val NEO4J_DIR = "neo4j-test"
-  private val PLEIADES_DUMP = "src/test/resources/places-20120212.ttl.gz"
+  private val PLEIADES_DUMP = "src/test/resources/places-20120401.ttl.gz"
    
   private val SAMPLE_VOID = "src/test/resources/gap-void-sample.ttl"
   private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
@@ -43,7 +43,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val placeCollector = new PlaceCollector
     parser.setRDFHandler(placeCollector);
     parser.parse(inputStream, "http://pleiades.stoa.org")
-    assert(placeCollector.placesTotal == 36115)
+    assert(placeCollector.placesTotal == 36129)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
     // Import data to Graph
@@ -97,7 +97,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val reader = new PelagiosGraphReader(graph)
     
     val places = reader.getPlaces()
-    assert(places.size == 36115)
+    assert(places.size == 36129)
     
     // TODO finish graph verification
     /*

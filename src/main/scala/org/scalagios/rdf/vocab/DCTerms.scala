@@ -9,5 +9,7 @@ object DCTerms extends BaseVocab {
   val description = factory.createURI(NAMESPACE, "description")
   
   val license = factory.createURI(NAMESPACE, "license")
+  
+  val coverage = factory.createURI(NAMESPACE, "coverage")
 
 }

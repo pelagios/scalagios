@@ -30,6 +30,7 @@ object Constants {
   val PLACE_LABEL = "label"
   val PLACE_COMMENT = "comment"
   val PLACE_ALTLABELS = "altLabels"
+  val PLACE_COVERAGE = "coverage"
   val PLACE_LON = "lon"
   val PLACE_LAT = "lat"
   val PLACE_WITHIN = "within"
