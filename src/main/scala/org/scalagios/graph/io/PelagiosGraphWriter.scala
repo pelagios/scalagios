@@ -92,6 +92,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       if (place.label != null) vertex.setProperty(PLACE_LABEL, place.label)
       if (place.comment != null) vertex.setProperty(PLACE_COMMENT, place.comment)
       if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels)
+      if (place.coverage != null) vertex.setProperty(PLACE_COVERAGE, place.coverage)
       if (place.geometryWKT != null) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT)    
       vertex.setProperty(PLACE_LON, place.lon)
       vertex.setProperty(PLACE_LAT, place.lat)
