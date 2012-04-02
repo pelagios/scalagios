@@ -13,6 +13,11 @@ object Constants {
   val INDEX_FOR_PLACES = "place-index"
   val INDEX_FOR_DATASETS = "dataset-index"
   val INDEX_FOR_ANNOTATIONS = "annotation-index"
+  
+  /**
+   * 'Virtual URI' used to make root datasets accessible via the index
+   */
+  val VIRTUAL_ROOT_URI = "scalagios://datasets/"
     
   /**
    * Vertex types

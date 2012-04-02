@@ -13,7 +13,7 @@ import com.tinkerpop.blueprints.pgm.TransactionalGraph
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
 class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIOBase(graph) {
-
+  
   def insertAnnotations(rootDatasets: Iterable[Dataset], annotations: Iterable[GeoAnnotation]): Unit = {
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
@@ -21,7 +21,16 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       tGraph.startTransaction()
     }
     
-    rootDatasets.foreach(dataset => _insertDataset(dataset, annotations))
+    rootDatasets.foreach(dataset => {
+      val rootVertex = _insertDataset(dataset, annotations)
+      
+      // In addition, add each root dataset to the index using a
+      // fixed "virtual" URI, so that we can later grab them from the
+      // index, irrespective of their true URI. This is really ugly,
+      // but I don't see another way, since Tinkerpop does not support
+      // the concept of a reference node.
+      datasetIndex.put(DATASET_URI, VIRTUAL_ROOT_URI, rootVertex)
+    })    
     
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)

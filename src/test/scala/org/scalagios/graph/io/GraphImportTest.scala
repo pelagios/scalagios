@@ -103,7 +103,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     /*
     places.foreach(p => println(p.uri))
     
-    val datasets = reader.getDatasets().size
+    val datasets = reader.listAllDatasets().size
     println("  " + datasets + " Datasets")
     assert(datasets == 410)
     */

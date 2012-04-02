@@ -32,10 +32,11 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
   }
 
   /**
-   * Returns an iterable over all datasets in the Graph
+   * Returns an iterable over all top-level datasets in the Graph
    */
-  def getDatasets(): Iterable[Dataset] = getVertices(DATASET_VERTEX).map(vertex => new DatasetVertex(vertex))
-
+  def getDatasets(): List[Dataset] =
+    datasetIndex.get(DATASET_URI, VIRTUAL_ROOT_URI).iterator.asScala.map(v => new DatasetVertex(v)).toList
+  
   /**
    * Returns the Dataset with the specified URI
    */
@@ -49,6 +50,15 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       None    
   }
   
+  /**
+   * Returns an iterable over all datasets in the Graph. (Used for unit testing only!)
+   */
+  protected def listAllDatasets(): Iterable[Dataset] = getVertices(DATASET_VERTEX).map(vertex => new DatasetVertex(vertex))
+  
+  /**
+   * I have the feeling this might become really slow in a full database. Even though this
+   * method is probably used very rarely, we'll need to find a solution that scales better!
+   */
   private def getVertices(vertexType: String) = graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
   
 }
