@@ -1,9 +1,11 @@
 package org.scalagios.graph.io
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
 import org.scalagios.api.{Dataset, GeoAnnotation, Place}
+import org.scalagios.graph.GeoAnnotationVertex
 import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
@@ -32,6 +34,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       datasetIndex.put(DATASET_URI, VIRTUAL_ROOT_URI, rootVertex)
     })    
     
+    // TODO catch GraphImportException and make sure the transaction is closed with FAILURE
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
@@ -82,7 +85,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     if (places.hasNext())
       graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
     else
-      throw UnknownPlaceException("Annotation references Place " + annotation.body + " but was not found in graph")
+      throw GraphImportException("Place referenced by annotation not found in Graph: " + annotation.body)
   }
   
   def insertPlaces(places: Iterable[Place]): Unit = {    
@@ -127,11 +130,13 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
         else null
         
       if (origin == null || destination == null)
-        throw UnknownPlaceException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
+        throw GraphImportException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
       else
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
     
+    // If there are annotations in the DB already, re-wire them
+    var floatingAnnotations = new ListBuffer[GeoAnnotation]()
     graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(ANNOTATION_VERTEX)).foreach(annotation => {
       val hasBody = annotation.getProperty(ANNOTATION_BODY)
       
@@ -139,9 +144,12 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
         val place = placeIndex.get(PLACE_URI, hasBody).next()
         graph.addEdge(null, annotation, place, RELATION_HASBODY)
       } else {
-        // TODO record floating annotations!
+        floatingAnnotations.append(new GeoAnnotationVertex(annotation))
       }
     })
+    if (floatingAnnotations.size > 0)
+      throw new GraphImportException("Could not re-wire all annotations after Place import:\n" +
+      	floatingAnnotations.mkString("\n"))
     
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)

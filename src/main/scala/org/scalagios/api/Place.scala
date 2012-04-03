@@ -26,6 +26,8 @@ trait Place {
   def within: Place
   
   def geometryWKT: String
+  
+  // TODO implement hasConnectionWith relation
 
   def isValid: Boolean = {
     if (uri == null) 

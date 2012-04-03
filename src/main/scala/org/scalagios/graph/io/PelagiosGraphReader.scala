@@ -20,7 +20,7 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
   def getPlaces(): Iterable[Place] = getVertices(PLACE_VERTEX).map(vertex => new PlaceVertex(vertex))
   
   /**
-   * Returns the Place with the specified URI
+   * Returns the Place with the specified URI, if it exists in the Graph
    */
   def getPlace(uri: String): Option[Place] = {
     val idxHits = placeIndex.get(PLACE_URI, uri)
@@ -32,33 +32,24 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
   }
 
   /**
-   * Returns an iterable over all top-level datasets in the Graph
+   * Returns a list of the (top-level) datasets in the Graph
    */
   def getDatasets(): List[Dataset] =
     datasetIndex.get(DATASET_URI, VIRTUAL_ROOT_URI).iterator.asScala.map(v => new DatasetVertex(v)).toList
   
   /**
-   * Returns the Dataset with the specified URI
+   * Returns the Dataset with the specified URI, if it exists in the graph
    */
   def getDataset(uri: String): Option[Dataset] = {
     val idxHits = datasetIndex.get(DATASET_URI, uri)
     
     if (idxHits.hasNext())
-      // Some(framesManager.frame(idxHits.next(), classOf[DatasetVertex]))
-      None
+      Some(new DatasetVertex(idxHits.next()))
     else
       None    
   }
-  
-  /**
-   * Returns an iterable over all datasets in the Graph. (Used for unit testing only!)
-   */
-  protected def listAllDatasets(): Iterable[Dataset] = getVertices(DATASET_VERTEX).map(vertex => new DatasetVertex(vertex))
-  
-  /**
-   * I have the feeling this might become really slow in a full database. Even though this
-   * method is probably used very rarely, we'll need to find a solution that scales better!
-   */
+    
+  // TODO Might be slow in a large DB! Although we'll probably use this rarely, we'll need a more scalable solution
   private def getVertices(vertexType: String) = graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
   
 }

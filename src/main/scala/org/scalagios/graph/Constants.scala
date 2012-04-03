@@ -1,7 +1,7 @@
 package org.scalagios.graph
 
 /**
- * String constants used as field labels (index, nodes, edges) in the Graph DB.
+ * String constants used as field labels in the Graph DB (index, nodes, relations, etc.)
  * 
  * @author Rainer Simon<rainer.simon@ait.ac.at>
  */
