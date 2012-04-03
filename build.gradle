@@ -34,3 +34,11 @@ dependencies {
     testCompile 'org.scalatest:scalatest_2.9.0:1.6.1'
 }
 
+task createSampleDB(type: JavaExec) { 
+    main = 'org.scalagios.bootstrap.CreateSampleDB'
+    jvmArgs = ["-Xms1024m"]
+    classpath sourceSets.main.classes
+    classpath sourceSets.test.classes
+    classpath sourceSets.test.compileClasspath
+} 
+
