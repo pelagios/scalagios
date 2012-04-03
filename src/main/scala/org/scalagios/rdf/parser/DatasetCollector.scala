@@ -14,7 +14,7 @@ import org.scalagios.rdf.vocab.Formats
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DatasetCollector extends RDFHandlerBase with HasStatistics {
+class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidation {
   
   /**
    * Maps a Dataset's URI to the Dataset
@@ -34,6 +34,7 @@ class DatasetCollector extends RDFHandlerBase with HasStatistics {
 
   override def handleStatement(statement: Statement): Unit = {
     triplesTotal += 1
+    validateDatasets(statement)
     
     val (subj, pred, obj) = (statement.getSubject().stringValue(), statement.getPredicate(), statement.getObject())
     

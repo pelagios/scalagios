@@ -16,7 +16,7 @@ import org.scalagios.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class AnnotationCollector extends RDFHandlerBase with HasStatistics {
+class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasValidation {
   
   private val annotationBuffer = new HashMap[String, DefaultGeoAnnotation]
   
@@ -25,6 +25,7 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics {
 
   override def handleStatement(statement: Statement): Unit = {
     triplesTotal += 1
+    validateAnnotations(statement)
     
     val (subj, obj) = (statement.getSubject().stringValue(), statement.getObject())
     

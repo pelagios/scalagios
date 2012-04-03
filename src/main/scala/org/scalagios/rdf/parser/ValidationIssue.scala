@@ -1,4 +1,4 @@
-package org.scalagios.rdf.validator
+package org.scalagios.rdf.parser
 
 object Severity extends Enumeration {
   
@@ -10,6 +10,6 @@ object Severity extends Enumeration {
 
 import Severity._
 
-class ValidationIssue(val severity: Severity, val message: String) {
+case class ValidationIssue(val severity: Severity, val message: String) {
 
 }
