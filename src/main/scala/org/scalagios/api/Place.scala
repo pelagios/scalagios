@@ -2,6 +2,9 @@ package org.scalagios.api
 
 import scala.collection.mutable.ListBuffer
 import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.io.WKTReader
 
 /**
  * Pelagios <em>Place</em> model primitive.
@@ -29,8 +32,16 @@ trait Place {
   def geometryWKT: String
   
   def location: Option[Geometry] = {
-    // TODO create a JTS Geometry based on lat, lon, within and/or geometryWKT
-    None
+    val factory = new GeometryFactory()
+    
+    if (within != null)
+      within.location
+    else if (!lon.isNaN() && !lat.isNaN())
+      Some(factory.createPoint(new Coordinate(lon, lat)))
+    else if (geometryWKT != null)
+      Some(new WKTReader(factory).read(geometryWKT))
+    else
+      None
   }
   
   // TODO implement hasConnectionWith relation
@@ -39,7 +50,7 @@ trait Place {
     if (uri == null) 
       // null URI not allowed
       false
-    else if (within == null && (lon == 0 && lat == 0) && geometryWKT == null)
+    else if (within == null && (lon == Double.NaN && lat == Double.NaN) && geometryWKT == null)
       // Place must either have 'within' OR non-null lon/lat OR WKT geometry
       false
       
@@ -71,9 +82,9 @@ class DefaultPlace(var uri: String) extends Place {
   
   var coverage: String = _
 
-  var lon: Double = _
+  var lon: Double = Double.NaN
 
-  var lat: Double = _
+  var lat: Double = Double.NaN
   
   var within: Place = _
     

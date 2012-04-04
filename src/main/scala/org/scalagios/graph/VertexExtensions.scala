@@ -17,7 +17,7 @@ class VertexExtensions(vertex: Vertex) {
   
   def getPropertyAsDouble(key: String): Double = {
     val property = getPropertyAsString(key)
-    if (property == null) 0 else property.toDouble
+    if (property == null) Double.NaN else property.toDouble
   }
   
   def getNeighbour(relation: String): Option[Vertex] = {
