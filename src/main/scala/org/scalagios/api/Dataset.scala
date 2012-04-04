@@ -1,6 +1,8 @@
 package org.scalagios.api
 
 import org.openrdf.rio.RDFFormat
+import java.security.MessageDigest
+import java.math.BigInteger
 
 /**
  * Pelagios <em>Dataset</em> model primitive.
@@ -28,8 +30,8 @@ trait Dataset {
   def subsets: List[Dataset]
   
   def md5: String = {
-    // TODO implement: generate an MD5 hash from the URI
-    ""
+    val md = MessageDigest.getInstance("MD5").digest(uri.getBytes())
+    new BigInteger(1, md).toString(16)
   }
     
   def isValid: Boolean = (!uri.isEmpty() && !title.isEmpty())

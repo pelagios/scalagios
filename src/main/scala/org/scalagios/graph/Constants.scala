@@ -49,6 +49,7 @@ object Constants {
   val DATASET_DESCRIPTION = "description"
   val DATASET_LICENSE = "license"
   val DATASET_HOMEPAGE = "homepage"
+  val DATASET_HASH = "hashCode"
     
   /**
    * GeoAnnotation vertex properties

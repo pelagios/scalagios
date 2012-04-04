@@ -42,11 +42,14 @@ class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
    */
   def getDataset(uri: String): Option[Dataset] = {
     val idxHits = datasetIndex.get(DATASET_URI, uri)
-    
-    if (idxHits.hasNext())
-      Some(new DatasetVertex(idxHits.next()))
-    else
-      None    
+    if (idxHits.hasNext()) Some(new DatasetVertex(idxHits.next()))
+    else None    
+  }
+  
+  def findDatasetByHash(hash: String): Option[Dataset] = {
+    val idxHits = datasetIndex.get(DATASET_HASH, hash)
+    if (idxHits.hasNext()) Some(new DatasetVertex(idxHits.next()))
+    else None       
   }
     
   // TODO Might be slow in a large DB! Although we'll probably use this rarely, we'll need a more scalable solution
