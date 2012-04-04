@@ -49,6 +49,8 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     // Add to index
     datasetIndex.put(DATASET_URI, dataset.uri, datasetVertex)
     
+    // TODO index datasets by their md5 hash (for local URI lookups)
+    
     // Insert annotations which are children of this dataset
     if (dataset.uriSpace != null)
       annotations.filter(_.uri.startsWith(dataset.uriSpace)).foreach(annotation => _insertAnnotation(annotation))

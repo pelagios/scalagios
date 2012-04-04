@@ -26,6 +26,11 @@ trait Dataset {
   def uriSpace: String
 
   def subsets: List[Dataset]
+  
+  def md5: String = {
+    // TODO implement: generate an MD5 hash from the URI
+    ""
+  }
     
   def isValid: Boolean = (!uri.isEmpty() && !title.isEmpty())
 
