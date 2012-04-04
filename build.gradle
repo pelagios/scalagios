@@ -29,6 +29,7 @@ dependencies {
     compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.6.3'
     compile 'com.tinkerpop.blueprints:blueprints-neo4j-graph:1.2'
     compile 'com.tinkerpop.blueprints:blueprints-neo4jbatch-graph:1.2'
+    compile 'com.vividsolutions:jts:1.12' 
 
     testCompile 'junit:junit:4.8.2'
     testCompile 'org.scalatest:scalatest_2.9.0:1.6.1'

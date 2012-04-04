@@ -1,6 +1,7 @@
 package org.scalagios.api
 
 import scala.collection.mutable.ListBuffer
+import com.vividsolutions.jts.geom.Geometry
 
 /**
  * Pelagios <em>Place</em> model primitive.
@@ -26,6 +27,11 @@ trait Place {
   def within: Place
   
   def geometryWKT: String
+  
+  def location: Option[Geometry] = {
+    // TODO create a JTS Geometry based on lat, lon, within and/or geometryWKT
+    None
+  }
   
   // TODO implement hasConnectionWith relation
 
