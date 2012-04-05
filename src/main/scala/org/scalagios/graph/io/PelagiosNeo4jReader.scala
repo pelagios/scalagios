@@ -14,8 +14,10 @@ class PelagiosNeo4jReader(graph: Neo4jGraph) extends PelagiosGraphReader(graph) 
     val index = neo4j.index().forNodes(INDEX_FOR_PLACES)
     
     val q = "*" + query + "*"
-    val hits = 
+    val hits =
+      index.query(PLACE_URI, q).iterator.asScala ++
       index.query(PLACE_LABEL, q).iterator.asScala ++ 
+      index.query(PLACE_COMMENT, q).iterator.asScala ++
       index.query(PLACE_ALTLABELS, q).iterator.asScala ++
       index.query(PLACE_COVERAGE, q).iterator.asScala
     
