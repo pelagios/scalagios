@@ -29,7 +29,10 @@ abstract class PelagiosGraphIOBase[T <: IndexableGraph](graph: T) {
       
   protected def normalizeURL(s: String): String = {
     val url = new URL(s)
-    url.getProtocol + "://" + url.getHost + url.getPath
+    var normalized = url.getProtocol + "://" + url.getHost + url.getPath 
+    if (url.getRef != null) 
+      if (!url.getRef.startsWith("this")) normalized += "#" + url.getRef
+    normalized
   }
   
 }
