@@ -98,7 +98,6 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
     val places = reader.getPlaces()
     assert(places.size == 36129)
-    places.foreach(p => if (p.lon.isNaN()) println(p.location))
     
     // TODO finish graph verification
     /*

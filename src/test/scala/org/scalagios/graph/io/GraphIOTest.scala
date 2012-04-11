@@ -27,7 +27,8 @@ class GraphIOTest extends FunSuite with BeforeAndAfterAll {
     val graph = new Neo4jGraph(NEO4J_DIR)
     val reader = new PelagiosNeo4jReader(graph)
     
-    reader.findPlaceByName("athen").foreach(place => println(place.label))
+    reader.queryPlaces("vindobo").foreach(place => println(place.label))
+    reader.queryDatasets("herodot").foreach(dataset => println(dataset.title))
     
     graph.shutdown()
   }
