@@ -29,14 +29,22 @@ class PelagiosNeo4jReader(graph: Neo4jGraph) extends PelagiosGraphReader(graph) 
   
   def queryPlaces(query: String): List[Place] = {
     val index = neo4j.index().forNodes(INDEX_FOR_PLACES)
-    val q = placeQueryParser.parse(query + "*")    
+    val q = if (query.contains("\""))
+          placeQueryParser.parse(query)
+        else
+          placeQueryParser.parse(query + "*")
+      
     index.query(q).iterator.asScala.map(node => 
       new PlaceVertex(new Neo4jVertex(node, graph))).toList 
   }
   
   def queryDatasets(query: String): List[Dataset] = {
     val index = neo4j.index().forNodes(INDEX_FOR_DATASETS)
-    val q = datasetQueryParser.parse(query + "*")      
+    val q = if (query.contains("\""))
+        datasetQueryParser.parse(query)
+      else
+        datasetQueryParser.parse(query + "*")
+        
     index.query(q).iterator().asScala.map(node => 
       new DatasetVertex(new Neo4jVertex(node, graph))).toList
   }
