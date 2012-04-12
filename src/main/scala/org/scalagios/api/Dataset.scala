@@ -26,8 +26,19 @@ trait Dataset {
   def dumpFormat: RDFFormat
   
   def uriSpace: String
+  
+  def parent: Option[Dataset]
+  
+  def rootSet: Dataset = {
+    if (parent.isEmpty)
+      this
+    else
+      parent.get.rootSet
+  }
 
   def subsets: List[Dataset]
+  
+  def annotations: Iterable[GeoAnnotation]
   
   def md5: String = {
     val md = MessageDigest.getInstance("MD5").digest(uri.getBytes())
@@ -60,7 +71,11 @@ class DefaultDataset(var uri: String) extends Dataset {
   
   var uriSpace: String = _
   
+  var parent: Option[Dataset] = None
+  
   var subsets: List[Dataset] = List.empty[Dataset]
+  
+  var annotations: Iterable[GeoAnnotation] = List.empty[GeoAnnotation]
   
   override def toString: String = uri
   

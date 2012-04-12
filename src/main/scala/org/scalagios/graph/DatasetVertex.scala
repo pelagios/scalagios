@@ -31,7 +31,18 @@ class DatasetVertex(vertex: Vertex)  extends Dataset {
   
   var uriSpace: String = _
   
+  def parent: Option[DatasetVertex] = {
+    val parentVertex = vertex.getInEdges(RELATION_SUBSET).iterator()
+    if (parentVertex.hasNext())
+      Some(new DatasetVertex(parentVertex.next().getOutVertex()))
+    else
+      None
+  } 
+  
   def subsets: List[DatasetVertex] = 
     vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex())).toList
+    
+  // TODO implement 'annotations' method on DatasetVertex
+  def annotations: Iterable[GeoAnnotationVertex] = List.empty[GeoAnnotationVertex]
 
 }
