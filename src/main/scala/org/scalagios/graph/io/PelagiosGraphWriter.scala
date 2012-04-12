@@ -5,7 +5,7 @@ import scala.collection.mutable.ListBuffer
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
 import org.scalagios.api.{Dataset, GeoAnnotation, Place}
-import org.scalagios.graph.GeoAnnotationVertex
+import org.scalagios.graph.{GeoAnnotationVertex, DatasetVertex}
 import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
@@ -89,7 +89,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
     if (places.hasNext())
       graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
     else
-      throw GraphImportException("Place referenced by annotation not found in Graph: " + annotation.body)
+      throw GraphIOException("Place referenced by annotation not found in Graph: " + annotation.body)
   }
   
   def insertPlaces(places: Iterable[Place]): Unit = {    
@@ -135,7 +135,7 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
         else null
         
       if (origin == null || destination == null)
-        throw GraphImportException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
+        throw GraphIOException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
       else
         graph.addEdge(null, origin, destination, RELATION_WITHIN)      
     })
@@ -153,11 +153,47 @@ class PelagiosGraphWriter[T <: IndexableGraph](graph: T) extends PelagiosGraphIO
       }
     })
     if (floatingAnnotations.size > 0)
-      throw new GraphImportException("Could not re-wire all annotations after Place import:\n" +
+      throw new GraphIOException("Could not re-wire all annotations after Place import:\n" +
       	floatingAnnotations.mkString("\n"))
     
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+  }
+    
+  def dropDataset(uri: String): Int = {
+    var ctr = 0
+    
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+        
+    datasetIndex.get(DATASET_URI, uri).iterator.asScala.
+      foreach(vtx => ctr += _dropDatasetVertex(new DatasetVertex(vtx)))
+             
+    // TODO catch GraphImportException and make sure the transaction is closed with FAILURE
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+    
+    ctr  
+  }
+  
+  private def _dropDatasetVertex(dataset: DatasetVertex): Int = {
+    var ctr = 0
+    
+    // Delete all subsets first
+    dataset.subsets.foreach(subset => ctr += _dropDatasetVertex(subset))
+    
+    // Check if subsets are gone
+    if (dataset.subsets.size > 0)
+      throw new GraphIOException("Could not delete subsets for " + dataset.uri)
+    
+    // Delete dataset vertex
+    dataset.vertex.getInEdges(RELATION_SUBSET).iterator().asScala.foreach(graph.removeEdge(_))
+    graph.removeVertex(dataset.vertex)
+    
+    ctr + 1
   }
    
 }

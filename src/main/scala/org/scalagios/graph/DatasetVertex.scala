@@ -13,7 +13,7 @@ import com.tinkerpop.blueprints.pgm.Vertex
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DatasetVertex(vertex: Vertex)  extends Dataset {
+class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   
   def uri: String = vertex.getPropertyAsString(DATASET_URI)
   

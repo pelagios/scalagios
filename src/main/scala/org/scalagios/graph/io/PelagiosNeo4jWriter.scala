@@ -4,7 +4,7 @@ import scala.collection.JavaConverters._
 import com.weiglewilczek.slf4s.Logging
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.Constants._
-import org.neo4j.graphdb.DynamicRelationshipType
+import org.neo4j.graphdb.{Node, DynamicRelationshipType}
 import org.neo4j.graphdb.index.IndexManager
 
 /**
@@ -17,8 +17,9 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
   
   private val hasTarget = DynamicRelationshipType.withName(RELATION_HASTARGET)
   
+  private val neo4j = graph.getRawGraph()
+  
   def dropPlaces(): Int = {
-    val neo4j = graph.getRawGraph()
     val index = neo4j.index().forNodes(INDEX_FOR_PLACES)
 
     val transaction = neo4j.beginTx()
@@ -48,8 +49,7 @@ class PelagiosNeo4jWriter(graph: Neo4jGraph) extends PelagiosGraphWriter(graph) 
    * base URI.
    * @return the number of annotations successfully dropped
    */
-  def dropDataset(baseURI: String): Int = {
-    val neo4j = graph.getRawGraph()
+  def dropGeoAnnotations(baseURI: String): Int = {
     val index = neo4j.index().forNodes(INDEX_FOR_ANNOTATIONS)
     
     // A prefix-query with ':' escaped, since this has special meaning in Lucene queries

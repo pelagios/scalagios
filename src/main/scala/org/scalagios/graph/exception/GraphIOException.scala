@@ -5,4 +5,4 @@ package org.scalagios.graph.io
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-case class GraphImportException(msg: String) extends Exception(msg) 
+case class GraphIOException(msg: String) extends Exception(msg) 
