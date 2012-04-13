@@ -16,6 +16,8 @@ import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.rdf.parser._
+import org.scalagios.graph.io.read.PelagiosGraphReader
+import org.scalagios.graph.io.write.PelagiosGraphWriter
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
@@ -25,7 +27,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
    
   private val SAMPLE_VOID = "src/test/resources/gap-void-sample.ttl"
   private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
-  private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples"
+  private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
   override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
@@ -64,7 +66,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     // Parse VoID RDF
     print("  Parsing VoID. ")
     val ttlParser = new TurtleParserFactory().getParser()
-    val datasetCollector = new DatasetCollector()
+    val datasetCollector = new DatasetCollector(ANNOTATION_BASEURI)
     ttlParser.setRDFHandler(datasetCollector)
     ttlParser.parse(new FileInputStream(new File(SAMPLE_VOID)), ANNOTATION_BASEURI)
     assert(datasetCollector.datasetsTotal == 410)
@@ -80,10 +82,11 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     assert(annotationCollector.annotationsTotal == 1849)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
-    // Import data to Graph
+    /* Import data to Graph
     print("  Importing GeoAnnotations to Graph. ")
     val writer = new PelagiosGraphWriter(graph) 
     writer.insertAnnotations(datasetCollector.getRootDatasets, annotationCollector.getAnnotations)
+    */
     graph.shutdown()
     println("Took " + (System.currentTimeMillis - startTime) + " milliseconds.")    
     println("  " + annotationCollector.getAnnotations.size + " GeoAnnnotations imported to Graph.")    

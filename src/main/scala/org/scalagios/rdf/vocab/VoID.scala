@@ -6,11 +6,11 @@ object VoID extends BaseVocab {
     
   val Dataset = factory.createURI(NAMESPACE, "Dataset")
 
-  val subset = factory.createURI(NAMESPACE, "subset")
-  
   val dataDump = factory.createURI(NAMESPACE, "dataDump")
+
+  val subset = factory.createURI(NAMESPACE, "subset")  
   
-  val feature = factory.createURI(NAMESPACE, "feature")
+  val uriRegexPattern = factory.createURI(NAMESPACE, "uriRegexPattern")
   
   val uriSpace = factory.createURI(NAMESPACE, "uriSpace")
   

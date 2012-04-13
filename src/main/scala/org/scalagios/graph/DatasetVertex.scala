@@ -1,7 +1,6 @@
 package org.scalagios.graph
 
 import scala.collection.JavaConverters._
-import org.openrdf.rio.RDFFormat
 import org.scalagios.api.Dataset
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.VertexExtensions._
@@ -15,34 +14,30 @@ import com.tinkerpop.blueprints.pgm.Vertex
  */
 class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   
-  def uri: String = vertex.getPropertyAsString(DATASET_URI)
+  def uri = vertex.getPropertyAsString(DATASET_URI)
   
-  def title: String = vertex.getPropertyAsString(DATASET_TITLE)
+  def context = vertex.getPropertyAsString(DATASET_CONTEXT)
   
-  def description: String = vertex.getPropertyAsString(DATASET_DESCRIPTION)
+  def title = vertex.getPropertyAsString(DATASET_TITLE)
   
-  def license: String = vertex.getPropertyAsString(DATASET_LICENSE)
+  def description = Some(vertex.getPropertyAsString(DATASET_DESCRIPTION))
   
-  def homepage: String = vertex.getPropertyAsString(DATASET_HOMEPAGE)
+  def license = Some(vertex.getPropertyAsString(DATASET_LICENSE))
   
-  var datadump: String = _
+  def homepage = Some(vertex.getPropertyAsString(DATASET_HOMEPAGE))
   
-  var dumpFormat: RDFFormat = _
+  // TODO
+  def associatedDatadumps = List.empty[String]
   
-  var uriSpace: String = _
+  def associatedUriSpace = Some(vertex.getPropertyAsString(DATASET_URISPACE))
   
-  def parent: Option[DatasetVertex] = {
-    val parentVertex = vertex.getInEdges(RELATION_SUBSET).iterator()
-    if (parentVertex.hasNext())
-      Some(new DatasetVertex(parentVertex.next().getOutVertex()))
-    else
-      None
-  } 
+  def associatedRegexPattern = Some(vertex.getPropertyAsString(DATASET_URIREGEXPATTERN))
   
-  def subsets: List[DatasetVertex] = 
-    vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex())).toList
+  def subsets: Iterable[DatasetVertex] = 
+    vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex()))
     
   // TODO implement 'annotations' method on DatasetVertex
-  def annotations: Iterable[GeoAnnotationVertex] = List.empty[GeoAnnotationVertex]
+  def annotations: Iterable[GeoAnnotationVertex] = 
+    List.empty[GeoAnnotationVertex]
 
 }

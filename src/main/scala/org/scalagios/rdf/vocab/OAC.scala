@@ -9,10 +9,10 @@ object OAC extends BaseVocab {
   
   val NAMESPACE = "http://www.openannotation.org/ns/"
   
-  val ANNOTATION = factory.createURI(NAMESPACE, "Annotation")
+  val Annotation = factory.createURI(NAMESPACE, "Annotation")
   
-  val HAS_BODY = factory.createURI(NAMESPACE, "hasBody")
+  val hasBody = factory.createURI(NAMESPACE, "hasBody")
   
-  val HAS_TARGET = factory.createURI(NAMESPACE, "hasTarget")
+  val hasTarget = factory.createURI(NAMESPACE, "hasTarget")
   
 }

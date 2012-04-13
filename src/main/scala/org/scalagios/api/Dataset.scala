@@ -1,8 +1,7 @@
 package org.scalagios.api
 
-import org.openrdf.rio.RDFFormat
-import java.security.MessageDigest
 import java.math.BigInteger
+import java.security.MessageDigest
 
 /**
  * Pelagios <em>Dataset</em> model primitive.
@@ -11,41 +10,66 @@ import java.math.BigInteger
  */
 trait Dataset {
   
+  /**
+   * The Dataset's original source URI (mandatory)
+   */
   def uri: String
   
+  /**
+   * The Context URI in the graph (mandatory)
+   */
+  def context: String
+  
+  /**
+   * The title (mandatory)
+   */
   def title: String
   
-  def description: String
+  /**
+   * The description
+   */
+  def description: Option[String]
   
-  def license: String
-  
-  def homepage: String
-  
-  def datadump: String
-  
-  def dumpFormat: RDFFormat
-  
-  def uriSpace: String
-  
-  def parent: Option[Dataset]
-  
-  def rootSet: Dataset = {
-    if (parent.isEmpty)
-      this
-    else
-      parent.get.rootSet
-  }
+  /**
+   * The license
+   */
+  def license: Option[String]
 
-  def subsets: List[Dataset]
+  /**
+   * A (human-readably) Web page with information about the dataset
+   */
+  def homepage: Option[String]
   
+  /**
+   * Association information (i.e. strategy for associating
+   * annotations with the dataset)
+   */
+  def associatedDatadumps: List[String]
+  def associatedUriSpace: Option[String]
+  def associatedRegexPattern: Option[String]
+  
+  /**
+   * Subsets
+   */
+  def subsets: Iterable[Dataset]
+
+  /**
+   * Annotations
+   */
   def annotations: Iterable[GeoAnnotation]
-  
+
+  /**
+   * Utility method that produces an MD5 hash of the URI
+   */
   def md5: String = {
     val md = MessageDigest.getInstance("MD5").digest(uri.getBytes())
     new BigInteger(1, md).toString(16)
   }
     
-  def isValid: Boolean = (!uri.isEmpty() && !title.isEmpty())
+  /**
+   * Utility method that checks if all mandatory properties are set
+   */
+  def isValid: Boolean = (!uri.isEmpty() && !context.isEmpty() && !title.isEmpty())
 
 }
 
@@ -55,28 +79,24 @@ trait Dataset {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultDataset(var uri: String) extends Dataset {
+class DefaultDataset(val uri: String, val context: String) extends Dataset {
 
-  var title: String = _
+  var title: String = _ // mandatory
   
-  var description: String = _
+  var description: Option[String] = _
   
-  var license: String = _
+  var license: Option[String] = _
   
-  var homepage: String = _
+  var homepage: Option[String] = _
   
-  var datadump: String = _
+  var associatedDatadumps: List[String] = List.empty[String]
   
-  var dumpFormat: RDFFormat = _
+  var associatedUriSpace: Option[String] = _
   
-  var uriSpace: String = _
-  
-  var parent: Option[Dataset] = None
+  var associatedRegexPattern: Option[String] = _
   
   var subsets: List[Dataset] = List.empty[Dataset]
   
   var annotations: Iterable[GeoAnnotation] = List.empty[GeoAnnotation]
-  
-  override def toString: String = uri
   
 }

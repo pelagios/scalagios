@@ -1,10 +1,11 @@
-package org.scalagios.graph.io
+package org.scalagios.graph.io.read
 
 import scala.collection.JavaConverters._
 import com.tinkerpop.blueprints.pgm.IndexableGraph
 import org.scalagios.graph.Constants._
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import org.scalagios.api.{Place, Dataset}
+import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.{PlaceVertex, DatasetVertex}
 
 /**
@@ -12,7 +13,7 @@ import org.scalagios.graph.{PlaceVertex, DatasetVertex}
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class PelagiosGraphReader[T <: IndexableGraph](graph: T) extends PelagiosGraphIOBase(graph) {
+class PelagiosGraphReader[T <: IndexableGraph](val graph: T) extends PelagiosGraphIOBase {
 
   /**
    * Returns an iterable over all Places in the Graph

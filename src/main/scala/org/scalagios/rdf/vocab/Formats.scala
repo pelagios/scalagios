@@ -11,14 +11,16 @@ object Formats extends BaseVocab {
   
   val RDF_XML = factory.createURI(NAMESPACE, "RDF_XML")
   
+  // TODO implement a method that derives formats from extensions instead
+  // Note: there should be some pre-existing functionality in Rio already!
+  /*
   def toRDFFormat(uri: Value): Option[RDFFormat] = {
 	  uri match {
-	    case N3 => Some(RDFFormat.N3)
-	      
-	    case RDF_XML => Some(RDFFormat.RDFXML)
-	      
+	    case N3 => Some(RDFFormat.N3)	      
+	    case RDF_XML => Some(RDFFormat.RDFXML)      
 	    case _ => None
 	  }
   }
+  */
   
 }

@@ -9,6 +9,6 @@ object OSSpatial extends BaseVocab {
   
   val NAMESPACE = "http://data.ordnancesurvey.co.uk/ontology/spatialrelations/"
     
-  val WITHIN = factory.createURI(NAMESPACE, "within")
+  val within = factory.createURI(NAMESPACE, "within")
 
 }

@@ -10,8 +10,6 @@ object DCTerms extends BaseVocab {
   
   val license = factory.createURI(NAMESPACE, "license")
   
-  val source = factory.createURI(NAMESPACE, "source")
-  
   val title = factory.createURI(NAMESPACE, "title")
 
 }

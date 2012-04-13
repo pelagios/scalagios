@@ -1,17 +1,17 @@
 package org.scalagios.graph.io
 
-import org.scalagios.graph.Constants._
-import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import java.net.URL
+
+import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import com.tinkerpop.blueprints.pgm.Index
 import com.tinkerpop.blueprints.pgm.impls.Parameter
 
-/**
- * Abstract base class that holds functionality common across readers and writers.
- * 
- * @author Rainer Simon <rainer.simon@ait.ac.at>
- */
-abstract class PelagiosGraphIOBase[T <: IndexableGraph](graph: T) {
+import org.scalagios.graph.Constants._
+
+private[io] trait PelagiosGraphIOBase {
+  
+  // Subclasses must provide a "graph" member
+  val graph: IndexableGraph
 
   protected val placeIndex = getOrCreateIndex(INDEX_FOR_PLACES)  
   protected val datasetIndex = getOrCreateIndex(INDEX_FOR_DATASETS)

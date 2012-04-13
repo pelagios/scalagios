@@ -12,15 +12,16 @@ import org.scalagios.api.Dataset
 class VoIDParserTest extends FunSuite { 
 
   val SAMPLE_RDF = "src/test/resources/gap-void-sample.ttl"
+  val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
     
   test("Pelagios VoID Import") {    
     println("Starting import of sample VoID file")
     val startTime = System.currentTimeMillis
     
     val parser = new TurtleParserFactory().getParser()
-    val datasetBuilder = new DatasetCollector
+    val datasetBuilder = new DatasetCollector(ANNOTATION_BASEURI)
     parser.setRDFHandler(datasetBuilder)
-    parser.parse(new FileInputStream(new File(SAMPLE_RDF)), "http://googleancientplaces.wordpress.com/")
+    parser.parse(new FileInputStream(new File(SAMPLE_RDF)), ANNOTATION_BASEURI)
     
     println("Import complete. Took " + (System.currentTimeMillis - startTime) + " milliseconds")
     println(datasetBuilder.triplesTotal + " triples total in file")
@@ -33,7 +34,7 @@ class VoIDParserTest extends FunSuite {
   
   private def printToScreen(dataset: Dataset, indent: String): Unit = {
     println(indent + dataset.title)
-    dataset.subsets.sortBy(_.uri).foreach(subset => {
+    dataset.subsets.toList.sortBy(_.uri).foreach(subset => {
       printToScreen(subset, "   " + indent)
     })
   }

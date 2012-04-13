@@ -1,4 +1,4 @@
-package org.scalagios.graph.io
+package org.scalagios.graph.exception
 
 /**
  * An exception that indicates a serious problem during data import.

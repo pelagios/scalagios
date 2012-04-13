@@ -14,7 +14,7 @@ import org.scalagios.rdf.vocab.Formats
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidation {
+class DatasetCollector(context: String) extends RDFHandlerBase with HasStatistics with HasValidation {
   
   /**
    * Maps a Dataset's URI to the Dataset
@@ -40,20 +40,14 @@ class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidat
     
     (pred, obj) match {
       case (RDF.TYPE, VoID.Dataset) => getOrCreate(subj)
-      case (DCTerms.title, _) => getOrCreate(subj).title = obj.stringValue()
-      case (DCTerms.description, _) => getOrCreate(subj).description = obj.stringValue()
-      case (DCTerms.license, _) => getOrCreate(subj).license = obj.stringValue()
-      case (FOAF.homepage, _) => getOrCreate(subj).homepage = obj.stringValue()
-      case (VoID.uriSpace, _) => getOrCreate(subj).uriSpace = obj.stringValue()
-      case (VoID.dataDump, _) => getOrCreate(subj).datadump = obj.stringValue()
-      case (VoID.subset, _) => parentsBuffer.put(obj.stringValue(), getOrCreate(subj))
-      case (VoID.feature, _) => {
-        val d = getOrCreate(subj)
-        val format = Formats.toRDFFormat(obj)
-        if (format.isDefined)
-        	d.dumpFormat = format.get        
-      }
-      
+      case (DCTerms.title, _) => getOrCreate(subj).title = obj.stringValue
+      case (DCTerms.description, _) => getOrCreate(subj).description = Some(obj.stringValue)
+      case (DCTerms.license, _) => getOrCreate(subj).license = Some(obj.stringValue)
+      case (FOAF.homepage, _) => getOrCreate(subj).homepage = Some(obj.stringValue)
+      case (VoID.dataDump, _) => getOrCreate(subj).associatedDatadumps ::= obj.stringValue
+      case (VoID.uriSpace, _) => getOrCreate(subj).associatedUriSpace = Some(obj.stringValue)
+      case (VoID.uriRegexPattern, _) => getOrCreate(subj).associatedRegexPattern = Some(obj.stringValue)
+      case (VoID.subset, _) => parentsBuffer.put(obj.stringValue, getOrCreate(subj))
       case _ => triplesSkipped += 1
     }
 
@@ -69,13 +63,15 @@ class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidat
       else
         rootDatasets = dataset :: rootDatasets
     })
+    
+    // TODO validate all datasets!
   }
     
   private def getOrCreate(uri: String): DefaultDataset = {
     datasetBuffer.get(uri) match {
       case Some(d) => d
       case None =>  {
-        val d = new DefaultDataset(uri)
+        val d = new DefaultDataset(uri, context)
         datasetBuffer.put(uri, d)
         d
       }

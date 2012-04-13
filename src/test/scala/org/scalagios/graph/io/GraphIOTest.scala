@@ -16,6 +16,7 @@ import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.rdf.parser._
+import org.scalagios.graph.io.read.PelagiosNeo4jReader
 
 @RunWith(classOf[JUnitRunner])
 class GraphIOTest extends FunSuite with BeforeAndAfterAll {

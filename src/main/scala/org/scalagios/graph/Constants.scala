@@ -45,10 +45,13 @@ object Constants {
    * Dataset vertex properties
    */
   val DATASET_URI = "uri"
+  val DATASET_CONTEXT = "context"
   val DATASET_TITLE = "title"
   val DATASET_DESCRIPTION = "description"
   val DATASET_LICENSE = "license"
   val DATASET_HOMEPAGE = "homepage"
+  val DATASET_URISPACE = "uriSpace"
+  val DATASET_URIREGEXPATTERN = "uriRegexPattern"
   val DATASET_HASH = "hashCode"
     
   /**

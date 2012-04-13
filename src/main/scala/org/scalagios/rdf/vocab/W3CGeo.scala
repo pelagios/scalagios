@@ -9,8 +9,8 @@ object W3CGeo extends BaseVocab {
   
   val NAMESPACE = "http://www.w3.org/2003/01/geo/wgs84_pos#"
     
-  val LAT = factory.createURI(NAMESPACE, "lat")
+  val lat = factory.createURI(NAMESPACE, "lat")
   
-  val LONG = factory.createURI(NAMESPACE, "long")
+  val long = factory.createURI(NAMESPACE, "long")
 
 }
