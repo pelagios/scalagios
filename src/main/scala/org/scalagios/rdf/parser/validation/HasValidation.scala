@@ -1,4 +1,4 @@
-package org.scalagios.rdf.parser
+package org.scalagios.rdf.parser.validation
 
 import scala.collection.mutable.ListBuffer
 import org.openrdf.model.Statement

@@ -1,12 +1,14 @@
 package org.scalagios.rdf.parser
 
 import scala.collection.mutable.HashMap
-import org.openrdf.rio.helpers.RDFHandlerBase
+
 import org.openrdf.model.Statement
-import org.scalagios.api.{Dataset, DefaultDataset}
 import org.openrdf.model.vocabulary.RDF
-import org.scalagios.rdf.vocab.{VoID, DCTerms, FOAF}
-import org.scalagios.rdf.vocab.Formats
+import org.openrdf.rio.helpers.RDFHandlerBase
+
+import org.scalagios.api.{Dataset, DefaultDataset}
+import org.scalagios.rdf.vocab.{VoID, DCTerms, FOAF, Formats}
+import org.scalagios.rdf.parser.validation.HasValidation
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler

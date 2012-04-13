@@ -7,6 +7,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 
 import org.scalagios.rdf.vocab.OAC
+import org.scalagios.rdf.parser.validation.HasValidation
 import org.scalagios.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
 
 /**

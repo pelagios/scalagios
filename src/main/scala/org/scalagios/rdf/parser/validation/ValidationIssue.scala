@@ -1,4 +1,4 @@
-package org.scalagios.rdf.parser
+package org.scalagios.rdf.parser.validation
 
 object Severity extends Enumeration {
   
