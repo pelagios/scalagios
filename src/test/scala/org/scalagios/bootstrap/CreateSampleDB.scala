@@ -5,7 +5,7 @@ import java.util.zip.GZIPInputStream
 import org.openrdf.rio.n3.N3ParserFactory
 import org.openrdf.rio.turtle.TurtleParserFactory
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
-import org.scalagios.graph.io.write.PelagiosGraphWriter
+import org.scalagios.graph.io.PelagiosGraphWriter
 import org.scalagios.rdf.parser.{PlaceCollector, AnnotationCollector, DatasetCollector}
 
 object CreateSampleDB {
@@ -44,9 +44,9 @@ object CreateSampleDB {
     n3Parser.parse(new FileInputStream(new File("src/test/resources/gap-triples-sample.n3")), 
         ANNOTATION_BASEURI)
     
-    /* Import data to Graph
-    writer.insertAnnotations(datasetCollector.getRootDatasets, annotationCollector.getAnnotations)
-    */  
+    // Import data to Graph
+    datasetCollector.getRootDatasets.foreach(writer.insertDataset(_))
+    writer.insertAnnotations(annotationCollector.getAnnotations, ANNOTATION_BASEURI)
     neo4j.shutdown()
     println("done.")
     

@@ -1,4 +1,4 @@
-package org.scalagios.graph.io.read
+package org.scalagios.graph.io
 
 import scala.collection.JavaConverters._
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph

@@ -17,7 +17,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
    * Imports annotations into a specified graph context. This method
    * will check for prefix- and RegEx-pattern associations.
    */
-  def insertAnnotations(annotations: List[GeoAnnotation], context: String): Unit =
+  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String): Unit =
     // TODO there must be a way to implement this Scala-style rather than Java-style
     insertAnnotations(annotations, context, null)
   
@@ -26,7 +26,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
    * In addition to dumpfile-URL-based association, this method will also
    * check prefix- and RegEx-patterns. 
    */
-  def insertAnnotations(annotations: List[GeoAnnotation], context: String, dumpfile: String): Unit = {    
+  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String): Unit = {    
     val datasets = datasetIndex.get(DATASET_CONTEXT, context).iterator.asScala.map(new DatasetVertex(_))    
 
     if (graph.isInstanceOf[TransactionalGraph]) {
