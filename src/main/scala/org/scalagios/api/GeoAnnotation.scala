@@ -7,13 +7,25 @@ package org.scalagios.api
  */
 trait GeoAnnotation {
   
+  /**
+   * The GeoAnnotation's original source URI (mandatory)
+   */
   def uri: String
   
-  def title: String
-  
+  /**
+   * The body URI (mandatory)
+   */
   def body: String
   
+  /**
+   * The target (mandatory)
+   */
   def target: GeoAnnotationTarget
+  
+  /**
+   * The title
+   */
+  def title: String
   
   def isValid: Boolean = (!uri.isEmpty() && !body.isEmpty() && target != null && target.isValid) 
 

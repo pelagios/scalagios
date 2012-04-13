@@ -13,7 +13,30 @@ import org.scalagios.graph.exception.GraphIOException
 
 trait GraphDatasetWriter extends PelagiosGraphIOBase {
 
-  def insertDataset(dataset: Dataset): Vertex = {  
+  /**
+   * Recursively insert a dataset and all its subsets into the graph 
+   */
+  def insertDataset(dataset: Dataset) = {      
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+    
+    val rootVertex = _insertDatasetVertex(dataset)
+    
+    // In addition, add the root dataset to the index using a f
+    // fixed "virtual" URI, so that we can later grab them from the
+    // index easily, irrespective of their true URI. This is really ugly,
+    // but I don't see another way, since Tinkerpop does not support
+    // the concept of a reference node.
+    datasetIndex.put(DATASET_URI, VIRTUAL_ROOT_URI, rootVertex)
+
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+  }
+  
+  private def _insertDatasetVertex(dataset: Dataset): Vertex = {
     // Insert dataset into graph
     val datasetVertex = graph.addVertex(null)
     datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
@@ -28,15 +51,18 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     datasetIndex.put(DATASET_TITLE, dataset.title, datasetVertex)
     if (dataset.description != null) datasetIndex.put(DATASET_DESCRIPTION, dataset.description, datasetVertex)
     
-    // Continue with this dataset's subsets
+    // Continue with subsets
     dataset.subsets.foreach(subset => {
-      val subsetVertex = insertDataset(subset)
+      val subsetVertex = _insertDatasetVertex(subset)
       graph.addEdge(null, datasetVertex, subsetVertex, RELATION_SUBSET)
     })
     
-    datasetVertex  
+    datasetVertex      
   }
   
+  /**
+   * Remove a dataset and all its subsets from the graph
+   */
   def dropDataset(uri: String): Int = {
     var ctr = 0
     
@@ -49,7 +75,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     datasetIndex.get(DATASET_URI, uri).iterator.asScala.
       foreach(vertex => ctr += _dropDatasetVertex(new DatasetVertex(vertex)))
              
-    // TODO catch GraphImportException and make sure the transaction is closed with FAILURE
+    // TODO catch GraphIOException and make sure the transaction is closed with FAILURE
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
     
