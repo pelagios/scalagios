@@ -83,17 +83,17 @@ class DefaultDataset(val uri: String, val context: String) extends Dataset {
 
   var title: String = _ // mandatory
   
-  var description: Option[String] = _
+  var description: Option[String] = None
   
-  var license: Option[String] = _
+  var license: Option[String] = None
   
-  var homepage: Option[String] = _
+  var homepage: Option[String] = None
   
   var associatedDatadumps: List[String] = List.empty[String]
   
-  var associatedUriSpace: Option[String] = _
+  var associatedUriSpace: Option[String] = None
   
-  var associatedRegexPattern: Option[String] = _
+  var associatedRegexPattern: Option[String] = None
   
   var subsets: List[Dataset] = List.empty[Dataset]
   

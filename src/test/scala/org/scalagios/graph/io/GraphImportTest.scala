@@ -80,11 +80,11 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     assert(annotationCollector.annotationsTotal == 1849)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
-    /* Import data to Graph
+    // Import data to Graph
     print("  Importing GeoAnnotations to Graph. ")
-    val writer = new PelagiosGraphWriter(graph) 
-    writer.insertAnnotations(datasetCollector.getRootDatasets, annotationCollector.getAnnotations)
-    */
+    val writer = new PelagiosGraphWriter(graph)
+    datasetCollector.getRootDatasets.foreach(writer.insertDataset(_))
+    writer.insertAnnotations(annotationCollector.getAnnotations, ANNOTATION_BASEURI)
     graph.shutdown()
     println("Took " + (System.currentTimeMillis - startTime) + " milliseconds.")    
     println("  " + annotationCollector.getAnnotations.size + " GeoAnnnotations imported to Graph.")    
