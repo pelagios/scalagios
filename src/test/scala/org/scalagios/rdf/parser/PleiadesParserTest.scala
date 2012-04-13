@@ -38,9 +38,9 @@ class PleiadesParserTest extends FunSuite {
     var counter = 0
     placeCollector.getPlaces.foreach(place => { 
       assert(place.isValid)
-      if (place.within != null) {
+      if (place.within.isDefined) {
         counter += 1
-        assert(placeCollector.placesBuffer.get(place.within.uri) != null, 
+        assert(placeCollector.placesBuffer.get(place.within.get.uri) != null, 
             place.uri + " is within " + place.within + " - but target not found in dataset")
       }
     })

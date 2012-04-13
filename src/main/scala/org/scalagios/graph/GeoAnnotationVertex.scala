@@ -13,11 +13,9 @@ import com.tinkerpop.blueprints.pgm.Vertex
  */
 class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
   
-  def uri: String = vertex.getPropertyAsString(ANNOTATION_URI)
+  def uri: String = vertex.getPropertyAsString(ANNOTATION_URI).get
   
-  def title: String = vertex.getPropertyAsString(ANNOTATION_TITLE)
-  
-  def body: String = vertex.getPropertyAsString(ANNOTATION_BODY)
+  def body: String = vertex.getPropertyAsString(ANNOTATION_BODY).get
   
   def target: GeoAnnotationTargetVertex = {
     val neighbour = vertex.getNeighbour(RELATION_HASTARGET)
@@ -27,4 +25,6 @@ class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
       throw new RuntimeException("Graph corrupt: annotation " + uri + " disconnected from target")
   }
 
+  def title: Option[String] = vertex.getPropertyAsString(ANNOTATION_TITLE)
+  
 }

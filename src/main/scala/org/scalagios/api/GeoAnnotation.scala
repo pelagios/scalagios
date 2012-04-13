@@ -25,8 +25,11 @@ trait GeoAnnotation {
   /**
    * The title
    */
-  def title: String
+  def title: Option[String]
   
+  /**
+   * Utility method that checks if all mandatory properties are set
+   */
   def isValid: Boolean = (!uri.isEmpty() && !body.isEmpty() && target != null && target.isValid) 
 
 }
@@ -38,11 +41,11 @@ trait GeoAnnotation {
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
 class DefaultGeoAnnotation(var uri: String) extends GeoAnnotation {
-
-  var title: String = _
   
   var body: String = _
   
   var target: GeoAnnotationTarget = _
+  
+  var title: Option[String] = None
   
 }

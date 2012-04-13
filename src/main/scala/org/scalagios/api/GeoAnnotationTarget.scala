@@ -7,10 +7,19 @@ package org.scalagios.api
  */
 trait GeoAnnotationTarget {
   
+  /**
+   * The GeoAnnotationTarget URI (mandatory)
+   */
   def uri: String
   
-  def title: String
-
+  /**
+   * The GeoAnnotationTarget title 
+   */
+  def title: Option[String]
+  
+  /**
+   * Utility method that checks if all mandatory properties are set
+   */
   def isValid: Boolean = (uri != null)
   
 }
@@ -23,6 +32,6 @@ trait GeoAnnotationTarget {
  */
 class DefaultGeoAnnotationTarget(var uri: String) extends GeoAnnotationTarget {
   
-  var title: String = _
+  var title: Option[String] = None
   
 }

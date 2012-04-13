@@ -33,14 +33,14 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
     val place = getOrCreate(subj);
 
     statement.getPredicate() match {
-      case RDFS.LABEL => place.label = obj
-      case RDFS.COMMENT => place.comment = obj
+      case RDFS.LABEL => place.label = Some(obj)
+      case RDFS.COMMENT => place.comment = Some(obj)
       case SKOS.altLabel => place.addAltLabel(obj)
-      case DCTerms.coverage => place.coverage = obj
+      case DCTerms.coverage => place.coverage = Some(obj)
       case W3CGeo.lat => place.lat = obj.toDouble
       case W3CGeo.long => place.lon = obj.toDouble
-      case OSSpatial.within => place.within = getOrCreate(obj)
-      case OSGeo.asWKT => place.geometryWKT = obj
+      case OSSpatial.within => place.within = Some(getOrCreate(obj))
+      case OSGeo.asWKT => place.geometryWKT = Some(obj)
       case _ => triplesSkipped += 1
     }
   }

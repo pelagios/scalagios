@@ -13,8 +13,8 @@ import com.tinkerpop.blueprints.pgm.Vertex
  */
 class GeoAnnotationTargetVertex(vertex: Vertex) extends GeoAnnotationTarget {
   
-  def uri: String = vertex.getPropertyAsString(ANNOTATION_TARGET_URI)
+  def uri: String = vertex.getPropertyAsString(ANNOTATION_TARGET_URI).get
 
-  def title: String = vertex.getPropertyAsString(ANNOTATION_TARGET_TITLE)
+  def title: Option[String] = vertex.getPropertyAsString(ANNOTATION_TARGET_TITLE)
 
 }

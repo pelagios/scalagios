@@ -41,9 +41,15 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     val datasetVertex = graph.addVertex(null)
     datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
     datasetVertex.setProperty(DATASET_URI, dataset.uri)
+    datasetVertex.setProperty(DATASET_CONTEXT, dataset.context)
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
     if (dataset.description.isDefined) datasetVertex.setProperty(DATASET_DESCRIPTION, dataset.description.get)
-      
+    if (dataset.license.isDefined) datasetVertex.setProperty(DATASET_LICENSE, dataset.license.get)
+    if (dataset.homepage.isDefined) datasetVertex.setProperty(DATASET_HOMEPAGE, dataset.homepage.get)
+    // TODO write associated data dumps to graph DB
+    if (dataset.associatedUriSpace.isDefined) datasetVertex.setProperty(DATASET_URISPACE, dataset.associatedUriSpace.get) 
+    if (dataset.associatedRegexPattern.isDefined) datasetVertex.setProperty(DATASET_URIREGEXPATTERN, dataset.associatedRegexPattern.get)
+ 
     // Add to index
     datasetIndex.put(DATASET_URI, dataset.uri, datasetVertex)
     datasetIndex.put(DATASET_CONTEXT, dataset.context, datasetVertex)

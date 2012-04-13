@@ -65,13 +65,13 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     annotationVertex.setProperty(VERTEX_TYPE, ANNOTATION_VERTEX)
     annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
     annotationVertex.setProperty(ANNOTATION_BODY, annotation.body)
-    if (annotation.title != null) annotationVertex.setProperty(ANNOTATION_TITLE, annotation.title)
+    if (annotation.title.isDefined) annotationVertex.setProperty(ANNOTATION_TITLE, annotation.title.get)
     
     // Create ANNOTATION_TARGET vertex
     val annotationTargetVertex = graph.addVertex(null)
     annotationTargetVertex.setProperty(VERTEX_TYPE, ANNOTATION_TARGET_VERTEX)
     annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
-    if (annotation.target.title != null) annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title)
+    if (annotation.target.title.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title.get)
 
     // Create DATASET -- contains --> ANNOTATION relation
     graph.addEdge(null, dataset.vertex, annotationVertex, RELATION_CONTAINS)

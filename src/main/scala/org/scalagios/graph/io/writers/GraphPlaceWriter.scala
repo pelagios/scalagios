@@ -26,11 +26,11 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       val vertex = graph.addVertex(null)
       vertex.setProperty(VERTEX_TYPE, PLACE_VERTEX)
       vertex.setProperty(PLACE_URI, normalizedURL)
-      if (place.label != null) vertex.setProperty(PLACE_LABEL, place.label)
-      if (place.comment != null) vertex.setProperty(PLACE_COMMENT, place.comment)
-      if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels)
-      if (place.coverage != null) vertex.setProperty(PLACE_COVERAGE, place.coverage)
-      if (place.geometryWKT != null) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT)    
+      if (place.label.isDefined) vertex.setProperty(PLACE_LABEL, place.label.get)
+      if (place.comment.isDefined) vertex.setProperty(PLACE_COMMENT, place.comment.get)
+      if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels.get)
+      if (place.coverage.isDefined) vertex.setProperty(PLACE_COVERAGE, place.coverage.get)
+      if (place.geometryWKT.isDefined) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT.get)    
       vertex.setProperty(PLACE_LON, place.lon)
       vertex.setProperty(PLACE_LAT, place.lat)
       
@@ -43,9 +43,9 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     })
     
     // Create PLACE -- within --> PLACE relations
-    places.filter(place => place.within != null).foreach(place => {
+    places.filter(place => place.within.isDefined).foreach(place => {
       val normalizedURL = normalizeURL(place.uri)
-      val normalizedWithin = normalizeURL(place.within.uri)
+      val normalizedWithin = normalizeURL(place.within.get.uri)
       
       val origin =
         if (placeIndex.count(PLACE_URI, normalizedURL) > 0) placeIndex.get(PLACE_URI, normalizedURL).next()

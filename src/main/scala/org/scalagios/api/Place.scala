@@ -15,31 +15,31 @@ trait Place {
   
   def uri: String
   
-  def label: String
+  def label: Option[String]
 
-  def comment: String
+  def comment: Option[String]
 
-  def altLabels: String
+  def altLabels: Option[String]
   
-  def coverage: String
+  def coverage: Option[String]
 
   def lon: Double
 
   def lat: Double
 
-  def within: Place
+  def within: Option[Place]
   
-  def geometryWKT: String
+  def geometryWKT: Option[String]
   
   def location: Option[Geometry] = {
     val factory = new GeometryFactory()
     
-    if (within != null)
-      within.location
+    if (within.isDefined)
+      within.get.location
     else if (!lon.isNaN() && !lat.isNaN())
       Some(factory.createPoint(new Coordinate(lon, lat)))
-    else if (geometryWKT != null)
-      Some(new WKTReader(factory).read(geometryWKT))
+    else if (geometryWKT.isDefined)
+      Some(new WKTReader(factory).read(geometryWKT.get))
     else
       None
   }
@@ -67,9 +67,9 @@ trait Place {
  */
 class DefaultPlace(var uri: String) extends Place {
   
-  var label: String = _
+  var label: Option[String] = None
 
-  var comment: String = _
+  var comment: Option[String] = None
   
   private val altLabelsList: ListBuffer[String] = ListBuffer()
   
@@ -78,16 +78,16 @@ class DefaultPlace(var uri: String) extends Place {
       altLabelsList.append(altLabel)
   }
   
-  def altLabels = altLabelsList.mkString(", ")
+  def altLabels: Option[String] = Some(altLabelsList.mkString(", "))
   
-  var coverage: String = _
+  var coverage: Option[String] = None
 
   var lon: Double = Double.NaN
 
   var lat: Double = Double.NaN
   
-  var within: Place = _
+  var within: Option[Place] = None
     
-  var geometryWKT: String = _
+  var geometryWKT: Option[String] = None
     
 }

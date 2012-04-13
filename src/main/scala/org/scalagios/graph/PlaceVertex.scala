@@ -13,28 +13,28 @@ import com.tinkerpop.blueprints.pgm.Vertex
  */
 class PlaceVertex(vertex: Vertex) extends Place {
   
-  def uri: String = vertex.getPropertyAsString(PLACE_URI)
+  def uri: String = vertex.getPropertyAsString(PLACE_URI).get
   
-  def label: String = vertex.getPropertyAsString(PLACE_LABEL)
+  def label = vertex.getPropertyAsString(PLACE_LABEL)
   
-  def comment: String = vertex.getPropertyAsString(PLACE_COMMENT)
+  def comment = vertex.getPropertyAsString(PLACE_COMMENT)
   
-  def altLabels: String = vertex.getPropertyAsString(PLACE_ALTLABELS)
+  def altLabels = vertex.getPropertyAsString(PLACE_ALTLABELS)
   
-  def coverage: String = vertex.getPropertyAsString(PLACE_COVERAGE)
+  def coverage = vertex.getPropertyAsString(PLACE_COVERAGE)
   
   def lon: Double = vertex.getPropertyAsDouble(PLACE_LON)
   
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
   
-  val within: Place = {
+  val within = {
     val containingPlace = vertex.getNeighbour(RELATION_WITHIN)
     if (containingPlace.isDefined)
-      new PlaceVertex(containingPlace.get)
+      Some(new PlaceVertex(containingPlace.get))
     else
-      null
+      None
   }
   
-  def geometryWKT: String = vertex.getPropertyAsString(PLACE_GEOMETRY)
+  def geometryWKT = vertex.getPropertyAsString(PLACE_GEOMETRY)
 
 }

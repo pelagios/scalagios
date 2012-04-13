@@ -14,24 +14,24 @@ import com.tinkerpop.blueprints.pgm.Vertex
  */
 class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   
-  def uri = vertex.getPropertyAsString(DATASET_URI)
+  def uri = vertex.getPropertyAsString(DATASET_URI).get
   
-  def context = vertex.getPropertyAsString(DATASET_CONTEXT)
+  def context = vertex.getPropertyAsString(DATASET_CONTEXT).get
   
-  def title = vertex.getPropertyAsString(DATASET_TITLE)
+  def title = vertex.getPropertyAsString(DATASET_TITLE).get
   
-  def description = Some(vertex.getPropertyAsString(DATASET_DESCRIPTION))
+  def description = vertex.getPropertyAsString(DATASET_DESCRIPTION)
   
-  def license = Some(vertex.getPropertyAsString(DATASET_LICENSE))
+  def license = vertex.getPropertyAsString(DATASET_LICENSE)
   
-  def homepage = Some(vertex.getPropertyAsString(DATASET_HOMEPAGE))
+  def homepage = vertex.getPropertyAsString(DATASET_HOMEPAGE)
   
   // TODO
   def associatedDatadumps = List.empty[String]
   
-  def associatedUriSpace = Some(vertex.getPropertyAsString(DATASET_URISPACE))
+  def associatedUriSpace = vertex.getPropertyAsString(DATASET_URISPACE)
   
-  def associatedRegexPattern = Some(vertex.getPropertyAsString(DATASET_URIREGEXPATTERN))
+  def associatedRegexPattern = vertex.getPropertyAsString(DATASET_URIREGEXPATTERN)
   
   def subsets: Iterable[DatasetVertex] = 
     vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex()))

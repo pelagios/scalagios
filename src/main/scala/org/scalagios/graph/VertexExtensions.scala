@@ -10,9 +10,9 @@ import com.tinkerpop.blueprints.pgm.Vertex
  */
 class VertexExtensions(vertex: Vertex) {
   
-  def getPropertyAsString(key: String): String = {
+  def getPropertyAsString(key: String): Option[String] = {
     val property = vertex.getProperty(key)
-    if (property == null) null else property.toString
+    if (property == null) None else Some(property.toString)
   } 
   
   def getPropertyAsDouble(key: String): Double = {
