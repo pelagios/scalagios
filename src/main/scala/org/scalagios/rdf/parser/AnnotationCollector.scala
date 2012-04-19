@@ -21,7 +21,7 @@ import org.scalagios.api.DefaultGeoAnnotationTarget
 class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasValidation {
   
   // A common type that covers common properties of OAC Annotations and Targets 
-  type OACEntity = { def uri: String; def title: Option[String] }
+  type OACEntity = { var uri: String; var title: Option[String] }
   
   // A default implementation we can use as placeholder for both
   class DefaultOACEntity(var uri:String) { var title: Option[String] = None } 
@@ -64,23 +64,29 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
       case (RDF.TYPE, OAC.Target) => getOrCreate(subj, classOf[DefaultGeoAnnotationTarget])
       
       // HasBody only allowed for GeoAnnotations -- get or create and add as String property 
-      case (OAC.hasBody, _) => getOrCreate(subj, classOf[DefaultGeoAnnotation]).body = obj.stringValue()
+      case (OAC.hasBody, _) => 
+        getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].body = 
+          obj.stringValue()
       
       // HasTarget only allowed for GeoAnnotations -- get or create annotation, and then get or create the target
-      case (OAC.hasTarget, _) => getOrCreate(subj, classOf[DefaultGeoAnnotation]).target = 
-        getOrCreate(obj.stringValue, classOf[DefaultGeoAnnotationTarget])       
-        
-      // This could be an annotation OR a target
-      case (DCTerms.title, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = Some(obj.stringValue())
-      
+      case (OAC.hasTarget, _) => 
+        getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].target = 
+          getOrCreate(obj.stringValue, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget]       
+ 
       // Thumbnail only allowed for GeoAnnotationTargets
-      case (FOAF.thumbnail, _) => getOrCreate(subj, classOf[DefaultGeoAnnotationTarget]).thumbnail = Some(obj.stringValue)
+      case (FOAF.thumbnail, _) => 
+        getOrCreate(subj, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget].thumbnail = 
+          Some(obj.stringValue)
+      
+      // This could be an annotation OR a target
+      case (DCTerms.title, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
+        Some(obj.stringValue())
       
       case _ => triplesSkipped += 1
     }
   }
    
-  private def getOrCreate[T<: OACEntity](uri: String, clazz: Class[T]): T = {
+  private def getOrCreate[T<: OACEntity](uri: String, clazz: Class[T]): OACEntity = {
     annotationBuffer.get(uri) match {
       case Some(a) => {
         if (a.isInstanceOf[DefaultOACEntity] && !clazz.isInstanceOf[DefaultOACEntity]) {
@@ -90,7 +96,7 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
           concrete
         } else {
           // Object is not a placeholder any more - return it as the specified type
-          a.asInstanceOf[T]
+          a
         }
       }
       case None =>  {

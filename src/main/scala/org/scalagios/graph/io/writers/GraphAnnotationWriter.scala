@@ -1,17 +1,16 @@
 package org.scalagios.graph.io.writers
 
 import scala.collection.JavaConverters._
-
 import com.tinkerpop.blueprints.pgm.TransactionalGraph
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
-
 import org.scalagios.api.{Dataset, GeoAnnotation}
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.DatasetVertex
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
+import com.weiglewilczek.slf4s.Logging
 
-trait GraphAnnotationWriter extends PelagiosGraphIOBase {
+trait GraphAnnotationWriter extends PelagiosGraphIOBase with Logging {
   
   /**
    * Imports annotations into a specified graph context. This method
@@ -26,7 +25,9 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
    * In addition to dumpfile-URL-based association, this method will also
    * check prefix- and RegEx-patterns. 
    */
-  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String): Unit = {    
+  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String): Unit = { 
+    logger.info("Starting annotation import to " + context + " from dumpfile " + dumpfile)
+    
     val datasets = datasetIndex.get(DATASET_CONTEXT, context).iterator.asScala.map(new DatasetVertex(_))    
 
     if (graph.isInstanceOf[TransactionalGraph]) {
@@ -60,11 +61,13 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
   }
   
   private def _insertAnnotationVertex(annotation: GeoAnnotation, dataset: DatasetVertex) = {
+    val normalizedBody = normalizeURL(annotation.body)
+    
     // Create ANNOTATION vertex
     val annotationVertex = graph.addVertex(null)
     annotationVertex.setProperty(VERTEX_TYPE, ANNOTATION_VERTEX)
     annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
-    annotationVertex.setProperty(ANNOTATION_BODY, annotation.body)
+    annotationVertex.setProperty(ANNOTATION_BODY, normalizedBody)
     if (annotation.title.isDefined) annotationVertex.setProperty(ANNOTATION_TITLE, annotation.title.get)
     
     // Create ANNOTATION_TARGET vertex
@@ -81,11 +84,11 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     graph.addEdge(null, annotationVertex, annotationTargetVertex, RELATION_HASTARGET)
     
     // Create ANNOTATION -- hasBody --> PLACE relation 
-    val places = placeIndex.get(PLACE_URI, annotation.body)
+    val places = placeIndex.get(PLACE_URI, normalizedBody)
     if (places.hasNext())
       graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
     else
-      throw GraphIOException("Place referenced by annotation not found in Graph: " + annotation.body)
+      throw GraphIOException("Place referenced by annotation not found in Graph: " + normalizedBody)
 
     // Add to index
     annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
