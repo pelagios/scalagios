@@ -72,6 +72,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     annotationTargetVertex.setProperty(VERTEX_TYPE, ANNOTATION_TARGET_VERTEX)
     annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
     if (annotation.target.title.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title.get)
+    if (annotation.target.thumbnail.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_THUMBNAIL, annotation.target.thumbnail.get)
 
     // Create DATASET -- contains --> ANNOTATION relation
     graph.addEdge(null, dataset.vertex, annotationVertex, RELATION_CONTAINS)

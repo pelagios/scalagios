@@ -67,6 +67,7 @@ object Constants {
    */
   val ANNOTATION_TARGET_URI = "uri"
   val ANNOTATION_TARGET_TITLE = "title"
+  val ANNOTATION_TARGET_THUMBNAIL = "thumbnail"
     
   /**
    * Graph relationship type 'within': Place -> Place

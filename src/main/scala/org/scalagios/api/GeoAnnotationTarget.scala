@@ -18,6 +18,11 @@ trait GeoAnnotationTarget {
   def title: Option[String]
   
   /**
+   * The thumbnail image
+   */
+  def thumbnail: Option[String]
+  
+  /**
    * Utility method that checks if all mandatory properties are set
    */
   def isValid: Boolean = (uri != null)
@@ -33,5 +38,7 @@ trait GeoAnnotationTarget {
 class DefaultGeoAnnotationTarget(var uri: String) extends GeoAnnotationTarget {
   
   var title: Option[String] = None
+  
+  var thumbnail: Option[String] = None
   
 }

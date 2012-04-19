@@ -11,6 +11,8 @@ object OAC extends BaseVocab {
   
   val Annotation = factory.createURI(NAMESPACE, "Annotation")
   
+  val Target = factory.createURI(NAMESPACE, "Target")
+  
   val hasBody = factory.createURI(NAMESPACE, "hasBody")
   
   val hasTarget = factory.createURI(NAMESPACE, "hasTarget")
