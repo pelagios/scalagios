@@ -1,15 +1,14 @@
 package org.scalagios.graph.io.writers
 
 import scala.collection.JavaConverters._
-
 import com.tinkerpop.blueprints.pgm.{Vertex, TransactionalGraph}
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
-
 import org.scalagios.api.Dataset
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.DatasetVertex
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
+import org.scalagios.graph.exception.GraphIntegrityException
 
 trait GraphDatasetWriter extends PelagiosGraphIOBase {
 
@@ -77,12 +76,18 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
       tGraph.setMaxBufferSize(0)
       tGraph.startTransaction()
     }
-            
-    datasetIndex.get(DATASET_URI, uri).iterator.asScala.
-      foreach(vertex => ctr += _dropDatasetVertex(new DatasetVertex(vertex)))
-
-    // TODO we need to manually remove top-level datasets from the index!
-   
+    
+    // Note: if we have more than ONE dataset in for this URI, something is wrong!
+    val vertices = datasetIndex.get(DATASET_URI, uri).iterator.asScala.toList    
+    if (vertices.size > 1)
+      throw new GraphIntegrityException("Index has " + vertices.size + " vertices listed for dataset " + uri)
+      
+    // Delete recursively
+    vertices.foreach(vertex => ctr += _dropDatasetVertex(new DatasetVertex(vertex)))
+    
+    // Note: Neo4j will automatically keep the index in sync - we don't need to clean up manually
+    // TODO Other graph DBs may not perform automatic index management - investigate!
+      
     // TODO catch GraphIOException and make sure the transaction is closed with FAILURE
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
@@ -92,8 +97,6 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
   
   private def _dropDatasetVertex(dataset: DatasetVertex): Int = {
     var ctr = 0
-    
-    println("Dropping dataset: " + dataset.uri)
     
     // Delete all subsets first
     dataset.subsets.foreach(subset => ctr += _dropDatasetVertex(subset))
@@ -105,9 +108,6 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     // Delete dataset vertex
     dataset.vertex.getInEdges(RELATION_SUBSET).iterator().asScala.foreach(graph.removeEdge(_))
     graph.removeVertex(dataset.vertex)
- 
-    // Note: Neo4j will automatically keep the index in sync - we don't need to remove manually
-    // TODO other graph DBs may not perform automatic index management - investigate
     
     ctr + 1
   }

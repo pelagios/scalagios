@@ -48,7 +48,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
     // Import data to Graph
-    print("  Importing Places to graph. ")
+    print("  Importing Places to Graph. ")
     val writer = new PelagiosGraphWriter(graph)
     writer.insertPlaces(placeCollector.getPlaces)
     graph.shutdown()
@@ -91,49 +91,46 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("  " + annotationCollector.getAnnotations.size + " GeoAnnnotations imported to Graph.")    
   }
     
-  test("Verify graph structure") {
-    println("Verifying Graph Structure")
+  test("Verify Graph integrity") {
+    println("Verifying Graph integrity")
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    val reader = new PelagiosNeo4jReader(graph)
+    val writer = new PelagiosGraphWriter(graph)
+    
+    print("  Counting Places. ")
+    val places = reader.getPlaces()
+    assert(places.size == 36129)
+    println(places.size + ". OK")
+
+    print("  Counting Datasets. ")
+    val topLevelDatasets = reader.getDatasets().size
+    assert(topLevelDatasets == 1)
+    val datasetsTotal = reader.getVertices(DATASET_VERTEX).size
+    assert(datasetsTotal == 410)
+    println(topLevelDatasets + " at top level, " + datasetsTotal + " total. OK")
+
+    // TODO test annotations as soon as we have decent test data!
+    
+    print("  Testing queries. ")
+    assert(reader.queryPlaces("vindobo").size == 3)
+    assert(reader.queryDatasets("herodot").size == 33)
+    println("OK")
+    
+    graph.shutdown()
+  }
+  
+  test("Verify delete functionality") {
+    println("Verifying delete functionality")
     val graph = new Neo4jGraph(NEO4J_DIR)
     val reader = new PelagiosGraphReader(graph)
     val writer = new PelagiosGraphWriter(graph)
-    
-    val places = reader.getPlaces()
-    assert(places.size == 36129)
 
-    val datasets = reader.getDatasets()
-    println("  Top level datasets: " + datasets.map(_.title).toList.mkString(","))
-    assert(datasets.size == 1)
-    
-    println("  " + reader.getVertices(ANNOTATION_VERTEX).size + " annotations in Graph")
+    print("  Deleting datasets. ")
+    reader.getDatasets.foreach(dataset => writer.dropDataset(dataset.uri))
+    assert(reader.getDatasets().size == 0)
+    assert(reader.getVertices(DATASET_VERTEX).size == 0)
+    println("OK")
 
-    // TODO put drop tests in separate method
-    writer.dropDataset(datasets.head.uri)
-    println("  Top level datasets: " + datasets.map(_.title).toList.mkString(","))
-    assert(datasets.size == 0)
-    
-    /*
-    val datasets = reader.getDatasets
-    println("  Dropping dataset " + datasets.head.uri)
-    
-    println("  " + reader.getVertices(ANNOTATION_VERTEX).size + " annotations in Graph")
-    
-    
-    
-    // TODO finish graph verification
-    
-    places.foreach(p => println(p.uri))
-    
-    val datasets = reader.listAllDatasets().size
-    println("  " + datasets + " Datasets")
-    assert(datasets == 410)
-    */
-    
-    // TODO dataset hierarchy
-    
-    // TODO check a few sample places and datasets via URI
-    
-    // TODO check annotations inside datasets
-    
     graph.shutdown()
   }
 
