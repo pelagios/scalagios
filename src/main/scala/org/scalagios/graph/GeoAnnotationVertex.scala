@@ -4,6 +4,7 @@ import org.scalagios.api.GeoAnnotation
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.VertexExtensions._
 import com.tinkerpop.blueprints.pgm.Vertex
+import org.scalagios.graph.exception.GraphIntegrityException
 
 /**
  * An implementation of the Pelagios <em>GeoAnnotation</em> model primitive
@@ -22,7 +23,7 @@ class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
     if (neighbour.isDefined)
       new GeoAnnotationTargetVertex(neighbour.get)
     else      
-      throw new RuntimeException("Graph corrupt: annotation " + uri + " disconnected from target")
+      throw new GraphIntegrityException("Graph corrupt: annotation " + uri + " disconnected from target")
   }
 
   def title: Option[String] = vertex.getPropertyAsString(ANNOTATION_TITLE)
