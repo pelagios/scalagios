@@ -1,10 +1,5 @@
 package org.scalagios.rdf.vocab
 
-/**
- * OAC Annotation vocabulary terms.
- * 
- * @author Rainer Simon<rainer.simon@ait.ac.at>
- */
 object OAC extends BaseVocab {
   
   val NAMESPACE = "http://www.openannotation.org/ns/"

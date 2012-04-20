@@ -19,12 +19,12 @@ import org.scalagios.rdf.parser.validation.HasValidation
 class DatasetCollector(context: String) extends RDFHandlerBase with HasStatistics with HasValidation {
   
   /**
-   * Maps a Dataset's URI to the Dataset
+   * Maps a Dataset URI to the Dataset
    */
   private val datasetBuffer = new HashMap[String, DefaultDataset]
   
   /**
-   * Maps a Dataset's URI to the its parent Dataset
+   * Maps a the URI of a Dataset to its parent Dataset
    */
   private val parentsBuffer = new HashMap[String, DefaultDataset]
  
@@ -52,21 +52,21 @@ class DatasetCollector(context: String) extends RDFHandlerBase with HasStatistic
       case (VoID.subset, _) => parentsBuffer.put(obj.stringValue, getOrCreate(subj))
       case _ => triplesSkipped += 1
     }
-
   }
   
   override def endRDF(): Unit = {
     rootDatasets = List[Dataset]()
     
     datasetBuffer.values.foreach(dataset => {
+      if (!dataset.isValid)
+        throw new RuntimeException("Invalid dataset: " + dataset.uri)
+      
       val parent = parentsBuffer.remove(dataset.uri)
       if (!parent.isEmpty)
         parent.get.subsets = dataset :: parent.get.subsets
       else
         rootDatasets = dataset :: rootDatasets
-    })
-    
-    // TODO validate all datasets!
+    })    
   }
     
   private def getOrCreate(uri: String): DefaultDataset = {
