@@ -53,6 +53,6 @@ class PelagiosGraphReader[T <: IndexableGraph](val graph: T) extends PelagiosGra
   }
     
   // TODO Might be slow in a large DB! Although we'll probably use this rarely, we'll need a more scalable solution
-  private def getVertices(vertexType: String) = graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
+  private[io] def getVertices(vertexType: String) = graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
   
 }

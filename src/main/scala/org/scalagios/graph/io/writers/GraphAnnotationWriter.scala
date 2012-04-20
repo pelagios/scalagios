@@ -13,19 +13,11 @@ import com.weiglewilczek.slf4s.Logging
 trait GraphAnnotationWriter extends PelagiosGraphIOBase {
   
   /**
-   * Imports annotations into a specified graph context. This method
-   * will check for prefix- and RegEx-pattern associations.
-   */
-  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String): Unit =
-    // TODO there must be a way to implement this Scala-style rather than Java-style
-    insertAnnotations(annotations, context, null)
-  
-  /**
    * Imports annotations from a named dump file in to a specified graph context.
    * In addition to dumpfile-URL-based association, this method will also
    * check prefix- and RegEx-patterns. 
    */
-  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String): Unit = { 
+  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String = null): Unit = { 
     val datasets = datasetIndex.get(DATASET_CONTEXT, context).iterator.asScala.map(new DatasetVertex(_))    
 
     if (graph.isInstanceOf[TransactionalGraph]) {
@@ -90,6 +82,8 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
 
     // Add to index
     annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
+    if (annotation.title.isDefined) annotationIndex.put(ANNOTATION_TITLE, annotation.title.get, annotationVertex)
+    if (annotation.target.title.isDefined) annotationIndex.put(ANNOTATION_TARGET_URI, annotation.target.title.get, annotationVertex)
   }
   
 }

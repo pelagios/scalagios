@@ -16,6 +16,7 @@ import com.tinkerpop.blueprints.pgm.IndexableGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.rdf.parser._
+import org.scalagios.graph.Constants._
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
@@ -92,16 +93,34 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
   test("Verify graph structure") {
     println("Verifying Graph Structure")
-    
-    var startTime = System.currentTimeMillis
     val graph = new Neo4jGraph(NEO4J_DIR)
     val reader = new PelagiosGraphReader(graph)
+    val writer = new PelagiosGraphWriter(graph)
     
     val places = reader.getPlaces()
     assert(places.size == 36129)
+
+    val datasets = reader.getDatasets()
+    println("  Top level datasets: " + datasets.map(_.title).toList.mkString(","))
+    assert(datasets.size == 1)
+    
+    println("  " + reader.getVertices(ANNOTATION_VERTEX).size + " annotations in Graph")
+
+    // TODO put drop tests in separate method
+    writer.dropDataset(datasets.head.uri)
+    println("  Top level datasets: " + datasets.map(_.title).toList.mkString(","))
+    assert(datasets.size == 0)
+    
+    /*
+    val datasets = reader.getDatasets
+    println("  Dropping dataset " + datasets.head.uri)
+    
+    println("  " + reader.getVertices(ANNOTATION_VERTEX).size + " annotations in Graph")
+    
+    
     
     // TODO finish graph verification
-    /*
+    
     places.foreach(p => println(p.uri))
     
     val datasets = reader.listAllDatasets().size
