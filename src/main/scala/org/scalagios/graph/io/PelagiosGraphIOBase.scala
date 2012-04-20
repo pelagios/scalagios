@@ -30,6 +30,9 @@ private[io] trait PelagiosGraphIOBase {
   protected def normalizeURL(s: String): String = {
     val url = new URL(s)
     var normalized = url.getProtocol + "://" + url.getHost + url.getPath 
+    if (normalized.endsWith("/"))
+      normalized = normalized.substring(0, normalized.length - 1)
+    
     if (url.getRef != null) 
       if (!url.getRef.startsWith("this")) normalized += "#" + url.getRef
     normalized

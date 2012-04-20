@@ -26,8 +26,13 @@ class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   
   def homepage = vertex.getPropertyAsString(DATASET_HOMEPAGE)
   
-  // TODO
-  def associatedDatadumps = List.empty[String]
+  def associatedDatadumps = {
+    val dumpList = vertex.getPropertyAsString(DATASET_DATADUMP)
+    if (dumpList.isDefined)
+      dumpList.map(_.split(",")).flatten.toList
+    else
+      List.empty[String]
+  }
   
   def associatedUriSpace = vertex.getPropertyAsString(DATASET_URISPACE)
   
@@ -36,8 +41,7 @@ class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   def subsets: Iterable[DatasetVertex] = 
     vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex()))
     
-  // TODO implement 'annotations' method on DatasetVertex
   def annotations: Iterable[GeoAnnotationVertex] = 
-    List.empty[GeoAnnotationVertex]
+    vertex.getOutEdges(RELATION_CONTAINS).asScala.map(edge => new GeoAnnotationVertex(edge.getInVertex))
 
 }

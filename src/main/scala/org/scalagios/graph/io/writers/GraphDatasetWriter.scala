@@ -46,7 +46,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     if (dataset.description.isDefined) datasetVertex.setProperty(DATASET_DESCRIPTION, dataset.description.get)
     if (dataset.license.isDefined) datasetVertex.setProperty(DATASET_LICENSE, dataset.license.get)
     if (dataset.homepage.isDefined) datasetVertex.setProperty(DATASET_HOMEPAGE, dataset.homepage.get)
-    // TODO write associated data dumps to graph DB
+    if (dataset.associatedDatadumps.size > 0) datasetVertex.setProperty(DATASET_DATADUMP, dataset.associatedDatadumps.mkString(","))
     if (dataset.associatedUriSpace.isDefined) datasetVertex.setProperty(DATASET_URISPACE, dataset.associatedUriSpace.get) 
     if (dataset.associatedRegexPattern.isDefined) datasetVertex.setProperty(DATASET_URIREGEXPATTERN, dataset.associatedRegexPattern.get)
  

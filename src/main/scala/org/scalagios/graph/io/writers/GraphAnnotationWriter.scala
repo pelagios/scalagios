@@ -10,7 +10,7 @@ import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
 import com.weiglewilczek.slf4s.Logging
 
-trait GraphAnnotationWriter extends PelagiosGraphIOBase with Logging {
+trait GraphAnnotationWriter extends PelagiosGraphIOBase {
   
   /**
    * Imports annotations into a specified graph context. This method
@@ -26,8 +26,6 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase with Logging {
    * check prefix- and RegEx-patterns. 
    */
   def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String): Unit = { 
-    logger.info("Starting annotation import to " + context + " from dumpfile " + dumpfile)
-    
     val datasets = datasetIndex.get(DATASET_CONTEXT, context).iterator.asScala.map(new DatasetVertex(_))    
 
     if (graph.isInstanceOf[TransactionalGraph]) {
@@ -49,8 +47,8 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase with Logging {
         } else if (dataset.associatedRegexPattern.isDefined) { 
           // TODO implement regex matching
           
-        } else if (dumpfile != null) {
-          annotations.foreach(_insertAnnotationVertex(_, dataset))
+        } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
+          annotations.foreach(annotation => _insertAnnotationVertex(annotation, dataset))
         }
       }
     })
