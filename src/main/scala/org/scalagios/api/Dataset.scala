@@ -52,12 +52,43 @@ trait Dataset {
    * Subsets
    */
   def subsets: Iterable[Dataset]
-
+  
   /**
-   * Annotations
+   * Annotations contained in the dataset. If the 'nested' parameter is
+   * set to <code>true</code>, the method will also look in the subsets 
+   * of this dataset. Otherwise, only annotations directly contained in
+   * this dataset are returned.
    */
-  def annotations: Iterable[GeoAnnotation]
+  def annotations(nested: Boolean = false): Iterable[GeoAnnotation] = {
+    if (nested)
+      _listAnnotations ++ subsets.map(subset => _recursiveList(subset)).flatten
+    else
+      _listAnnotations
+  }
+  
+  private def _recursiveList(dataset: Dataset): Iterable[GeoAnnotation] = {
+    // TODO I'm sure there's a better, more functional way to do this...
+    var list = dataset._listAnnotations
+    dataset.subsets.foreach(subset => list ++= _recursiveList(subset))
+    list
+  }
+  
+  def countAnnotations(nested: Boolean = false): Int = {
+    if (nested)
+      _listAnnotations.size + subsets.map(subset => _recursiveCount(subset)).foldLeft(0)((x, y) => x + y)
+    else
+      _listAnnotations.size
+  }
+  
+  private def _recursiveCount(dataset: Dataset): Int = {
+    // TODO I'm sure there's a better, more functional way to do this...
+    var count = dataset._listAnnotations.size
+    dataset.subsets.foreach(subset => count += _recursiveCount(subset))
+    count
+  }
 
+  protected def _listAnnotations: Iterable[GeoAnnotation]
+  
   /**
    * Utility method that produces an MD5 hash of the URI
    */
@@ -97,6 +128,10 @@ class DefaultDataset(val uri: String, val context: String) extends Dataset {
   
   var subsets: List[Dataset] = List.empty[Dataset]
   
-  var annotations: Iterable[GeoAnnotation] = List.empty[GeoAnnotation]
+  private var _annotations = List.empty[GeoAnnotation]
+  
+  private[api] def setAnnotations(annotations: List[DefaultGeoAnnotation]) = _annotations = annotations
+  
+  protected def _listAnnotations: Iterable[GeoAnnotation] = _annotations
   
 }

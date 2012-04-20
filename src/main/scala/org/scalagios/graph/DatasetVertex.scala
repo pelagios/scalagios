@@ -41,7 +41,7 @@ class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   def subsets: Iterable[DatasetVertex] = 
     vertex.getOutEdges(RELATION_SUBSET).asScala.map(edge => new DatasetVertex(edge.getInVertex()))
     
-  def annotations: Iterable[GeoAnnotationVertex] = 
+  def _listAnnotations: Iterable[GeoAnnotationVertex] = 
     vertex.getOutEdges(RELATION_CONTAINS).asScala.map(edge => new GeoAnnotationVertex(edge.getInVertex))
-
+   
 }
