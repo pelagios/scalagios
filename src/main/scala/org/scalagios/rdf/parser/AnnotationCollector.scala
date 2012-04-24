@@ -63,9 +63,8 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
     (statement.getPredicate(), obj) match {
       case (RDF.TYPE, OAC.Annotation)  => getOrCreate(subj, classOf[DefaultGeoAnnotation])
       case (RDF.TYPE, OAC.Target) => getOrCreate(subj, classOf[DefaultGeoAnnotationTarget])
-      case (OAC.hasBody, _) => 
-        getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].body = 
-          obj.stringValue()
+      case (OAC.hasBody, _) =>
+          getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].body = obj.stringValue
       case (OAC.hasTarget, _) => 
         getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].target = 
           getOrCreate(obj.stringValue, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget]       
