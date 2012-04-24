@@ -33,14 +33,22 @@ class PelagiosGraphReader[T <: IndexableGraph](val graph: T) extends PelagiosGra
       None
   }
   
-  def getReferencedPlaces(datasetUri: String): Seq[Place] = { 
-    // TODO implement getReferencedPlaces method
-    Seq.empty[Place]
+  def getReferencedPlaces(datasetUri: String): Iterable[(Place, Int)] = { 
+    val idxHits = datasetIndex.get(DATASET_URI, datasetUri)
+    if (idxHits.hasNext())
+      idxHits.next.getOutEdges(RELATION_REFERENCES).asScala
+        .map(edge => (new PlaceVertex(edge.getInVertex) -> edge.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt))
+    else
+      Seq.empty[(Place, Int)]
   }
   
-  def getReferencingDatasets(placeUri: String): Seq[Dataset] = {
-    // TODO implement getReferencingDatasets method
-    Seq.empty[Dataset]
+  def getReferencingDatasets(placeUri: String): Iterable[(Dataset, Int)] = {
+    val idxHits = placeIndex.get(PLACE_URI, placeUri)
+    if (idxHits.hasNext())
+      idxHits.next.getInEdges(RELATION_REFERENCES).asScala
+        .map(edge => (new DatasetVertex(edge.getOutVertex) -> edge.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt))
+    else
+      Seq.empty[(Dataset, Int)]
   }
 
   /**
