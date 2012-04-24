@@ -84,7 +84,7 @@ object Constants {
    * Graph relationship type 'contains': Dataset -> GeoAnnotation
    */
   val RELATION_CONTAINS = "contains"
-      
+    
   /**
    * Graph relationship type 'hasBody': GeoAnnotation -> Place
    */
