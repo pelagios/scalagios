@@ -14,6 +14,8 @@ import org.scalagios.graph.{PlaceVertex, DatasetVertex}
  */
 class PelagiosGraphReader[T <: IndexableGraph](val graph: T) extends PelagiosGraphIOBase {
 
+  // TODO class should probably be broken up into smaller chunks, just like the writers
+  
   /**
    * Returns an iterable over all Places in the Graph
    */
@@ -29,6 +31,16 @@ class PelagiosGraphReader[T <: IndexableGraph](val graph: T) extends PelagiosGra
       Some(new PlaceVertex(idxHits.next()))
     else
       None
+  }
+  
+  def getReferencedPlaces(datasetUri: String): Seq[Place] = { 
+    // TODO implement getReferencedPlaces method
+    Seq.empty[Place]
+  }
+  
+  def getReferencingDatasets(placeUri: String): Seq[Dataset] = {
+    // TODO implement getReferencingDatasets method
+    Seq.empty[Dataset]
   }
 
   /**
