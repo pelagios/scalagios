@@ -81,9 +81,14 @@ object Constants {
   val RELATION_SUBSET = "subset"
     
   /**
-   * Graph relationshipt ype 'contains': Dataset -> GeoAnnotation
+   * Graph relationship type 'contains': Dataset -> GeoAnnotation
    */
   val RELATION_CONTAINS = "contains"
+    
+  /**
+   * Graph relationship type 'references': Dataset -> Place
+   */
+  val RELATION_REFERENCES = "references"
     
   /**
    * Graph relationship type 'hasBody': GeoAnnotation -> Place

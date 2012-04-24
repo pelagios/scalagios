@@ -1,16 +1,19 @@
 package org.scalagios.graph.io.writers
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.HashMap
 import com.tinkerpop.blueprints.pgm.TransactionalGraph
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
-import org.scalagios.api.{Dataset, GeoAnnotation}
+import org.scalagios.api.{Dataset, GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.DatasetVertex
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
-import com.weiglewilczek.slf4s.Logging
 
 trait GraphAnnotationWriter extends PelagiosGraphIOBase {
+
+  // For storing aggregate information on place references: Place URI -> no. of times references
+  val aggregatedReferences = HashMap[String, Int]()
   
   /**
    * Imports annotations from a named dump file in to a specified graph context.
@@ -33,6 +36,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
       if (dataset.associatedDatadumps.isEmpty ||
          (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile))) {
         
+        // Insert annotation vertices
         if (dataset.associatedUriSpace.isDefined) {
           annotations.filter(_.uri.startsWith(dataset.associatedUriSpace.get))
             .foreach(_insertAnnotationVertex(_, dataset))
@@ -42,6 +46,9 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
         } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
           annotations.foreach(annotation => _insertAnnotationVertex(annotation, dataset))
         }
+        
+        // TODO Insert aggregate relations
+        
       }
     })
     
@@ -84,6 +91,10 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
     if (annotation.title.isDefined) annotationIndex.put(ANNOTATION_TITLE, annotation.title.get, annotationVertex)
     if (annotation.target.title.isDefined) annotationIndex.put(ANNOTATION_TARGET_URI, annotation.target.title.get, annotationVertex)
+    
+    // Record in aggregateReferences counter
+    val referenceCount = aggregatedReferences.get(normalizedBody).getOrElse(0)
+    aggregatedReferences.put(normalizedBody, referenceCount + 1)
   }
   
 }
