@@ -44,9 +44,9 @@ class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   def _listAnnotations(hasBody: Option[String]): Iterable[GeoAnnotationVertex] = {
     val annotations = vertex.getOutEdges(RELATION_CONTAINS).asScala.map(edge => new GeoAnnotationVertex(edge.getInVertex))
     if (hasBody.isDefined)
-      annotations.filter(_.body.equals(hasBody))
+      annotations.filter(_.body.equals(hasBody.get))
     else
-      annotations
+     annotations
   }
    
 }

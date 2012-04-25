@@ -74,7 +74,7 @@ trait Dataset {
    */
   def annotations(hasBody: String, nested: Boolean): Iterable[GeoAnnotation] = {
     if (nested)
-      _listAnnotations(Some(hasBody))
+      _listAnnotations(Some(hasBody)) ++ subsets.map(subset => _recursiveList(subset, Some(hasBody))).flatten
     else
       _listAnnotations(Some(hasBody))
   }
