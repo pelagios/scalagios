@@ -112,10 +112,8 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     // TODO test annotations as soon as we have decent test data!
     
     print("  Testing queries. ")
-    val searchResult = reader.queryPlaces("attic")
-    searchResult.foreach(place => println(place.label))
-    assert(reader.queryDatasets("herodot").size == 33)
-    println("OK")
+    reader.queryPlaces("attic").foreach(place => println(place.label.get))
+    reader.queryDatasets("herodot").foreach(dataset => println(dataset.title))
     
     graph.shutdown()
   }
