@@ -36,10 +36,10 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       
       // Add to index
       placeIndex.put(PLACE_URI, normalizedURL, vertex)
-      if (place.label != null) placeIndex.put(PLACE_LABEL, place.label, vertex)
-      if (place.comment != null) placeIndex.put(PLACE_COMMENT, place.comment, vertex)
-      if (place.altLabels != null) placeIndex.put(PLACE_ALTLABELS, place.altLabels, vertex)
-      if (place.coverage != null) placeIndex.put(PLACE_COVERAGE, place.coverage, vertex)
+      if (place.label.isDefined) placeIndex.put(PLACE_LABEL, place.label.get, vertex)
+      if (place.comment.isDefined) placeIndex.put(PLACE_COMMENT, place.comment.get, vertex)
+      if (place.altLabels.isDefined) placeIndex.put(PLACE_ALTLABELS, place.altLabels.get, vertex)
+      if (place.coverage.isDefined) placeIndex.put(PLACE_COVERAGE, place.coverage.get, vertex)
     })
     
     // Create PLACE -- within --> PLACE relations

@@ -1,12 +1,11 @@
 package org.scalagios.graph.io
 
 import java.net.URL
-
 import com.tinkerpop.blueprints.pgm.{Vertex, IndexableGraph}
 import com.tinkerpop.blueprints.pgm.Index
 import com.tinkerpop.blueprints.pgm.impls.Parameter
-
 import org.scalagios.graph.Constants._
+import org.apache.lucene.analysis.standard.StandardAnalyzer
 
 private[io] trait PelagiosGraphIOBase {
   
