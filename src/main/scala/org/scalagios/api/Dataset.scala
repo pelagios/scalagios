@@ -61,33 +61,46 @@ trait Dataset {
    */
   def annotations(nested: Boolean = false): Iterable[GeoAnnotation] = {
     if (nested)
-      _listAnnotations ++ subsets.map(subset => _recursiveList(subset)).flatten
+      _listAnnotations(None) ++ subsets.map(subset => _recursiveList(subset, None)).flatten
     else
-      _listAnnotations
+      _listAnnotations(None)
   }
   
-  private def _recursiveList(dataset: Dataset): Iterable[GeoAnnotation] = {
+  /**
+   * Annotations contained in the dataset, but restricted to those referencing
+   * a particular place (i.e. which have a defined hasBody URI). If the 'nested' 
+   * parameter is set to <code>true</code>, the method will also look in the 
+   * subsets of this dataset.
+   */
+  def annotations(hasBody: String, nested: Boolean): Iterable[GeoAnnotation] = {
+    if (nested)
+      _listAnnotations(Some(hasBody))
+    else
+      _listAnnotations(Some(hasBody))
+  }
+  
+  private def _recursiveList(dataset: Dataset, hasBody: Option[String]): Iterable[GeoAnnotation] = {
     // TODO I'm sure there's a better, more functional way to do this...
-    var list = dataset._listAnnotations
-    dataset.subsets.foreach(subset => list ++= _recursiveList(subset))
+    var list = dataset._listAnnotations(hasBody)
+    dataset.subsets.foreach(subset => list ++= _recursiveList(subset, hasBody))
     list
   }
   
   def countAnnotations(nested: Boolean = false): Int = {
     if (nested)
-      _listAnnotations.size + subsets.map(subset => _recursiveCount(subset)).foldLeft(0)((x, y) => x + y)
+      _listAnnotations(None).size + subsets.map(subset => _recursiveCount(subset)).foldLeft(0)((x, y) => x + y)
     else
-      _listAnnotations.size
+      _listAnnotations(None).size
   }
   
   private def _recursiveCount(dataset: Dataset): Int = {
     // TODO I'm sure there's a better, more functional way to do this...
-    var count = dataset._listAnnotations.size
+    var count = dataset._listAnnotations(None).size
     dataset.subsets.foreach(subset => count += _recursiveCount(subset))
     count
   }
 
-  protected def _listAnnotations: Iterable[GeoAnnotation]
+  protected def _listAnnotations(hasBody: Option[String]): Iterable[GeoAnnotation]
   
   /**
    * Utility method that produces an MD5 hash of the URI
@@ -132,6 +145,11 @@ class DefaultDataset(val uri: String, val context: String) extends Dataset {
   
   private[api] def setAnnotations(annotations: List[DefaultGeoAnnotation]) = _annotations = annotations
   
-  protected def _listAnnotations: Iterable[GeoAnnotation] = _annotations
+  protected def _listAnnotations(hasBody: Option[String]): Iterable[GeoAnnotation] = {
+    if (hasBody.isDefined)
+      _annotations.filter(_.body.equals(hasBody.get))
+    else
+      _annotations
+  }
   
 }
