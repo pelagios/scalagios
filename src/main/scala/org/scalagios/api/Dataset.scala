@@ -21,6 +21,14 @@ trait Dataset {
   def context: String
   
   /**
+   * The URI of this datasets' root dataset (mandatory)
+   * 
+   * Note: if this dataset is a root dataset, <code>rootUri</code> is
+   * the same as <code>uri</code> 
+   */
+  def rootUri: String
+  
+  /**
    * The title (mandatory)
    */
   def title: String
@@ -113,7 +121,7 @@ trait Dataset {
   /**
    * Utility method that checks if all mandatory properties are set
    */
-  def isValid: Boolean = (!uri.isEmpty() && !context.isEmpty() && !title.isEmpty())
+  def isValid: Boolean = (!uri.isEmpty() && !context.isEmpty() && !rootUri.isEmpty && !title.isEmpty())
 
 }
 
@@ -125,6 +133,12 @@ trait Dataset {
  */
 class DefaultDataset(val uri: String, val context: String) extends Dataset {
 
+  def rootUri: String =
+    if (parent.isEmpty)
+      uri
+    else
+      parent.get.rootUri        
+  
   var title: String = _ // mandatory
   
   var description: Option[String] = None
@@ -140,6 +154,13 @@ class DefaultDataset(val uri: String, val context: String) extends Dataset {
   var associatedRegexPattern: Option[String] = None
   
   var subsets: List[Dataset] = List.empty[Dataset]
+  
+  /**
+   * Note: this is not a <code>Dataset</code> method. We use this only in
+   * the <code>DefaultDataset</code> impl to determine <code>rootUri</code>
+   * at runtime!
+   */
+  var parent: Option[DefaultDataset] = None
   
   private var _annotations = List.empty[GeoAnnotation]
   

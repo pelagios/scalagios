@@ -18,6 +18,8 @@ class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   
   def context = vertex.getPropertyAsString(DATASET_CONTEXT).get
   
+  def rootUri = vertex.getPropertyAsString(DATASET_ROOTURI).get
+  
   def title = vertex.getPropertyAsString(DATASET_TITLE).get
   
   def description = vertex.getPropertyAsString(DATASET_DESCRIPTION)

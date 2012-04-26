@@ -17,6 +17,7 @@ import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.rdf.parser._
 import org.scalagios.graph.Constants._
+import org.scalagios.graph.DatasetVertex
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
@@ -103,17 +104,24 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println(places.size + ". OK")
 
     print("  Counting Datasets. ")
-    val topLevelDatasets = reader.getDatasets().size
-    assert(topLevelDatasets == 1)
-    val datasetsTotal = reader.getVertices(DATASET_VERTEX).size
-    assert(datasetsTotal == 410)
-    println(topLevelDatasets + " at top level, " + datasetsTotal + " total. OK")
+    val topLevelDatasets = reader.getDatasets()
+    assert(topLevelDatasets.size == 1)
+    topLevelDatasets.foreach(dataset => {
+      assert(dataset.isValid)
+    })
+    
+    val datasetsTotal = reader.getVertices(DATASET_VERTEX).map(new DatasetVertex(_))
+    assert(datasetsTotal.size == 410)
+    datasetsTotal.foreach(dataset => {
+      assert(dataset.isValid)
+    })
+    println(topLevelDatasets.size + " at top level, " + datasetsTotal.size + " total. OK")
 
     // TODO test annotations as soon as we have decent test data!
     
-    print("  Testing queries. ")
-    reader.queryPlaces("attic").foreach(place => println(place.label.get))
-    reader.queryDatasets("herodot").foreach(dataset => println(dataset.title))
+    println("  Testing queries. ")
+    reader.queryPlaces("attic").foreach(place => println("    " + place.label.get))
+    reader.queryDatasets("herodot").foreach(dataset => println("    " + dataset.title))
     
     graph.shutdown()
   }

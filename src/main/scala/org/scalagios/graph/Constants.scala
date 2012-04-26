@@ -46,6 +46,7 @@ object Constants {
    */
   val DATASET_URI = "uri"
   val DATASET_CONTEXT = "context"
+  val DATASET_ROOTURI = "rootUri"
   val DATASET_TITLE = "title"
   val DATASET_DESCRIPTION = "description"
   val DATASET_LICENSE = "license"
