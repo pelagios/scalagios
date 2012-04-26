@@ -108,13 +108,21 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     assert(topLevelDatasets.size == 1)
     topLevelDatasets.foreach(dataset => {
       assert(dataset.isValid)
+      
+      // For top-level sets, root URI must equal dataset URI
+      assert(dataset.rootUri.equals(dataset.uri))
     })
     
     val datasetsTotal = reader.getVertices(DATASET_VERTEX).map(new DatasetVertex(_))
     assert(datasetsTotal.size == 410)
+    
+    var ctRoot = 0
     datasetsTotal.foreach(dataset => {
       assert(dataset.isValid)
+      if (dataset.rootUri.equals(dataset.uri))
+        ctRoot += 1
     })
+    assert(ctRoot == topLevelDatasets.size)
     println(topLevelDatasets.size + " at top level, " + datasetsTotal.size + " total. OK")
 
     // TODO test annotations as soon as we have decent test data!

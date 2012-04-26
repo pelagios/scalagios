@@ -62,10 +62,12 @@ class DatasetCollector(context: String) extends RDFHandlerBase with HasStatistic
         throw new RuntimeException("Invalid dataset: " + dataset.uri)
       
       val parent = parentsBuffer.remove(dataset.uri)
-      if (!parent.isEmpty)
+      if (!parent.isEmpty) {
         parent.get.subsets = dataset :: parent.get.subsets
-      else
+        dataset.parent = parent
+      } else {
         rootDatasets = dataset :: rootDatasets
+      }
     })    
   }
     
