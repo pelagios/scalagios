@@ -18,6 +18,8 @@ class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
   
   def body: String = vertex.getPropertyAsString(ANNOTATION_BODY).get
   
+  // TODO not clean - put this functionality in the graph reader
+  // to keep this class consistent with the GeoAnnotation trait!
   def bodyAsPlace: PlaceVertex = {
     val place = vertex.getNeighbour(RELATION_HASBODY)
     if (place.isDefined)
