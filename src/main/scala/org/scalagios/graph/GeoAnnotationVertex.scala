@@ -18,6 +18,14 @@ class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
   
   def body: String = vertex.getPropertyAsString(ANNOTATION_BODY).get
   
+  def bodyAsPlace: PlaceVertex = {
+    val place = vertex.getNeighbour(RELATION_HASBODY)
+    if (place.isDefined)
+      new PlaceVertex(place.get)
+    else
+      throw new GraphIntegrityException("Graph corrupt: annotation " + uri + " disconnected from body")
+  }
+  
   def target: GeoAnnotationTargetVertex = {
     val neighbour = vertex.getNeighbour(RELATION_HASTARGET)
     if (neighbour.isDefined)

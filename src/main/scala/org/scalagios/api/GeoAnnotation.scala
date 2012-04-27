@@ -11,9 +11,9 @@ trait GeoAnnotation {
    * The GeoAnnotation's original source URI (mandatory)
    */
   def uri: String
-  
+
   /**
-   * The body URI (mandatory)
+   * The body (mandatory)
    */
   def body: String
   
@@ -30,7 +30,7 @@ trait GeoAnnotation {
   /**
    * Utility method that checks if all mandatory properties are set
    */
-  def isValid: Boolean = (!uri.isEmpty() && !body.isEmpty() && target != null && target.isValid) 
+  def isValid: Boolean = (!uri.isEmpty() && body!=null && target != null && target.isValid) 
 
 }
 
