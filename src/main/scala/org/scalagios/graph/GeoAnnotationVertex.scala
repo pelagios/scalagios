@@ -12,21 +12,11 @@ import org.scalagios.graph.exception.GraphIntegrityException
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class GeoAnnotationVertex(vertex: Vertex) extends GeoAnnotation {
+class GeoAnnotationVertex(private[graph] val vertex: Vertex) extends GeoAnnotation {
   
   def uri: String = vertex.getPropertyAsString(ANNOTATION_URI).get
   
   def body: String = vertex.getPropertyAsString(ANNOTATION_BODY).get
-  
-  // TODO not clean - put this functionality in the graph reader
-  // to keep this class consistent with the GeoAnnotation trait!
-  def bodyAsPlace: PlaceVertex = {
-    val place = vertex.getNeighbour(RELATION_HASBODY)
-    if (place.isDefined)
-      new PlaceVertex(place.get)
-    else
-      throw new GraphIntegrityException("Graph corrupt: annotation " + uri + " disconnected from body")
-  }
   
   def target: GeoAnnotationTargetVertex = {
     val neighbour = vertex.getNeighbour(RELATION_HASTARGET)
