@@ -12,7 +12,7 @@ import org.scalagios.graph.exception.GraphIntegrityException
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class GeoAnnotationVertex(private[graph] val vertex: Vertex) extends GeoAnnotation {
+case class GeoAnnotationVertex(private[graph] val vertex: Vertex) extends GeoAnnotation {
   
   def uri: String = vertex.getPropertyAsString(ANNOTATION_URI).get
   

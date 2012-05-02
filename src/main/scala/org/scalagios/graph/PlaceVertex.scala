@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.pgm.Vertex
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class PlaceVertex(vertex: Vertex) extends Place {
+case class PlaceVertex(vertex: Vertex) extends Place {
   
   def uri: String = vertex.getPropertyAsString(PLACE_URI).get
   

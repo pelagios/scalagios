@@ -65,7 +65,7 @@ trait Place {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultPlace(var uri: String) extends Place {
+case class DefaultPlace(var uri: String) extends Place {
   
   var label: Option[String] = None
 

@@ -131,7 +131,7 @@ trait Dataset {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultDataset(val uri: String, val context: String) extends Dataset {
+case class DefaultDataset(val uri: String, val context: String) extends Dataset {
 
   def rootUri: String =
     if (parent.isEmpty)

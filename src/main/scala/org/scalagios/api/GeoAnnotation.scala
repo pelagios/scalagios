@@ -40,7 +40,7 @@ trait GeoAnnotation {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultGeoAnnotation(var uri: String) extends GeoAnnotation {
+case class DefaultGeoAnnotation(var uri: String) extends GeoAnnotation {
   
   var body: String = _
   

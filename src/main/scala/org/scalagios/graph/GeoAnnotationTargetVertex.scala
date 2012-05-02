@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.pgm.Vertex
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class GeoAnnotationTargetVertex(vertex: Vertex) extends GeoAnnotationTarget {
+case class GeoAnnotationTargetVertex(vertex: Vertex) extends GeoAnnotationTarget {
   
   def uri: String = vertex.getPropertyAsString(ANNOTATION_TARGET_URI).get
 

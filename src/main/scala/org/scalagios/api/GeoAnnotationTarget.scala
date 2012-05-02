@@ -35,7 +35,7 @@ trait GeoAnnotationTarget {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DefaultGeoAnnotationTarget(var uri: String) extends GeoAnnotationTarget {
+case class DefaultGeoAnnotationTarget(var uri: String) extends GeoAnnotationTarget {
   
   var title: Option[String] = None
   
