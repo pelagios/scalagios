@@ -28,7 +28,7 @@ class PlaceVertex(vertex: Vertex) extends Place {
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
   
   val within = {
-    val containingPlace = vertex.getNeighbour(RELATION_WITHIN)
+    val containingPlace = vertex.getOutNeighbour(RELATION_WITHIN)
     if (containingPlace.isDefined)
       Some(new PlaceVertex(containingPlace.get))
     else

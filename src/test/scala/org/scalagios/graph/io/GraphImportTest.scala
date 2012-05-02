@@ -115,7 +115,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
     val datasetsTotal = reader.getVertices(DATASET_VERTEX).map(new DatasetVertex(_))
     assert(datasetsTotal.size == 410)
-    
+     
     var ctRoot = 0
     datasetsTotal.foreach(dataset => {
       assert(dataset.isValid)
@@ -125,6 +125,10 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     assert(ctRoot == topLevelDatasets.size)
     println(topLevelDatasets.size + " at top level, " + datasetsTotal.size + " total. OK")
 
+    val sampleDataset = datasetsTotal.drop(3).head
+    println("  Hierarchy example: " + sampleDataset.title + " > " + 
+        reader.getDatasetHierarchy(sampleDataset).map(_.title).mkString(" > "))
+    
     // TODO test annotations as soon as we have decent test data!
     
     println("  Testing queries. ")

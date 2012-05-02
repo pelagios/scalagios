@@ -20,12 +20,20 @@ class VertexExtensions(vertex: Vertex) {
     if (property == null) Double.NaN else property.toString.toDouble
   }
   
-  def getNeighbour(relation: String): Option[Vertex] = {
+  def getOutNeighbour(relation: String): Option[Vertex] = {
     val outEdges = vertex.getOutEdges(relation).iterator
     if (outEdges.hasNext())
       Some(outEdges.next().getInVertex())
     else
       None
+  }
+  
+  def getInNeighbour(relation: String): Option[Vertex] = {
+    val inEdges = vertex.getInEdges(relation).iterator
+    if (inEdges.hasNext())
+      Some(inEdges.next().getOutVertex())
+    else
+      None    
   }
 
 }

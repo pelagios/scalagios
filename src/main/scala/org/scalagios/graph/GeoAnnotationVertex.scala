@@ -19,7 +19,7 @@ class GeoAnnotationVertex(private[graph] val vertex: Vertex) extends GeoAnnotati
   def body: String = vertex.getPropertyAsString(ANNOTATION_BODY).get
   
   def target: GeoAnnotationTargetVertex = {
-    val neighbour = vertex.getNeighbour(RELATION_HASTARGET)
+    val neighbour = vertex.getOutNeighbour(RELATION_HASTARGET)
     if (neighbour.isDefined)
       new GeoAnnotationTargetVertex(neighbour.get)
     else      

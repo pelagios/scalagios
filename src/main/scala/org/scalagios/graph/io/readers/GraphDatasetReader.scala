@@ -1,8 +1,11 @@
 package org.scalagios.graph.io.readers
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
+import com.tinkerpop.blueprints.pgm.Vertex
 import org.scalagios.api.{Dataset, Place}
 import org.scalagios.graph.Constants._
+import org.scalagios.graph.VertexExtensions._
 import org.scalagios.graph.{DatasetVertex, PlaceVertex}
 import org.scalagios.graph.io.PelagiosGraphIOBase
 
@@ -11,9 +14,6 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
   def getDatasets(): List[Dataset] =
     datasetIndex.get(DATASET_URI, VIRTUAL_ROOT_URI).iterator.asScala.map(v => new DatasetVertex(v)).toList
   
-  /**
-   * Returns the Dataset with the specified URI, if it exists in the graph
-   */
   def getDataset(uri: String): Option[Dataset] = {
     val idxHits = datasetIndex.get(DATASET_URI, uri)
     if (idxHits.hasNext()) Some(new DatasetVertex(idxHits.next()))
@@ -34,5 +34,19 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
     else
       Seq.empty[(Place, Int)]
   }
+  
+  def getDatasetHierarchy(dataset: Dataset): List[Dataset] = {
+    _traverseHierarchy(dataset.asInstanceOf[DatasetVertex].vertex, ListBuffer.empty[Dataset]).toList
+  }
+  
+  private def _traverseHierarchy(dataset: Vertex, hierarchy: ListBuffer[Dataset]): ListBuffer[Dataset] = {
+    dataset.getInNeighbour(RELATION_SUBSET) match {
+      case Some(vertex) => {
+        hierarchy.append(new DatasetVertex(vertex))
+        _traverseHierarchy(vertex, hierarchy) 
+      }
+      case None => hierarchy
+    }
+  } 
 
 }
