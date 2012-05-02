@@ -33,30 +33,34 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
       // Reset place reference counter
       aggregatedReferences.clear
       
-      // Evaluate if 
-      // * there are NO specific datadumps associated with this dataset OR
-      // * the dumpfile is EXPLICITELY LISTED among the dataset's associated datadumps 
-      if (dataset.associatedDatadumps.isEmpty ||
-         (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile))) {
+      // Annotations are (per convention) ALWAYS in the leave sets,
+      // i.e. if a dataset has subsets, there can be no annotations inside 
+      if (dataset.subsets.size == 0) {
+        // Evaluate if 
+        // * there are NO specific datadumps associated with this dataset OR
+        // * the dumpfile is EXPLICITELY LISTED among the dataset's associated datadumps 
+        if (dataset.associatedDatadumps.isEmpty ||
+           (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile))) {
         
-        // Insert annotation vertices
-        if (dataset.associatedUriSpace.isDefined) {
-          annotations.filter(_.uri.startsWith(dataset.associatedUriSpace.get))
-            .foreach(_insertAnnotationVertex(_, dataset))
-        } else if (dataset.associatedRegexPattern.isDefined) { 
-          // TODO implement regex matching
+          // Insert annotation vertices
+          if (dataset.associatedUriSpace.isDefined) {
+            annotations.filter(_.uri.startsWith(dataset.associatedUriSpace.get))
+              .foreach(_insertAnnotationVertex(_, dataset))
+          } else if (dataset.associatedRegexPattern.isDefined) { 
+            // TODO implement regex matching
           
-        } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
-          annotations.foreach(annotation => _insertAnnotationVertex(annotation, dataset))
-        }
+          } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
+            annotations.foreach(annotation => _insertAnnotationVertex(annotation, dataset))
+          }
         
-        aggregatedReferences.foreach {case (key, value) => {
-          val hits = placeIndex.get(PLACE_URI, key)
-          if (hits.hasNext) {
-            val edge = graph.addEdge(null, dataset.vertex, hits.next, RELATION_REFERENCES)
-            edge.setProperty(REL_PROPERTY_REFERENCECOUNT, value)
-          }  
-        }}
+          aggregatedReferences.foreach {case (key, value) => {
+            val hits = placeIndex.get(PLACE_URI, key)
+            if (hits.hasNext) {
+              val edge = graph.addEdge(null, dataset.vertex, hits.next, RELATION_REFERENCES)
+              edge.setProperty(REL_PROPERTY_REFERENCECOUNT, value)
+            }  
+          }}
+        }
       }
     })
     
