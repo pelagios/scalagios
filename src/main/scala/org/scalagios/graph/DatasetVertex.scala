@@ -16,8 +16,6 @@ case class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   
   def uri = vertex.getPropertyAsString(DATASET_URI).get
   
-  def context = vertex.getPropertyAsString(DATASET_CONTEXT).get
-  
   def rootUri = vertex.getPropertyAsString(DATASET_ROOTURI).get
   
   def title = vertex.getPropertyAsString(DATASET_TITLE).get

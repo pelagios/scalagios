@@ -66,7 +66,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     // Parse VoID RDF
     print("  Parsing VoID. ")
     val ttlParser = new TurtleParserFactory().getParser()
-    val datasetCollector = new DatasetCollector(ANNOTATION_BASEURI)
+    val datasetCollector = new DatasetCollector()
     ttlParser.setRDFHandler(datasetCollector)
     ttlParser.parse(new FileInputStream(new File(SAMPLE_VOID)), ANNOTATION_BASEURI)
     assert(datasetCollector.datasetsTotal == 410)
@@ -86,7 +86,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     print("  Importing GeoAnnotations to Graph. ")
     val writer = new PelagiosGraphWriter(graph)
     datasetCollector.getRootDatasets.foreach(writer.insertDataset(_))
-    writer.insertAnnotations(annotationCollector.getAnnotations, ANNOTATION_BASEURI)
+    writer.insertAnnotations(annotationCollector.getAnnotations, datasetCollector.getRootDatasets.head.uri)
     graph.shutdown()
     println("Took " + (System.currentTimeMillis - startTime) + " milliseconds.")    
     println("  " + annotationCollector.getAnnotations.size + " GeoAnnnotations imported to Graph.")    

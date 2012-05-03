@@ -16,11 +16,6 @@ trait Dataset {
   def uri: String
   
   /**
-   * The Context URI in the graph (mandatory)
-   */
-  def context: String
-  
-  /**
    * The URI of this datasets' root dataset (mandatory)
    * 
    * Note: if this dataset is a root dataset, <code>rootUri</code> is
@@ -121,7 +116,7 @@ trait Dataset {
   /**
    * Utility method that checks if all mandatory properties are set
    */
-  def isValid: Boolean = (!uri.isEmpty() && !context.isEmpty() && !rootUri.isEmpty && !title.isEmpty())
+  def isValid: Boolean = (!uri.isEmpty() && !rootUri.isEmpty && !title.isEmpty())
 
 }
 
@@ -131,7 +126,7 @@ trait Dataset {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-case class DefaultDataset(val uri: String, val context: String) extends Dataset {
+case class DefaultDataset(val uri: String) extends Dataset {
 
   def rootUri: String =
     if (parent.isEmpty)

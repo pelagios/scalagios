@@ -16,7 +16,7 @@ import org.scalagios.rdf.parser.validation.HasValidation
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-class DatasetCollector(context: String) extends RDFHandlerBase with HasStatistics with HasValidation {
+class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidation {
   
   /**
    * Maps a Dataset URI to the Dataset
@@ -75,7 +75,7 @@ class DatasetCollector(context: String) extends RDFHandlerBase with HasStatistic
     datasetBuffer.get(uri) match {
       case Some(d) => d
       case None =>  {
-        val d = new DefaultDataset(uri, context)
+        val d = new DefaultDataset(uri)
         datasetBuffer.put(uri, d)
         d
       }

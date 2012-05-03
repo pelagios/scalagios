@@ -32,7 +32,7 @@ object CreateSampleDB {
     // Parse VoID RDF
     print("Importing sample GAP data... ")
     val ttlParser = new TurtleParserFactory().getParser()
-    val datasetCollector = new DatasetCollector(ANNOTATION_BASEURI)
+    val datasetCollector = new DatasetCollector()
     ttlParser.setRDFHandler(datasetCollector)
     ttlParser.parse(new FileInputStream(new File("src/test/resources/gap-void-sample.ttl")), 
         ANNOTATION_BASEURI)
@@ -46,7 +46,7 @@ object CreateSampleDB {
     
     // Import data to Graph
     datasetCollector.getRootDatasets.foreach(writer.insertDataset(_))
-    writer.insertAnnotations(annotationCollector.getAnnotations, ANNOTATION_BASEURI)
+    writer.insertAnnotations(annotationCollector.getAnnotations, datasetCollector.getRootDatasets.head.uri)
     neo4j.shutdown()
     println("done.")
     

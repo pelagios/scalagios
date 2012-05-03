@@ -19,7 +19,7 @@ class VoIDParserTest extends FunSuite {
     val startTime = System.currentTimeMillis
     
     val parser = new TurtleParserFactory().getParser()
-    val datasetBuilder = new DatasetCollector(ANNOTATION_BASEURI)
+    val datasetBuilder = new DatasetCollector()
     parser.setRDFHandler(datasetBuilder)
     parser.parse(new FileInputStream(new File(SAMPLE_RDF)), ANNOTATION_BASEURI)
     

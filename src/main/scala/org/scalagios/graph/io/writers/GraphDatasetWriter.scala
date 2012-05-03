@@ -40,7 +40,6 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     val datasetVertex = graph.addVertex(null)
     datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
     datasetVertex.setProperty(DATASET_URI, dataset.uri)
-    datasetVertex.setProperty(DATASET_CONTEXT, dataset.context)
     datasetVertex.setProperty(DATASET_ROOTURI, dataset.rootUri)
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
     if (dataset.description.isDefined) datasetVertex.setProperty(DATASET_DESCRIPTION, dataset.description.get)
@@ -52,7 +51,6 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
  
     // Add to index
     datasetIndex.put(DATASET_URI, dataset.uri, datasetVertex)
-    datasetIndex.put(DATASET_CONTEXT, dataset.context, datasetVertex)
     datasetIndex.put(DATASET_HASH, dataset.md5, datasetVertex)
     datasetIndex.put(DATASET_TITLE, dataset.title, datasetVertex)
     if (dataset.description.isDefined) datasetIndex.put(DATASET_DESCRIPTION, dataset.description.get, datasetVertex)

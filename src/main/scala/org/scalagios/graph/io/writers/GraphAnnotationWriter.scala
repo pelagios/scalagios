@@ -9,67 +9,75 @@ import org.scalagios.graph.Constants._
 import org.scalagios.graph.DatasetVertex
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
+import org.scalagios.graph.exception.GraphIntegrityException
+import org.scalagios.graph.exception.GraphIOException
 
 trait GraphAnnotationWriter extends PelagiosGraphIOBase {
 
   // For counting number of references to a particular places: Place URI -> no. of times referenced
   val aggregatedReferences = HashMap[String, Int]()
-  
-  /**
-   * Imports annotations from a named dump file in to a specified graph context.
-   * In addition to dumpfile-URL-based association, this method will also
-   * check prefix- and RegEx-patterns. 
-   */
-  def insertAnnotations(annotations: Iterable[GeoAnnotation], context: String, dumpfile: String = null): Unit = { 
-    val datasets = datasetIndex.get(DATASET_CONTEXT, context).iterator.asScala.map(new DatasetVertex(_))    
-
-    if (graph.isInstanceOf[TransactionalGraph]) {
-      val tGraph = graph.asInstanceOf[TransactionalGraph]
-      tGraph.setMaxBufferSize(0)
-      tGraph.startTransaction()
-    }
+   
+  def insertAnnotations(annotations: Iterable[GeoAnnotation], datasetUri: String, dumpfile: String = null): Unit = {
+    val datasets = datasetIndex.get(DATASET_URI, datasetUri).iterator.asScala.map(new DatasetVertex(_)).toList
     
-    datasets.foreach(dataset => {
+    if (datasets.size == 0)
+      throw new GraphIOException("Dataset " + datasetUri + " not found in Graph")
+    
+    if (datasets.size > 1)
+      // Should honestly never ever happen
+      throw new GraphIntegrityException("More than one dataset indexed for URI " + datasetUri)
+    
+    _insertIntoDataset(annotations, datasets.head, dumpfile)
+  }
+  
+  private def _insertIntoDataset(annotations: Iterable[GeoAnnotation], dataset: DatasetVertex, dumpfile: String = null): Unit = {
+    if (dataset.subsets.size > 0) {
+      // Annotations are (per convention) ALWAYS in the leave sets,
+      // i.e. if a dataset has subsets, there can be no annotations inside 
+      dataset.subsets.foreach(subset => _insertIntoDataset(annotations, subset, dumpfile))
+    } else {
+      if (graph.isInstanceOf[TransactionalGraph]) {
+        val tGraph = graph.asInstanceOf[TransactionalGraph]
+        tGraph.setMaxBufferSize(0)
+        tGraph.startTransaction()
+      }
+    
       // Reset place reference counter
       aggregatedReferences.clear
       
-      // Annotations are (per convention) ALWAYS in the leave sets,
-      // i.e. if a dataset has subsets, there can be no annotations inside 
-      if (dataset.subsets.size == 0) {
-        // Evaluate if 
-        // * there are NO specific datadumps associated with this dataset OR
-        // * the dumpfile is EXPLICITELY LISTED among the dataset's associated datadumps 
-        if (dataset.associatedDatadumps.isEmpty ||
-           (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile))) {
+      // Evaluate if 
+      // * there are NO specific datadumps associated with this dataset OR
+      // * the dumpfile is EXPLICITELY LISTED among the dataset's associated datadumps 
+      if (dataset.associatedDatadumps.isEmpty ||
+         (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile))) {
         
-          // Insert annotation vertices
-          if (dataset.associatedUriSpace.isDefined) {
-            annotations.filter(_.uri.startsWith(dataset.associatedUriSpace.get))
-              .foreach(_insertAnnotationVertex(_, dataset))
-          } else if (dataset.associatedRegexPattern.isDefined) { 
-            // TODO implement regex matching
-          
-          } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
-            annotations.foreach(annotation => _insertAnnotationVertex(annotation, dataset))
-          }
-        
-          aggregatedReferences.foreach {case (key, value) => {
-            val hits = placeIndex.get(PLACE_URI, key)
-            if (hits.hasNext) {
-              val edge = graph.addEdge(null, dataset.vertex, hits.next, RELATION_REFERENCES)
-              edge.setProperty(REL_PROPERTY_REFERENCECOUNT, value)
-            }  
-          }}
+        // Insert annotation vertices
+        if (dataset.associatedUriSpace.isDefined) {
+          annotations.filter(_.uri.startsWith(dataset.associatedUriSpace.get))
+            .foreach(_createAnnotationVertex(_, dataset))
+        } else if (dataset.associatedRegexPattern.isDefined) { 
+          // TODO implement regex matching
+         
+        } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
+          annotations.foreach(annotation => _createAnnotationVertex(annotation, dataset))
         }
-      }
-    })
+        
+        aggregatedReferences.foreach {case (key, value) => {
+          val hits = placeIndex.get(PLACE_URI, key)
+          if (hits.hasNext) {
+            val edge = graph.addEdge(null, dataset.vertex, hits.next, RELATION_REFERENCES)
+            edge.setProperty(REL_PROPERTY_REFERENCECOUNT, value)
+          }  
+        }}
+      }  
     
-    // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
-    if (graph.isInstanceOf[TransactionalGraph])
-      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+      // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
+      if (graph.isInstanceOf[TransactionalGraph])
+        graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+    }
   }
   
-  private def _insertAnnotationVertex(annotation: GeoAnnotation, dataset: DatasetVertex) = {
+  private def _createAnnotationVertex(annotation: GeoAnnotation, dataset: DatasetVertex) = {
     val normalizedBody = normalizeURL(annotation.body)
     
     // Create ANNOTATION vertex

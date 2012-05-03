@@ -18,20 +18,20 @@ class DatasetTest extends FunSuite {
    *           |- dataset0_2 --- <http://www.example.com/annotations/0004>                                                    
    */
    
-  val dataset0_0 = new DefaultDataset("http://www.example.com/datasets/0_0", "http://www.example.com/")
-  val dataset0_0_0 = new DefaultDataset("http://www.example.com/datasets/0_0_0", "http://www.example.com/")
+  val dataset0_0 = new DefaultDataset("http://www.example.com/datasets/0_0")
+  val dataset0_0_0 = new DefaultDataset("http://www.example.com/datasets/0_0_0")
   dataset0_0_0.setAnnotations(List(
     new DefaultGeoAnnotation("http://www.example.com/annotations/0001"),
     new DefaultGeoAnnotation("http://www.example.com/annotations/0002")))
   dataset0_0.subsets = List(dataset0_0_0)
     
-  val dataset0_1 = new DefaultDataset("http://www.example.com/datasets/0_1", "http://www.example.com/")
+  val dataset0_1 = new DefaultDataset("http://www.example.com/datasets/0_1")
   dataset0_1.setAnnotations(List(new DefaultGeoAnnotation("http://www.example.com/annotations/0003")))
     
-  val dataset0_2 = new DefaultDataset("http://www.example.com/datasets/0_2", "http://www.example.com/")
+  val dataset0_2 = new DefaultDataset("http://www.example.com/datasets/0_2")
   dataset0_2.setAnnotations(List(new DefaultGeoAnnotation("http://www.example.com/annotations/0004")))
  
-  val dataset0 = new DefaultDataset("http://www.example.com/datasets/0", "http://www.example.com/")
+  val dataset0 = new DefaultDataset("http://www.example.com/datasets/0")
   dataset0.subsets = List(dataset0_0, dataset0_1, dataset0_2)
   
   test("Verify subset hierarchy was created correctly") {
