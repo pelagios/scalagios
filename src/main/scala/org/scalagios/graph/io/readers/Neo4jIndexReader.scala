@@ -20,10 +20,10 @@ trait Neo4jIndexReader extends PelagiosGraphIOBase {
   
   def queryPlaces(q: String): List[Place] = {
     val query = new QueryParser(Version.LUCENE_35, PLACE_LABEL, new KeywordAnalyzer)
-      .parse(q + " " +
-        PLACE_ALTLABELS + ":" + q + " " +
-        PLACE_COVERAGE + ":" + q + " " +
-        PLACE_COMMENT + ":" + q)
+      .parse(q + "* " +
+        PLACE_ALTLABELS + ":" + q + "* " +
+        PLACE_COVERAGE + ":" + q + "* " +
+        PLACE_COMMENT + ":" + q + "*")
     
     placeNodeIndex.query(new QueryContext(query).sortByScore).iterator.asScala 
       .map(node =>  new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList 
