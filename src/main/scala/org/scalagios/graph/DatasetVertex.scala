@@ -48,5 +48,12 @@ case class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
     else
      annotations
   }
+  
+  def countAnnotations(nested: Boolean = false): Int = {
+    if (nested == true)
+      vertex.getPropertyAsDouble(DATASET_ANNOTATION_COUNT).toInt
+    else
+      _listAnnotations(None).size
+  }
    
 }

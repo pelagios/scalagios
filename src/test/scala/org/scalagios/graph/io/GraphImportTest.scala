@@ -129,10 +129,13 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("  Hierarchy example: " + sampleDataset.title + " > " + 
         reader.getDatasetHierarchy(sampleDataset).map(_.title).mkString(" > "))
     
+    println("annotations: " + topLevelDatasets.head.countAnnotations(true))
+    assert(topLevelDatasets.head.countAnnotations(true) == 1)
+    
     // TODO test annotations as soon as we have decent test data!
     
     println("  Testing queries. ")
-    reader.queryPlaces("attic").foreach(place => println("    " + place.label.get))
+    reader.queryPlaces("leptis").foreach(place => println("    " + place.label.get))
     reader.queryDatasets("herodot").foreach(dataset => println("    " + dataset.title))
     
     graph.shutdown()

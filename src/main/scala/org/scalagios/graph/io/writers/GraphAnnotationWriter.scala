@@ -27,7 +27,20 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
       // Should honestly never ever happen
       throw new GraphIntegrityException("More than one dataset indexed for URI " + datasetUri)
     
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+    
     _insertIntoDataset(annotations, datasets.head, dumpfile)
+    
+    // Import complete - now update annotation counts recorded in dataset vertices
+    _updateAnnotationCounts(datasets.head)
+    
+    // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
   private def _insertIntoDataset(annotations: Iterable[GeoAnnotation], dataset: DatasetVertex, dumpfile: String = null): Unit = {
@@ -36,12 +49,6 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
       // i.e. if a dataset has subsets, there can be no annotations inside 
       dataset.subsets.foreach(subset => _insertIntoDataset(annotations, subset, dumpfile))
     } else {
-      if (graph.isInstanceOf[TransactionalGraph]) {
-        val tGraph = graph.asInstanceOf[TransactionalGraph]
-        tGraph.setMaxBufferSize(0)
-        tGraph.startTransaction()
-      }
-    
       // Reset place reference counter
       aggregatedReferences.clear
       
@@ -70,10 +77,6 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
           }  
         }}
       }  
-    
-      // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
-      if (graph.isInstanceOf[TransactionalGraph])
-        graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
     }
   }
   
@@ -115,6 +118,12 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     // Record in aggregateReferences counter
     val referenceCount = aggregatedReferences.get(normalizedBody).getOrElse(0)
     aggregatedReferences.put(normalizedBody, referenceCount + 1)
+  }
+  
+  private def _updateAnnotationCounts(dataset: DatasetVertex): Unit = {
+    val recursiveCount = dataset.annotations(true).size
+    dataset.vertex.setProperty(DATASET_ANNOTATION_COUNT, recursiveCount)
+    dataset.subsets.foreach(_updateAnnotationCounts(_))
   }
   
 }
