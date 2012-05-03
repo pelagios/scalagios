@@ -27,6 +27,7 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
   }
   
   def getReferencedPlaces(dataset: Dataset): Iterable[(Place, Int)] = { 
+    // TODO make getReferencedPlaces recursive
     dataset.asInstanceOf[DatasetVertex].vertex.getOutEdges(RELATION_REFERENCES).asScala
         .map(edge => (new PlaceVertex(edge.getInVertex) -> edge.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt))
   }
