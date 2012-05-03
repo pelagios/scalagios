@@ -26,13 +26,9 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
     else None       
   }
   
-  def getReferencedPlaces(datasetUri: String): Iterable[(Place, Int)] = { 
-    val idxHits = datasetIndex.get(DATASET_URI, datasetUri)
-    if (idxHits.hasNext())
-      idxHits.next.getOutEdges(RELATION_REFERENCES).asScala
+  def getReferencedPlaces(dataset: Dataset): Iterable[(Place, Int)] = { 
+    dataset.asInstanceOf[DatasetVertex].vertex.getOutEdges(RELATION_REFERENCES).asScala
         .map(edge => (new PlaceVertex(edge.getInVertex) -> edge.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt))
-    else
-      Seq.empty[(Place, Int)]
   }
   
   def getDatasetHierarchy(dataset: Dataset): List[Dataset] = {
