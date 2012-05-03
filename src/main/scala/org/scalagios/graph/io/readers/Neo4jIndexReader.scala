@@ -7,6 +7,9 @@ import org.scalagios.api.{Dataset, Place}
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.{DatasetVertex, PlaceVertex}
 import org.scalagios.graph.io.PelagiosGraphIOBase
+import org.apache.lucene.util.Version
+import org.apache.lucene.queryParser.QueryParser
+import org.apache.lucene.analysis.KeywordAnalyzer
 
 trait Neo4jIndexReader extends PelagiosGraphIOBase {
 
@@ -15,15 +18,15 @@ trait Neo4jIndexReader extends PelagiosGraphIOBase {
   val placeNodeIndex = neo4jGraph.getRawGraph.index().forNodes(INDEX_FOR_PLACES)
   val datasetNodeIndex = neo4jGraph.getRawGraph.index().forNodes(INDEX_FOR_DATASETS)
   
-  def queryPlaces(query: String): List[Place] = {
-    val q = new QueryContext(
-      PLACE_LABEL + ":" + query + "* " +
-      PLACE_COMMENT + ":" + query + "* " +
-      PLACE_ALTLABELS + ":" + query + "* " + 
-      PLACE_COVERAGE + ":" + query + "*").sortByScore
-      
-    placeNodeIndex.query(q).iterator.asScala.map(node => 
-      new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList 
+  def queryPlaces(q: String): List[Place] = {
+    val query = new QueryParser(Version.LUCENE_35, PLACE_LABEL, new KeywordAnalyzer)
+      .parse(q + " " +
+        PLACE_ALTLABELS + ":" + q + " " +
+        PLACE_COVERAGE + ":" + q + " " +
+        PLACE_COMMENT + ":" + q)
+    
+    placeNodeIndex.query(new QueryContext(query).sortByScore).iterator.asScala 
+      .map(node =>  new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList 
   }
   
   def queryDatasets(query: String): List[Dataset] = {

@@ -30,7 +30,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
-  override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
+  // override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
   
   test("Place import with Neo4j") {
     println("Importing Pleiades Gazetteer")
@@ -129,13 +129,12 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println("  Hierarchy example: " + sampleDataset.title + " > " + 
         reader.getDatasetHierarchy(sampleDataset).map(_.title).mkString(" > "))
     
-    println("annotations: " + topLevelDatasets.head.countAnnotations(true))
     assert(topLevelDatasets.head.countAnnotations(true) == 1)
     
     // TODO test annotations as soon as we have decent test data!
     
     println("  Testing queries. ")
-    reader.queryPlaces("leptis").foreach(place => println("    " + place.label.get))
+    reader.queryPlaces("leptis magna").foreach(place => println("    " + place.label.get))
     reader.queryDatasets("herodot").foreach(dataset => println("    " + dataset.title))
     
     graph.shutdown()
