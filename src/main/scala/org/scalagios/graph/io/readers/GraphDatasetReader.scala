@@ -8,6 +8,7 @@ import org.scalagios.graph.Constants._
 import org.scalagios.graph.VertexExtensions._
 import org.scalagios.graph.{DatasetVertex, PlaceVertex}
 import org.scalagios.graph.io.PelagiosGraphIOBase
+import scala.collection.mutable.Map
 
 trait GraphDatasetReader extends PelagiosGraphIOBase {
 
@@ -25,12 +26,22 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
     if (idxHits.hasNext()) Some(new DatasetVertex(idxHits.next()))
     else None       
   }
-  
-  def getReferencedPlaces(dataset: Dataset): Iterable[(Place, Int)] = { 
-    // TODO make getReferencedPlaces recursive
-    dataset.asInstanceOf[DatasetVertex].vertex.getOutEdges(RELATION_REFERENCES).asScala
-        .map(edge => (new PlaceVertex(edge.getInVertex) -> edge.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt))
+
+  def getReferencedPlaces(dataset: Dataset): Iterable[(Place, Int)] = {
+    val places = Map.empty[Place, Int]
+    _referencedPlacesRecursive(dataset, places)
+    places.toIterable
   }
+  
+  private def _referencedPlacesRecursive(dataset: Dataset, places: Map[Place, Int]): Unit = {
+    dataset.asInstanceOf[DatasetVertex].vertex.getOutEdges(RELATION_REFERENCES).asScala.foreach(edge => {
+      val place = new PlaceVertex(edge.getInVertex)
+      val count = edge.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt
+      places.put(place, places.get(place).getOrElse(0) + count)
+    })
+    
+    dataset.subsets.foreach(_referencedPlacesRecursive(_, places))
+  } 
   
   def getDatasetHierarchy(dataset: Dataset): List[Dataset] = {
     _traverseHierarchy(dataset.asInstanceOf[DatasetVertex].vertex, ListBuffer.empty[Dataset]).toList
