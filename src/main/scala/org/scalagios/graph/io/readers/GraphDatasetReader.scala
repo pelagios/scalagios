@@ -36,12 +36,12 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
     places.toIterable
   }
   
-  def getConvexHull(dataset: Dataset): Geometry = {
+  def getConvexHull(dataset: Dataset): Option[Geometry] = {
     val wkt = dataset.asInstanceOf[DatasetVertex].vertex.getPropertyAsString(DATASET_CONVEX_HULL)
     if (wkt.isDefined)
-      new WKTReader().read(wkt.get)
+      Some(new WKTReader().read(wkt.get))
     else
-      throw new GraphIntegrityException("Undefined Convex Hull for dataset " + dataset.uri)
+      None
   }
   
   private def _referencedPlacesRecursive(dataset: Dataset, places: Map[Place, Int]): Unit = {
