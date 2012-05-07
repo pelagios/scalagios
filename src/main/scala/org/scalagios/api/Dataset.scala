@@ -88,23 +88,6 @@ trait Dataset {
     dataset.subsets.foreach(subset => list ++= _recursiveList(subset, hasBody))
     list
   }
-    
-  /*
-  {
-    if (nested)
-      _listAnnotations(None).size + subsets.map(subset => _recursiveCount(subset)).foldLeft(0)((x, y) => x + y)
-    else
-      _listAnnotations(None).size
-  } */
-  
-  /*
-  private def _recursiveCount(dataset: Dataset): Int = {
-    // TODO I'm sure there's a better, more functional way to do this...
-    var count = dataset._listAnnotations(None).size
-    dataset.subsets.foreach(subset => count += _recursiveCount(subset))
-    count
-  }
-  */
 
   protected def _listAnnotations(hasBody: Option[String]): Iterable[GeoAnnotation]
   

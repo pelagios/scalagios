@@ -9,6 +9,9 @@ import org.scalagios.graph.VertexExtensions._
 import org.scalagios.graph.{DatasetVertex, PlaceVertex}
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import scala.collection.mutable.Map
+import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.io.WKTReader
+import org.scalagios.graph.exception.GraphIntegrityException
 
 trait GraphDatasetReader extends PelagiosGraphIOBase {
 
@@ -31,6 +34,14 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
     val places = Map.empty[Place, Int]
     _referencedPlacesRecursive(dataset, places)
     places.toIterable
+  }
+  
+  def getConvexHull(dataset: Dataset): Geometry = {
+    val wkt = dataset.asInstanceOf[DatasetVertex].vertex.getPropertyAsString(DATASET_CONVEX_HULL)
+    if (wkt.isDefined)
+      new WKTReader().read(wkt.get)
+    else
+      throw new GraphIntegrityException("Undefined Convex Hull for dataset " + dataset.uri)
   }
   
   private def _referencedPlacesRecursive(dataset: Dataset, places: Map[Place, Int]): Unit = {

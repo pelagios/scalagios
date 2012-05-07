@@ -8,9 +8,13 @@ import org.scalagios.api.{Dataset, GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.DatasetVertex
 import org.scalagios.graph.io.PelagiosGraphIOBase
-import org.scalagios.graph.exception.GraphIOException
-import org.scalagios.graph.exception.GraphIntegrityException
-import org.scalagios.graph.exception.GraphIOException
+import com.vividsolutions.jts.geom.Geometry
+import scala.collection.mutable.ListBuffer
+import org.scalagios.graph.exception.{GraphIOException, GraphIntegrityException}
+import org.scalagios.graph.PlaceVertex
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.algorithm.ConvexHull
+import com.vividsolutions.jts.geom.GeometryFactory
 
 trait GraphAnnotationWriter extends PelagiosGraphIOBase {
 
@@ -35,8 +39,9 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     
     _insertIntoDataset(annotations, datasets.head, dumpfile)
     
-    // Import complete - now update annotation counts recorded in dataset vertices
-    _updateAnnotationCounts(datasets.head)
+    // Import complete - run dataset vertex postprocessing (update annotation counts,
+    // compute convex hulls)
+    _postProcessDatasets(datasets.head)   
     
     // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
     if (graph.isInstanceOf[TransactionalGraph])
@@ -120,10 +125,32 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     aggregatedReferences.put(normalizedBody, referenceCount + 1)
   }
   
-  private def _updateAnnotationCounts(dataset: DatasetVertex): Unit = {
-    val recursiveCount = dataset.annotations(true).size
-    dataset.vertex.setProperty(DATASET_ANNOTATION_COUNT, recursiveCount)
-    dataset.subsets.foreach(_updateAnnotationCounts(_))
+  private def _postProcessDatasets(dataset: DatasetVertex): Unit = {
+    val nestedAnnotations = dataset.annotations(true)
+    
+    // Annotation count
+    dataset.vertex.setProperty(DATASET_ANNOTATION_COUNT, nestedAnnotations.size)
+    
+    // Convex hull
+    val coordinates = ListBuffer.empty[Coordinate]
+    
+    val placeUris = nestedAnnotations.groupBy(_.body).keys
+    placeUris.foreach(uri =>  {
+      val idxHits = placeIndex.get(PLACE_URI, uri)
+      if (idxHits.hasNext) {
+        val location = new PlaceVertex(idxHits.next).location
+        if (location.isDefined)
+          coordinates.appendAll(location.get.getCoordinates)
+      } else {
+        throw new GraphIntegrityException("Annotation references place " + uri + ", but was not found during post-processing")
+      }
+    })
+    
+    val convexHull = new ConvexHull(coordinates.toArray, new GeometryFactory)
+    dataset.vertex.setProperty(DATASET_CONVEX_HULL, convexHull.getConvexHull.toText)
+
+    // Continue with subsets
+    dataset.subsets.foreach(_postProcessDatasets(_))
   }
   
 }

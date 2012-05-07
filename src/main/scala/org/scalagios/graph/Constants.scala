@@ -55,6 +55,7 @@ object Constants {
   val DATASET_URIREGEXPATTERN = "uriRegexPattern"
   val DATASET_HASH = "hashCode"
   val DATASET_ANNOTATION_COUNT = "annotationCount"
+  val DATASET_CONVEX_HULL = "convexHull"
     
   /**
    * GeoAnnotation vertex properties
