@@ -10,6 +10,9 @@ import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.apache.lucene.util.Version
 import org.apache.lucene.queryParser.QueryParser
 import org.apache.lucene.analysis.KeywordAnalyzer
+import org.apache.lucene.search.NumericRangeQuery
+import org.apache.lucene.search.BooleanQuery
+import org.apache.lucene.search.BooleanClause
 
 trait Neo4jIndexReader extends PelagiosGraphIOBase {
 
@@ -27,6 +30,18 @@ trait Neo4jIndexReader extends PelagiosGraphIOBase {
     
     placeNodeIndex.query(new QueryContext(query).sortByScore).iterator.asScala 
       .map(node =>  new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList 
+  }
+  
+  def queryPlaces(minLon: Double, minLat: Double, maxLon: Double, maxLat: Double): List[Place] = {
+    val lon = NumericRangeQuery.newDoubleRange(PLACE_LON, minLon, maxLon, true, true)
+    val lat = NumericRangeQuery.newDoubleRange(PLACE_LAT, minLat, maxLat, true, true)
+    
+    val compound = new BooleanQuery()
+    compound.add(lon, BooleanClause.Occur.MUST)
+    compound.add(lat, BooleanClause.Occur.MUST)
+    
+    placeNodeIndex.query(compound).iterator.asScala
+      .map(node => new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList
   }
   
   def queryDatasets(query: String): List[Dataset] = {

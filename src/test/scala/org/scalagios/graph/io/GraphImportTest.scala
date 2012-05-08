@@ -133,9 +133,21 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
     // TODO test annotations as soon as we have decent test data!
     
+    graph.shutdown()
+  }
+  
+  test("Test queries") {
     println("  Testing queries. ")
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    val reader = new PelagiosNeo4jReader(graph)
+    val writer = new PelagiosGraphWriter(graph)
+    
     reader.queryPlaces("leptis magna").foreach(place => println("    " + place.label.get))
     reader.queryDatasets("herodot").foreach(dataset => println("    " + dataset.title))
+        
+    val viennaRegion = reader.queryPlaces(16.3, 48.2, 16.4, 48.3)
+    assert(viennaRegion.size > 0)
+    assert(viennaRegion.mapConserve(_.label).contains(Some("Vindobona")))
     
     graph.shutdown()
   }

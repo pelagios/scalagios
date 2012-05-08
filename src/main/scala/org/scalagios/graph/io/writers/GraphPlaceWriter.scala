@@ -1,15 +1,14 @@
 package org.scalagios.graph.io.writers
 
 import scala.collection.JavaConverters._
-
 import com.tinkerpop.blueprints.pgm.{IndexableGraph, TransactionalGraph}
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
-
 import org.scalagios.api.{GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.GeoAnnotationVertex
 import org.scalagios.graph.exception.GraphIOException
 import org.scalagios.graph.io.PelagiosGraphIOBase
+import org.neo4j.index.lucene.ValueContext
 
 trait GraphPlaceWriter extends PelagiosGraphIOBase {
   
@@ -40,6 +39,11 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       if (place.comment.isDefined) placeIndex.put(PLACE_COMMENT, place.comment.get, vertex)
       if (place.altLabels.isDefined) placeIndex.put(PLACE_ALTLABELS, place.altLabels.get, vertex)
       if (place.coverage.isDefined) placeIndex.put(PLACE_COVERAGE, place.coverage.get, vertex)
+      if (place.location.isDefined) {
+        val centroid = place.location.get.getCentroid.getCoordinate
+        placeIndex.put(PLACE_LON, new ValueContext(centroid.x).indexNumeric(), vertex)
+        placeIndex.put(PLACE_LAT, new ValueContext(centroid.y).indexNumeric(), vertex)
+      }
     })
     
     // Create PLACE -- within --> PLACE relations
