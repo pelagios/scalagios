@@ -87,42 +87,45 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
   
   private def _createAnnotationVertex(annotation: GeoAnnotation, dataset: DatasetVertex) = {
     val normalizedBody = normalizeURL(annotation.body)
-    
-    // Create ANNOTATION vertex
-    val annotationVertex = graph.addVertex(null)
-    annotationVertex.setProperty(VERTEX_TYPE, ANNOTATION_VERTEX)
-    annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
-    annotationVertex.setProperty(ANNOTATION_BODY, normalizedBody)
-    if (annotation.title.isDefined) annotationVertex.setProperty(ANNOTATION_TITLE, annotation.title.get)
-    
-    // Create ANNOTATION_TARGET vertex
-    val annotationTargetVertex = graph.addVertex(null)
-    annotationTargetVertex.setProperty(VERTEX_TYPE, ANNOTATION_TARGET_VERTEX)
-    annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
-    if (annotation.target.title.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title.get)
-    if (annotation.target.thumbnail.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_THUMBNAIL, annotation.target.thumbnail.get)
 
-    // Create DATASET -- contains --> ANNOTATION relation
-    graph.addEdge(null, dataset.vertex, annotationVertex, RELATION_CONTAINS)
-    
-    // Create ANNOTATION -- hasTarget --> ANNOTATION_TARGET relation
-    graph.addEdge(null, annotationVertex, annotationTargetVertex, RELATION_HASTARGET)
-    
-    // Create ANNOTATION -- hasBody --> PLACE relation 
+    // Only include annotation if it references a place that's actually in the graph
     val places = placeIndex.get(PLACE_URI, normalizedBody)
-    if (places.hasNext())
-      graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
-    else
-      throw GraphIOException("Place referenced by annotation not found in Graph: " + normalizedBody)
-
-    // Add to index
-    annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
-    if (annotation.title.isDefined) annotationIndex.put(ANNOTATION_TITLE, annotation.title.get, annotationVertex)
-    if (annotation.target.title.isDefined) annotationIndex.put(ANNOTATION_TARGET_URI, annotation.target.title.get, annotationVertex)
+    if (places.hasNext()) {
+      // Create ANNOTATION vertex
+      val annotationVertex = graph.addVertex(null)
+      annotationVertex.setProperty(VERTEX_TYPE, ANNOTATION_VERTEX)
+      annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
+      annotationVertex.setProperty(ANNOTATION_BODY, normalizedBody)
+      if (annotation.title.isDefined) annotationVertex.setProperty(ANNOTATION_TITLE, annotation.title.get)
     
-    // Record in aggregateReferences counter
-    val referenceCount = aggregatedReferences.get(normalizedBody).getOrElse(0)
-    aggregatedReferences.put(normalizedBody, referenceCount + 1)
+      // Create ANNOTATION_TARGET vertex
+      val annotationTargetVertex = graph.addVertex(null)
+      annotationTargetVertex.setProperty(VERTEX_TYPE, ANNOTATION_TARGET_VERTEX)
+      annotationTargetVertex.setProperty(ANNOTATION_TARGET_URI, annotation.target.uri)
+      if (annotation.target.title.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_TITLE, annotation.target.title.get)
+      if (annotation.target.thumbnail.isDefined) annotationTargetVertex.setProperty(ANNOTATION_TARGET_THUMBNAIL, annotation.target.thumbnail.get)
+    
+      // Create DATASET -- contains --> ANNOTATION relation
+      graph.addEdge(null, dataset.vertex, annotationVertex, RELATION_CONTAINS)
+    
+      // Create ANNOTATION -- hasTarget --> ANNOTATION_TARGET relation
+      graph.addEdge(null, annotationVertex, annotationTargetVertex, RELATION_HASTARGET)
+
+      // Create ANNOTATION -- hasBody --> PLACE relation 
+      graph.addEdge(null, annotationVertex, places.next(), RELATION_HASBODY)
+
+      // Add to index
+      annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
+      if (annotation.title.isDefined) annotationIndex.put(ANNOTATION_TITLE, annotation.title.get, annotationVertex)
+      if (annotation.target.title.isDefined) annotationIndex.put(ANNOTATION_TARGET_URI, annotation.target.title.get, annotationVertex)
+    
+      // Record in aggregateReferences counter
+      val referenceCount = aggregatedReferences.get(normalizedBody).getOrElse(0)
+      aggregatedReferences.put(normalizedBody, referenceCount + 1)      
+    } else {
+      // TODO we need a good policy to deal with bodies pointing to places not in the graph - for now, just ignore silently
+
+    }
   }
   
   private def _postProcessDatasets(dataset: DatasetVertex): Unit = {

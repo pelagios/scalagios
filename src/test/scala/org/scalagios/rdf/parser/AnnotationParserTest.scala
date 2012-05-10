@@ -27,7 +27,7 @@ class AnnotationParserTest extends FunSuite {
     println(annotationCollector.annotationsTotal + " annotations imported")
     
     assert(annotationCollector.triplesTotal == 5548)
-    assert(annotationCollector.triplesProcessed == 5547)
+    assert(annotationCollector.triplesProcessed == 5548)
     assert(annotationCollector.annotationsTotal == 1849)
     
     annotationCollector.getAnnotations.foreach(annotation => assert(annotation.isValid))

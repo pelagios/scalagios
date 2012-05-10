@@ -10,6 +10,15 @@ import org.scalagios.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
 import org.scalagios.rdf.vocab.DCTerms
 import org.scalagios.rdf.vocab.FOAF
 import org.scalagios.api.DefaultGeoAnnotationTarget
+import org.openrdf.model.vocabulary.RDFS
+import org.scalagios.rdf.parser.validation.ValidationIssue
+import org.scalagios.rdf.parser.validation.Severity
+
+/**
+ * A default OACEntity implementation we can use as placeholder as long is we don't 
+ * know what type of entity we are dealing with
+ */
+class DefaultOACEntity(var uri:String) { var title: Option[String] = None } 
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -23,28 +32,11 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
   // A utility type that covers common properties of GeoAnnotations and GeoAnnotationTargets 
   type OACEntity = { var uri: String; var title: Option[String] }
   
-  // A default OACEntity implementation we can use as placeholder as long is we don't know
-  // what type of entity we are dealing with
-  class DefaultOACEntity(var uri:String) { var title: Option[String] = None } 
-  
   // Utility method to convert from OACEntity place holder to concrete object
   private def _convert[T<: OACEntity](entity: OACEntity, clazz: Class[T]): T = {
     val converted = clazz.getConstructors()(0).newInstance(entity.uri).asInstanceOf[T]
     converted.title = entity.title
     converted
-    /*
-    if (clazz.isInstanceOf[DefaultGeoAnnotation]) {
-      val annotation = new DefaultGeoAnnotation(entity.uri)
-      annotation.title = entity.title
-      annotation.asInstanceOf[T]
-    } else if (clazz.isInstanceOf[DefaultGeoAnnotationTarget]) {
-      val target = new DefaultGeoAnnotationTarget(entity.uri)
-      target.title = entity.title
-      target.asInstanceOf[T]
-    } else {
-      throw new RuntimeException()
-    }
-    */
   }    
 
   private val annotationBuffer = new HashMap[String, OACEntity]
@@ -71,6 +63,9 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
       case (FOAF.thumbnail, _) => 
         getOrCreate(subj, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget].thumbnail = 
           Some(obj.stringValue)
+      // NOTE: we support rdfs:label for titles, but it's deprecated - use dcterms:title instead!
+      case (RDFS.LABEL, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
+        Some(obj.stringValue())
       case (DCTerms.title, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
         Some(obj.stringValue())
       
