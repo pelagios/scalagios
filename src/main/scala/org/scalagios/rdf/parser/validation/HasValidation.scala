@@ -7,7 +7,7 @@ import org.openrdf.model.vocabulary.RDFS
 
 private[parser] trait HasValidation {
 
-  protected val issues = ListBuffer[ValidationIssue]()
+  val issues = ListBuffer[ValidationIssue]()
   
   private val WRONG_LABEL_TYPE_RDFS_LABEL = "Please use dcterms:title to assign labels - not rdfs:label"
   private val DESCRIPTION_TOO_LONG = "Dataset descriptions should be 80 characters maximum"
