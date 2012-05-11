@@ -6,16 +6,16 @@ import com.tinkerpop.blueprints.pgm.TransactionalGraph
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
 import org.scalagios.api.{Dataset, GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
-import org.scalagios.graph.DatasetVertex
+import org.scalagios.graph.{DatasetVertex, PlaceVertex}
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import com.vividsolutions.jts.geom.Geometry
 import scala.collection.mutable.ListBuffer
 import org.scalagios.graph.exception.{GraphIOException, GraphIntegrityException}
-import org.scalagios.graph.PlaceVertex
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom.GeometryFactory
 import org.scalagios.api.DefaultGeoAnnotation
+import com.tinkerpop.blueprints.pgm.Edge
 
 trait GraphAnnotationWriter extends PelagiosGraphIOBase {
 
@@ -84,8 +84,21 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
         aggregatedReferences.foreach {case (key, value) => {
           val hits = placeIndex.get(PLACE_URI, key)
           if (hits.hasNext) {
-            val edge = graph.addEdge(null, dataset.vertex, hits.next, RELATION_REFERENCES)
-            edge.setProperty(REL_PROPERTY_REFERENCECOUNT, value)
+            val placeVertex = hits.next
+            
+            var referencesSoFar: Option[Edge] = None
+            placeVertex.getInEdges(RELATION_REFERENCES).asScala.foreach(edge =>
+              if (edge.getOutVertex == dataset.vertex)
+                referencesSoFar = Some(edge)
+            )
+            
+            if (referencesSoFar.isDefined) {
+              val cnt = referencesSoFar.get.getProperty(REL_PROPERTY_REFERENCECOUNT).toString.toInt
+              referencesSoFar.get.setProperty(REL_PROPERTY_REFERENCECOUNT, cnt + value)
+            } else {
+              val edge = graph.addEdge(null, dataset.vertex, placeVertex, RELATION_REFERENCES)
+              edge.setProperty(REL_PROPERTY_REFERENCECOUNT, value)
+            }
           }  
         }}
       }  
