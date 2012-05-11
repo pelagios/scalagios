@@ -15,6 +15,7 @@ import org.scalagios.graph.PlaceVertex
 import com.vividsolutions.jts.geom.Coordinate
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom.GeometryFactory
+import org.scalagios.api.DefaultGeoAnnotation
 
 trait GraphAnnotationWriter extends PelagiosGraphIOBase {
 
@@ -72,6 +73,12 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
          
         } else if (dumpfile != null && dataset.associatedDatadumps.contains(dumpfile)) {
           annotations.foreach(annotation => _createAnnotationVertex(annotation, dataset))
+        } else {
+          // Note: special handling for ARACHNE
+          annotations.filter(annotation => {
+            annotation.isInstanceOf[DefaultGeoAnnotation] &&
+            annotations.asInstanceOf[DefaultGeoAnnotation].inDataset == dataset.uri
+          }).foreach(_createAnnotationVertex(_, dataset))
         }
         
         aggregatedReferences.foreach {case (key, value) => {

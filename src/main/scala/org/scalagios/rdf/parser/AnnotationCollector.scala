@@ -13,6 +13,7 @@ import org.scalagios.api.DefaultGeoAnnotationTarget
 import org.openrdf.model.vocabulary.RDFS
 import org.scalagios.rdf.parser.validation.ValidationIssue
 import org.scalagios.rdf.parser.validation.Severity
+import org.scalagios.rdf.vocab.VoID
 
 /**
  * A default OACEntity implementation we can use as placeholder as long is we don't 
@@ -65,9 +66,11 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
           Some(obj.stringValue)
       // NOTE: we support rdfs:label for titles, but it's deprecated - use dcterms:title instead!
       case (RDFS.LABEL, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
-        Some(obj.stringValue())
+        Some(obj.stringValue)
       case (DCTerms.title, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
-        Some(obj.stringValue())
+        Some(obj.stringValue)
+      case (VoID.inDataset, _) => getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].inDataset =
+        Some(obj.stringValue)
       
       case _ => triplesSkipped += 1
     }
