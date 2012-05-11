@@ -77,7 +77,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
           // Note: special handling for ARACHNE
           annotations.filter(annotation => {
             annotation.isInstanceOf[DefaultGeoAnnotation] &&
-            annotations.asInstanceOf[DefaultGeoAnnotation].inDataset == dataset.uri
+            annotation.asInstanceOf[DefaultGeoAnnotation].inDataset.getOrElse(None) == dataset.uri
           }).foreach(_createAnnotationVertex(_, dataset))
         }
         
@@ -94,7 +94,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
   
   private def _createAnnotationVertex(annotation: GeoAnnotation, dataset: DatasetVertex) = {
     val normalizedBody = normalizeURL(annotation.body)
-
+    
     // Only include annotation if it references a place that's actually in the graph
     val places = placeIndex.get(PLACE_URI, normalizedBody)
     if (places.hasNext()) {
