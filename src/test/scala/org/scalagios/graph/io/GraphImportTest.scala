@@ -25,8 +25,8 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   private val NEO4J_DIR = "neo4j-test"
   private val PLEIADES_DUMP = "src/test/resources/places-20120401.ttl.gz"
    
-  private val SAMPLE_VOID = "src/test/resources/gap-void-sample.ttl"
-  private val SAMPLE_ANNOTATIONS = "src/test/resources/gap-triples-sample.n3" 
+  private val VOID = "src/test/resources/gap-void.ttl"
+  private val ANNOTATIONS_DUMP = "src/test/resources/gap-triples.n3.gz" 
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
@@ -68,7 +68,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val ttlParser = new TurtleParserFactory().getParser()
     val datasetCollector = new DatasetCollector()
     ttlParser.setRDFHandler(datasetCollector)
-    ttlParser.parse(new FileInputStream(new File(SAMPLE_VOID)), ANNOTATION_BASEURI)
+    ttlParser.parse(new FileInputStream(new File(VOID)), ANNOTATION_BASEURI)
     assert(datasetCollector.datasetsTotal == 410)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
@@ -78,8 +78,8 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val n3Parser = new N3ParserFactory().getParser()
     val annotationCollector = new AnnotationCollector()
     n3Parser.setRDFHandler(annotationCollector)
-    n3Parser.parse(new FileInputStream(new File(SAMPLE_ANNOTATIONS)), ANNOTATION_BASEURI)
-    assert(annotationCollector.annotationsTotal == 1849)
+    n3Parser.parse(new GZIPInputStream(new FileInputStream(new File(ANNOTATIONS_DUMP))), ANNOTATION_BASEURI)
+    assert(annotationCollector.annotationsTotal == 41053)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
     // Import data to Graph
@@ -128,11 +128,9 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val sampleDataset = datasetsTotal.drop(3).head
     println("  Hierarchy example: " + sampleDataset.title + " > " + 
         reader.getDatasetHierarchy(sampleDataset).map(_.title).mkString(" > "))
-    
-    assert(topLevelDatasets.head.countAnnotations(true) == 1)
-    
-    // TODO test annotations as soon as we have decent test data!
-    
+
+    println(topLevelDatasets.head.countAnnotations(true))
+    assert(topLevelDatasets.head.countAnnotations(true) == 41053)    
     graph.shutdown()
   }
   
