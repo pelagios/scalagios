@@ -104,7 +104,7 @@ trait Dataset {
   /**
    * Utility method that checks if all mandatory properties are set
    */
-  def isValid: Boolean = (!uri.isEmpty() && !rootUri.isEmpty && !title.isEmpty())
+  def isValid: Boolean = (uri != null && rootUri != null && title != null)
 
 }
 
