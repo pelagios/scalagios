@@ -40,9 +40,14 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     
     _insertIntoDataset(annotations, datasets.head, dumpfile)
     
-    // Import complete - run dataset vertex postprocessing (update annotation counts,
-    // compute convex hulls)
-    _postProcessDatasets(datasets.head)   
+    // Import complete - run dataset vertex postprocessing: i.e. update 
+    // annotation counts and compute convex hulls, starting fromthe root set
+    val rootSets = datasetIndex.get(DATASET_URI, datasets.head.rootUri).iterator.asScala.map(new DatasetVertex(_)).toList
+    if (rootSets.size != 1)
+      // Should never happen
+      throw new GraphIntegrityException("Dataset " + datasetUri + " has " + rootSets.size + " rootsets");
+    
+    _postProcessDatasets(rootSets.head)   
     
     // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
     if (graph.isInstanceOf[TransactionalGraph])
@@ -153,7 +158,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     
     // Annotation count
     dataset.vertex.setProperty(DATASET_ANNOTATION_COUNT, nestedAnnotations.size)
-    
+        
     // Convex hull
     val coordinates = ListBuffer.empty[Coordinate]
     
