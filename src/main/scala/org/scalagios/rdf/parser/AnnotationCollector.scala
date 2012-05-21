@@ -14,6 +14,7 @@ import org.openrdf.model.vocabulary.RDFS
 import org.scalagios.rdf.parser.validation.ValidationIssue
 import org.scalagios.rdf.parser.validation.Severity
 import org.scalagios.rdf.vocab.VoID
+import org.scalagios.rdf.vocab.DC
 
 /**
  * A default OACEntity implementation we can use as placeholder as long is we don't 
@@ -66,6 +67,9 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
           Some(obj.stringValue)
       // NOTE: we support rdfs:label for titles, but it's deprecated - use dcterms:title instead!
       case (RDFS.LABEL, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
+        Some(obj.stringValue)
+      // NOTE: we support dc:title for titles, but it's deprecated - use dcterms:title instead!      
+      case (DC.title, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
         Some(obj.stringValue)
       case (DCTerms.title, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
         Some(obj.stringValue)
