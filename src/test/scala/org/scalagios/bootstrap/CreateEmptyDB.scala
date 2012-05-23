@@ -8,12 +8,12 @@ import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.io.PelagiosGraphWriter
 import org.scalagios.rdf.parser.{PlaceCollector, AnnotationCollector, DatasetCollector}
 
-object CreateSampleDB {
+object CreateEmptyDB {
   
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
   
   def main(args: Array[String]): Unit = {
-    println("Building sample graph DB")
+    println("Building emtpy graph DB")
     print("Importing places... ")
         
     // Parse sample Pleiades dump
@@ -27,30 +27,7 @@ object CreateSampleDB {
     val neo4j = new Neo4jGraph("neo4j")
     val writer = new PelagiosGraphWriter(neo4j)
     writer.insertPlaces(placeCollector.getPlaces) 
-    println("done.")
-    
-    // Parse VoID RDF
-    print("Importing sample GAP data... ")
-    val ttlParser = new TurtleParserFactory().getParser()
-    val datasetCollector = new DatasetCollector()
-    ttlParser.setRDFHandler(datasetCollector)
-    ttlParser.parse(new FileInputStream(new File("src/test/resources/gap-void-sample.ttl")), 
-        ANNOTATION_BASEURI)
-    
-    // Parse annotation RDF
-    val n3Parser = new N3ParserFactory().getParser()
-    val annotationCollector = new AnnotationCollector()
-    n3Parser.setRDFHandler(annotationCollector)
-    n3Parser.parse(new FileInputStream(new File("src/test/resources/gap-triples-sample.n3")), 
-        ANNOTATION_BASEURI)
-    
-    // Import data to Graph
-    datasetCollector.getRootDatasets.foreach(writer.insertDataset(_))
-    writer.insertAnnotations(annotationCollector.getAnnotations, datasetCollector.getRootDatasets.head.uri)
-    neo4j.shutdown()
-    println("done.")
-    
-    println("Sample DB complete")
+    println("DB complete.")
   }
 
 }

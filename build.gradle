@@ -35,8 +35,8 @@ dependencies {
     testCompile 'org.scalatest:scalatest_2.9.0:1.6.1'
 }
 
-task createSampleDB(type: JavaExec) { 
-    main = 'org.scalagios.bootstrap.CreateSampleDB'
+task createEmptyDB(type: JavaExec) { 
+    main = 'org.scalagios.bootstrap.CreateEmptyDB'
     jvmArgs = ["-Xms1024m"]
     classpath sourceSets.main.output
     classpath sourceSets.test.output
