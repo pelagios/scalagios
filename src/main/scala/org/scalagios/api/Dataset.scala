@@ -24,6 +24,11 @@ trait Dataset {
   def rootUri: String
   
   /**
+   * Last updated timestamp (mandatory)
+   */
+  def lastUpdated: Long
+  
+  /**
    * The title (mandatory)
    */
   def title: String
@@ -104,7 +109,7 @@ trait Dataset {
   /**
    * Utility method that checks if all mandatory properties are set
    */
-  def isValid: Boolean = (uri != null && rootUri != null && title != null)
+  def isValid: Boolean = (uri != null && rootUri != null && lastUpdated != 0 && title != null)
 
 }
 
@@ -120,7 +125,9 @@ case class DefaultDataset(val uri: String) extends Dataset {
     if (parent.isEmpty)
       uri
     else
-      parent.get.rootUri        
+      parent.get.rootUri     
+      
+  var lastUpdated: Long = _ // mandatory
   
   var title: String = _ // mandatory
   

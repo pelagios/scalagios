@@ -19,6 +19,11 @@ class VertexExtensions(vertex: Vertex) {
     val property = vertex.getProperty(key)
     if (property == null) Double.NaN else property.toString.toDouble
   }
+  
+  def getPropertyAsLong(key: String): Option[Long] = {
+    val property = vertex.getProperty(key)
+    if (property == null) None else Some(property.toString.toLong)
+  }
     
   def getOutNeighbour(relation: String): Option[Vertex] = {
     val outEdges = vertex.getOutEdges(relation).iterator

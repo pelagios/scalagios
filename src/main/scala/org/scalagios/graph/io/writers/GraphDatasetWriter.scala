@@ -43,6 +43,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
     datasetVertex.setProperty(DATASET_URI, dataset.uri)
     datasetVertex.setProperty(DATASET_ROOTURI, dataset.rootUri)
+    datasetVertex.setProperty(DATASET_LASTUPDATED, dataset.lastUpdated)
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
     if (dataset.description.isDefined) datasetVertex.setProperty(DATASET_DESCRIPTION, dataset.description.get)
     if (dataset.license.isDefined) 

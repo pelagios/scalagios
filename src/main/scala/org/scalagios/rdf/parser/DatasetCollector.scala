@@ -19,6 +19,12 @@ import org.scalagios.rdf.parser.validation.HasValidation
 class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidation {
   
   /**
+   * We'll use the instantiation time of the collector as timestamp for the 'lastUpdate'
+   * property of all Datasets we parse
+   */
+  private val startTime = System.currentTimeMillis
+  
+  /**
    * Maps a Dataset URI to the Dataset
    */
   private val datasetBuffer = new HashMap[String, DefaultDataset]
@@ -76,6 +82,7 @@ class DatasetCollector extends RDFHandlerBase with HasStatistics with HasValidat
       case Some(d) => d
       case None =>  {
         val d = new DefaultDataset(uri)
+        d.lastUpdated = startTime
         datasetBuffer.put(uri, d)
         d
       }
