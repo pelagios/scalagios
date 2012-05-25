@@ -11,6 +11,8 @@ import org.scalagios.graph.exception.GraphIOException
 import org.scalagios.graph.exception.GraphIntegrityException
 
 trait GraphDatasetWriter extends PelagiosGraphIOBase {
+  
+  private val UNKNOWN_LICENSE = "[unknown]"
 
   /**
    * Recursively insert a dataset and all its subsets into the graph 
@@ -35,7 +37,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
-  private def _insertDatasetVertex(dataset: Dataset): Vertex = {
+  private def _insertDatasetVertex(dataset: Dataset, parent: Option[DatasetVertex] = None): Vertex = {
     // Insert dataset into graph
     val datasetVertex = graph.addVertex(null)
     datasetVertex.setProperty(VERTEX_TYPE, DATASET_VERTEX)
@@ -43,7 +45,11 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     datasetVertex.setProperty(DATASET_ROOTURI, dataset.rootUri)
     datasetVertex.setProperty(DATASET_TITLE, dataset.title)
     if (dataset.description.isDefined) datasetVertex.setProperty(DATASET_DESCRIPTION, dataset.description.get)
-    if (dataset.license.isDefined) datasetVertex.setProperty(DATASET_LICENSE, dataset.license.get)
+    if (dataset.license.isDefined) 
+      datasetVertex.setProperty(DATASET_LICENSE, dataset.license.get)
+    else if (parent.isDefined)
+      datasetVertex.setProperty(DATASET_LICENSE, parent.get.license.getOrElse(UNKNOWN_LICENSE))
+      
     if (dataset.homepage.isDefined) datasetVertex.setProperty(DATASET_HOMEPAGE, dataset.homepage.get)
     if (dataset.associatedDatadumps.size > 0) datasetVertex.setProperty(DATASET_DATADUMP, dataset.associatedDatadumps.mkString(","))
     if (dataset.associatedUriSpace.isDefined) datasetVertex.setProperty(DATASET_URISPACE, dataset.associatedUriSpace.get) 
@@ -57,7 +63,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     
     // Continue with subsets
     dataset.subsets.foreach(subset => {
-      val subsetVertex = _insertDatasetVertex(subset)
+      val subsetVertex = _insertDatasetVertex(subset, Some(DatasetVertex(datasetVertex)))
       graph.addEdge(null, datasetVertex, subsetVertex, RELATION_SUBSET)
     })
     
