@@ -63,6 +63,12 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
   }
    
   def postProcessing(places: Iterable[Place] ) {
+    if (graph.isInstanceOf[TransactionalGraph]) {
+      val tGraph = graph.asInstanceOf[TransactionalGraph]
+      tGraph.setMaxBufferSize(0)
+      tGraph.startTransaction()
+    }
+
     // Create PLACE -- within --> PLACE relations
     places.filter(place => place.within.isDefined).foreach(place => {
       val normalizedURL = normalizeURL(place.uri)
@@ -97,6 +103,9 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     if (floatingAnnotations.size > 0)
       throw new GraphIOException("Could not re-wire all annotations after Place import:\n" +
       	floatingAnnotations.mkString("\n"))    
+    
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
   
 }
