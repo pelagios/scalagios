@@ -15,13 +15,9 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
   private def BATCH_SIZE = 2000
   
   def insertPlaces(places: Iterable[Place]) = {
-    var placeBuffer = places.toList
-    while (placeBuffer.size > BATCH_SIZE) {
-      insertPlaceBatch(placeBuffer.take(BATCH_SIZE))
-      placeBuffer = placeBuffer.drop(BATCH_SIZE)
-      println("Inserted " + BATCH_SIZE + " places into DB - " + placeBuffer.size + " left")
-    }
-    insertPlaceBatch(placeBuffer)
+    // Split into batches to make transactions smaller (less memory consumption)
+    places.grouped(BATCH_SIZE).foreach(batch => insertPlaceBatch(batch))
+    postProcessing(places)
   }
   
   def insertPlaceBatch(places: Iterable[Place]) = {    

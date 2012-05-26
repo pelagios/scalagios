@@ -69,7 +69,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val datasetCollector = new DatasetCollector()
     ttlParser.setRDFHandler(datasetCollector)
     ttlParser.parse(new FileInputStream(new File(VOID)), ANNOTATION_BASEURI)
-    assert(datasetCollector.datasetsTotal == 1263)
+    assert(datasetCollector.datasetsTotal == 806)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
     // Parse annotation RDF
@@ -79,7 +79,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val annotationCollector = new AnnotationCollector()
     n3Parser.setRDFHandler(annotationCollector)
     n3Parser.parse(new GZIPInputStream(new FileInputStream(new File(ANNOTATIONS_DUMP))), ANNOTATION_BASEURI)
-    assert(annotationCollector.annotationsTotal == 5100)
+    assert(annotationCollector.annotationsTotal == 2116)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
     // Import data to Graph
@@ -114,7 +114,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     })
     
     val datasetsTotal = reader.getVertices(DATASET_VERTEX).map(new DatasetVertex(_))
-    assert(datasetsTotal.size == 1263)
+    assert(datasetsTotal.size == 806)
      
     var ctRoot = 0
     datasetsTotal.foreach(dataset => {
@@ -130,7 +130,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
         reader.getDatasetHierarchy(sampleDataset).map(_.title).mkString(" > "))
 
     println(topLevelDatasets.head.countAnnotations(true))
-    assert(topLevelDatasets.head.countAnnotations(true) == 5100)    
+    assert(topLevelDatasets.head.countAnnotations(true) == 2116)    
     graph.shutdown()
   }
   
