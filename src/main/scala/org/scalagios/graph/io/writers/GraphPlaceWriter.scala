@@ -19,6 +19,7 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     while (placeBuffer.size > BATCH_SIZE) {
       insertPlaceBatch(placeBuffer.take(BATCH_SIZE))
       placeBuffer = placeBuffer.drop(BATCH_SIZE)
+      println("Inserted " + BATCH_SIZE + " places into DB - " + placeBuffer.size + " left")
     }
     insertPlaceBatch(placeBuffer)
   }
