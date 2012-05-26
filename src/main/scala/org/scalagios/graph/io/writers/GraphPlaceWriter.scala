@@ -12,7 +12,18 @@ import org.neo4j.index.lucene.ValueContext
 
 trait GraphPlaceWriter extends PelagiosGraphIOBase {
   
-  def insertPlaces(places: Iterable[Place]) = {    
+  private def BATCH_SIZE = 2000
+  
+  def insertPlaces(places: Iterable[Place]) = {
+    var placeBuffer = places.toList
+    while (placeBuffer.size > BATCH_SIZE) {
+      insertPlaceBatch(placeBuffer.take(BATCH_SIZE))
+      placeBuffer = placeBuffer.drop(BATCH_SIZE)
+    }
+    insertPlaceBatch(placeBuffer)
+  }
+  
+  def insertPlaceBatch(places: Iterable[Place]) = {    
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
       tGraph.setMaxBufferSize(0)
@@ -46,6 +57,11 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       }
     })
     
+    if (graph.isInstanceOf[TransactionalGraph])
+      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+  }
+   
+  def postProcessing(places: Iterable[Place] ) {
     // Create PLACE -- within --> PLACE relations
     places.filter(place => place.within.isDefined).foreach(place => {
       val normalizedURL = normalizeURL(place.uri)
@@ -79,10 +95,7 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     })
     if (floatingAnnotations.size > 0)
       throw new GraphIOException("Could not re-wire all annotations after Place import:\n" +
-      	floatingAnnotations.mkString("\n"))
-    
-    if (graph.isInstanceOf[TransactionalGraph])
-      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
+      	floatingAnnotations.mkString("\n"))    
   }
   
 }
