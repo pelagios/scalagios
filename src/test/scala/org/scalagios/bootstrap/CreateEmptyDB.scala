@@ -27,6 +27,7 @@ object CreateEmptyDB {
     val neo4j = new Neo4jGraph("neo4j")
     val writer = new PelagiosGraphWriter(neo4j)
     writer.insertPlaces(placeCollector.getPlaces) 
+    neo4j.shutdown
     println("DB complete.")
   }
 
