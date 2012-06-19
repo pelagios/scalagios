@@ -99,6 +99,13 @@ trait Dataset {
   def countAnnotations(nested: Boolean = false): Int
   
   /**
+   * Utility method that checks whether this dataset is a child of the dataset with
+   * the specified URI. The check runs recursively across the entire hierarchy (up to the root 
+   * level), i.e. it does not just check for direct parent/child relationship
+   */
+  def isChildOf(uri: String): Boolean
+  
+  /**
    * Utility method that produces an MD5 hash of the URI
    */
   def md5: String = {
@@ -125,7 +132,7 @@ case class DefaultDataset(val uri: String) extends Dataset {
     if (parent.isEmpty)
       uri
     else
-      parent.get.rootUri     
+      parent.get.rootUri  
       
   var lastUpdated: Long = _ // mandatory
   
@@ -165,4 +172,13 @@ case class DefaultDataset(val uri: String) extends Dataset {
   
   def countAnnotations(nested: Boolean = false): Int = annotations(nested).size // No need for optimization in this case
   
+  def isChildOf(uri: String) =
+    if (parent.isEmpty)
+      false
+    else
+      if (parent.get.uri.equals(uri))
+        true
+      else
+        parent.get.isChildOf(uri)
+        
 }

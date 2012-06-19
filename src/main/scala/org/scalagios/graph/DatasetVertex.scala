@@ -57,5 +57,16 @@ case class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
     else
       _listAnnotations(None).size
   }
-   
+  
+  def isChildOf(uri: String) = {
+    val parent = vertex.getInNeighbour(RELATION_SUBSET).map(new DatasetVertex(_))
+    if (parent.isEmpty)
+      false
+    else
+      if (parent.get.uri.equals(uri))
+        true
+      else
+        parent.get.isChildOf(uri)
+  }
+    
 }

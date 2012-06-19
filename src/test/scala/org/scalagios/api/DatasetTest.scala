@@ -20,20 +20,27 @@ class DatasetTest extends FunSuite {
    
   val dataset0_0 = new DefaultDataset("http://www.example.com/datasets/0_0")
   val dataset0_0_0 = new DefaultDataset("http://www.example.com/datasets/0_0_0")
+  dataset0_0_0.parent = Some(dataset0_0)
   dataset0_0_0.setAnnotations(List(
     new DefaultGeoAnnotation("http://www.example.com/annotations/0001"),
     new DefaultGeoAnnotation("http://www.example.com/annotations/0002")))
   dataset0_0.subsets = List(dataset0_0_0)
+
     
   val dataset0_1 = new DefaultDataset("http://www.example.com/datasets/0_1")
   dataset0_1.setAnnotations(List(new DefaultGeoAnnotation("http://www.example.com/annotations/0003")))
-    
+
+  
   val dataset0_2 = new DefaultDataset("http://www.example.com/datasets/0_2")
   dataset0_2.setAnnotations(List(new DefaultGeoAnnotation("http://www.example.com/annotations/0004")))
+
  
   val dataset0 = new DefaultDataset("http://www.example.com/datasets/0")
   dataset0.subsets = List(dataset0_0, dataset0_1, dataset0_2)
-  
+  dataset0_0.parent = Some(dataset0)
+  dataset0_1.parent = Some(dataset0) 
+  dataset0_2.parent = Some(dataset0)
+     
   test("Verify subset hierarchy was created correctly") {
     assert(dataset0.subsets.size == 3)
     
@@ -85,6 +92,20 @@ class DatasetTest extends FunSuite {
     assert(dataset0_2.annotations(true).size == 1)
     println("\ndataset0_2:")
     dataset0_2.annotations().foreach(a => println(a.uri))
+  }
+  
+  test("Verify isChild() functionality") {
+    // Must yield true
+    assert(dataset0_0_0.isChildOf(dataset0_0.uri))
+    assert(dataset0_0_0.isChildOf(dataset0.uri))
+    assert(dataset0_1.isChildOf(dataset0.uri))
+    assert(dataset0_2.isChildOf(dataset0.uri))
+    
+    // Must yield false
+    assert(!dataset0_1.isChildOf(dataset0_0.uri))
+    assert(!dataset0_2.isChildOf(dataset0_0.uri))
+    assert(!dataset0_0_0.isChildOf(dataset0_1.uri))
+    assert(!dataset0_0_0.isChildOf(dataset0_2.uri))    
   }
 
 }

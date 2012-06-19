@@ -126,9 +126,19 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     println(topLevelDatasets.size + " at top level, " + datasetsTotal.size + " total. OK")
 
     val sampleDataset = datasetsTotal.drop(3).head
+    val hierarchy = reader.getDatasetHierarchy(sampleDataset)
     println("  Hierarchy example: " + sampleDataset.title + " > " + 
-        reader.getDatasetHierarchy(sampleDataset).map(_.title).mkString(" > "))
-
+        hierarchy.map(_.title).mkString(" > "))
+    
+    val root = hierarchy.reverse.head
+    for (i <- 0 to (hierarchy.size - 2)) {
+      val child = hierarchy.drop(i).head
+      val parent = hierarchy.drop(i + 1).head
+      println("parent: " + parent)
+      assert(child.isChildOf(parent.uri))
+      assert(child.isChildOf(root.uri))
+    }
+        
     println(topLevelDatasets.head.countAnnotations(true))
     assert(topLevelDatasets.head.countAnnotations(true) == 2116)    
     graph.shutdown()
