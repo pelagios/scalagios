@@ -141,6 +141,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
 
       // Add to index
       annotationIndex.put(ANNOTATION_URI, annotation.uri, annotationVertex)
+      annotationIndex.put(ANNOTATION_TARGET_URI, annotation.target.uri, annotationVertex)
       if (annotation.title.isDefined) annotationIndex.put(ANNOTATION_TITLE, annotation.title.get, annotationVertex)
       if (annotation.target.title.isDefined) annotationIndex.put(ANNOTATION_TARGET_URI, annotation.target.title.get, annotationVertex)
     

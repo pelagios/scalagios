@@ -69,9 +69,9 @@ object Constants {
   /**
    * GeoAnnotationTarget vertex properties
    */
-  val ANNOTATION_TARGET_URI = "uri"
-  val ANNOTATION_TARGET_TITLE = "title"
-  val ANNOTATION_TARGET_THUMBNAIL = "thumbnail"
+  val ANNOTATION_TARGET_URI = "targetUri"
+  val ANNOTATION_TARGET_TITLE = "targetTitle"
+  val ANNOTATION_TARGET_THUMBNAIL = "targetThumbnail"
     
   /**
    * Graph relationship type 'within': Place -> Place
