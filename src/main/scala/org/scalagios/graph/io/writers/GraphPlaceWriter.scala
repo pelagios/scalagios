@@ -37,6 +37,7 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       if (place.comment.isDefined) vertex.setProperty(PLACE_COMMENT, place.comment.get)
       if (place.altLabels.size > 0) vertex.setProperty(PLACE_ALTLABELS, place.altLabels.get)
       if (place.coverage.isDefined) vertex.setProperty(PLACE_COVERAGE, place.coverage.get)
+      if (place.featureType.isDefined) vertex.setProperty(PLACE_FEATURE_TYPE, place.featureType.get)
       if (place.geometryWKT.isDefined) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT.get)    
       vertex.setProperty(PLACE_LON, place.lon)
       vertex.setProperty(PLACE_LAT, place.lat)

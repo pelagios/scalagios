@@ -22,6 +22,8 @@ trait Place {
   def altLabels: Option[String]
   
   def coverage: Option[String]
+  
+  def featureType: Option[String]
 
   def lon: Double
 
@@ -81,6 +83,8 @@ case class DefaultPlace(var uri: String) extends Place {
   def altLabels: Option[String] = Some(altLabelsList.mkString(", "))
   
   var coverage: Option[String] = None
+  
+  var featureType: Option[String] = None
 
   var lon: Double = Double.NaN
 

@@ -9,6 +9,7 @@ import org.scalagios.graph.DatasetVertex
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
 import org.scalagios.graph.exception.GraphIntegrityException
+import org.scalagios.graph.exception.GraphIOException
 
 trait GraphDatasetWriter extends PelagiosGraphIOBase {
   
@@ -23,6 +24,11 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
       tGraph.setMaxBufferSize(0)
       tGraph.startTransaction()
     }
+
+    // Make sure there is no dataset with same ID in the graph already
+    val existing = datasetIndex.get(DATASET_URI, dataset.uri).iterator.asScala.toList    
+    if (existing.size > 0)
+      throw new GraphIOException("Datset " + dataset.uri + " already exists in the graph")
     
     val rootVertex = _insertDatasetVertex(dataset)
     

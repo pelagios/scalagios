@@ -5,7 +5,7 @@ import org.openrdf.rio.helpers.RDFHandlerBase
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDFS
 import org.scalagios.api.{Place, DefaultPlace}
-import org.scalagios.rdf.vocab.{SKOS, DCTerms, W3CGeo, OSSpatial, OSGeo}
+import org.scalagios.rdf.vocab.{SKOS, DCTerms, W3CGeo, OSSpatial, OSGeo, PleiadesPlaces}
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -37,6 +37,7 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
       case RDFS.COMMENT => place.comment = Some(obj)
       case SKOS.altLabel => place.addAltLabel(obj)
       case DCTerms.coverage => place.coverage = Some(obj)
+      case PleiadesPlaces.hasFeatureType => place.featureType = Some(obj)
       case W3CGeo.lat => place.lat = obj.toDouble
       case W3CGeo.long => place.lon = obj.toDouble
       case OSSpatial.within => place.within = Some(getOrCreate(obj))

@@ -23,6 +23,8 @@ case class PlaceVertex(vertex: Vertex) extends Place {
   
   def coverage = vertex.getPropertyAsString(PLACE_COVERAGE)
   
+  def featureType = vertex.getPropertyAsString(PLACE_FEATURE_TYPE)
+  
   def lon: Double = vertex.getPropertyAsDouble(PLACE_LON)
   
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
