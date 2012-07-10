@@ -98,7 +98,7 @@ object PleiadesPlaceTypes extends BaseVocab {
   
   val bay = factory.createURI(NAMESPACE, "bay")
   
-  val saltMarsh = factory.createURI(NAMESPACE, "saltMarsh")
+  val saltMarsh = factory.createURI(NAMESPACE, "salt-marsh")
 
   val centuriation = factory.createURI(NAMESPACE, "centuriation")
   
