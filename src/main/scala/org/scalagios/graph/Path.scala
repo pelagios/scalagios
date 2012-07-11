@@ -14,8 +14,9 @@ class Path(neo4jPath: Neo4jPath, graph: Neo4jGraph) {
   
   lazy val length = neo4jPath.length
   
-  lazy val nodes = {
-    neo4jPath.nodes.asScala.map(node => {
+  lazy val via = {
+    val nodes = neo4jPath.nodes.asScala
+    nodes.take(nodes.size - 1).drop(1).map(node => {
       new Neo4jVertex(node, graph) match {
         case v: Neo4jVertex if v.getProperty(VERTEX_TYPE).equals(PLACE_VERTEX) => new PlaceVertex(v)
         case v: Neo4jVertex if v.getProperty(VERTEX_TYPE).equals(DATASET_VERTEX) => new DatasetVertex(v)
