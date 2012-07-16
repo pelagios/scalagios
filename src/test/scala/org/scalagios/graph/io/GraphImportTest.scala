@@ -144,11 +144,10 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     graph.shutdown()
   }
   
-  test("Test queries") {
-    println("  Testing queries. ")
+  test("Test index queries") {
+    println("  Testing index queries.")
     val graph = new Neo4jGraph(NEO4J_DIR)
     val reader = new PelagiosNeo4jReader(graph)
-    val writer = new PelagiosGraphWriter(graph)
     
     reader.queryPlaces("leptis magna").foreach(place => println("    " + place.label.get))
     reader.queryDatasets("herodot").foreach(dataset => println("    " + dataset.title))
@@ -156,6 +155,26 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val viennaRegion = reader.queryPlaces(16.3, 48.2, 16.4, 48.3)
     assert(viennaRegion.size > 0)
     assert(viennaRegion.mapConserve(_.label).contains(Some("Vindobona")))
+    
+    graph.shutdown()
+  }
+  
+  test("Test network queries") {
+    println("  Testing network queries.")
+    val graph = new Neo4jGraph(NEO4J_DIR)
+    val reader = new PelagiosNeo4jReader(graph)
+    
+    // Vindobona
+    println("    Network neighbourhood for Vindobona:")
+    reader.networkNeighbourHood("http://pleiades.stoa.org/places/128537").foreach { case (place, weight) =>
+      println("      " + place.label.getOrElse("untitled") + " (" + weight + ")")
+    }
+    
+    // Athens
+    println("    Network neighbourhood for Athenae:")
+    reader.networkNeighbourHood("http://pleiades.stoa.org/places/579885").foreach { case (place, weight) =>
+      println("      " + place.label.getOrElse("untitled") + " (" + weight + ")")
+    }    
     
     graph.shutdown()
   }
