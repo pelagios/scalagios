@@ -181,5 +181,5 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     // Continue with subsets
     dataset.subsets.foreach(_postProcessDatasets(_))
   }
-  
+
 }

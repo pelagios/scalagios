@@ -10,6 +10,7 @@ import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.scalagios.graph.exception.GraphIOException
 import org.scalagios.graph.exception.GraphIntegrityException
 import org.scalagios.graph.exception.GraphIOException
+import org.scalagios.graph.GeoAnnotationVertex
 
 trait GraphDatasetWriter extends PelagiosGraphIOBase {
   
@@ -78,11 +79,15 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
   }
   
   /**
-   * Remove a dataset and all its subsets from the graph
+   * Remove a dataset and all its subsets from the graph 
+   * returns (number of datasets, number of annotations) removed
    */
-  def dropDataset(uri: String): Int = {
-    var ctr = 0
+  def dropDataset(uri: String): (Int, Int) = {
+    var ctrDatasets = 0
+    var ctrAnnotations = 0
         
+    // TODO needs to be split up into multiple transactions
+    
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
       tGraph.setMaxBufferSize(0)
@@ -95,7 +100,11 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
       throw new GraphIntegrityException("Index has " + vertices.size + " vertices listed for dataset " + uri)
       
     // Delete recursively
-    vertices.foreach(vertex => ctr += _dropDatasetVertex(new DatasetVertex(vertex)))
+    vertices.foreach(vertex => {
+      val (datasetsAdded, annotationsAdded) = _dropDatasetVertex(new DatasetVertex(vertex))
+      ctrDatasets += annotationsAdded
+      ctrAnnotations += annotationsAdded
+    })
     
     // Note: Neo4j will automatically keep the index in sync - we don't need to clean up manually
     // TODO Other graph DBs may not perform automatic index management - investigate!
@@ -104,24 +113,42 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
  
-    ctr  
+    (ctrDatasets, ctrAnnotations)  
   }
   
-  private def _dropDatasetVertex(dataset: DatasetVertex): Int = {
-    var ctr = 0
+  private def _dropDatasetVertex(dataset: DatasetVertex): (Int, Int) = {
+    var ctrDatasets = 0
+    var ctrAnnotations = 0
     
     // Delete all subsets first
-    dataset.subsets.foreach(subset => ctr += _dropDatasetVertex(subset))
+    dataset.subsets.foreach(subset => {
+      val (datasetsAdded, annotationsAdded) = _dropDatasetVertex(subset)
+      ctrDatasets += datasetsAdded
+      ctrAnnotations += annotationsAdded
+    })
     
     // Check if subsets are gone
     if (dataset.subsets.size > 0)
       throw new GraphIOException("Could not delete subsets for " + dataset.uri)
     
+    // Delete annotations, if any
+    dataset.vertex.getOutEdges(RELATION_CONTAINS).iterator.asScala.foreach(edge => {
+      val annotationVertex = edge.getInVertex     
+      annotationVertex.getOutEdges(RELATION_HASTARGET).iterator.asScala.foreach(targetEdge => {
+        // Remove annotation target vertex
+        graph.removeVertex(targetEdge.getInVertex)
+      })
+      
+      // Remove annotation vertex
+      graph.removeVertex(annotationVertex)
+      
+      ctrAnnotations += 1
+    })
+    
     // Delete dataset vertex
-    dataset.vertex.getInEdges(RELATION_SUBSET).iterator().asScala.foreach(graph.removeEdge(_))
     graph.removeVertex(dataset.vertex)
     
-    ctr + 1
+    (ctrDatasets + 1, ctrAnnotations)
   }
 
 }
