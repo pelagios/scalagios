@@ -204,5 +204,5 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
-
+  
 }
