@@ -48,8 +48,6 @@ case class DefaultGeoAnnotation(var uri: String) extends GeoAnnotation {
   
   var title: Option[String] = None
   
-  // Note: void:inDataset applies to RDF documents, not annotations - we only support this because of Arachne! 
-  @deprecated
   var inDataset: Option[String] = None
   
 }

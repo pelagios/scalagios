@@ -29,13 +29,9 @@ case class PlaceVertex(vertex: Vertex) extends Place {
   
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
   
-  val within = {
-    val containingPlace = vertex.getOutNeighbour(RELATION_WITHIN)
-    if (containingPlace.isDefined)
-      Some(new PlaceVertex(containingPlace.get))
-    else
-      None
-  }
+  val within = vertex.getOutNeighbour(RELATION_WITHIN).map(new PlaceVertex(_))
+  
+  val sameAs = vertex.getOutNeighbour(RELATION_SAMEAS).map(new PlaceVertex(_))
   
   def geometryWKT = vertex.getPropertyAsString(PLACE_GEOMETRY)
 

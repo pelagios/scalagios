@@ -80,6 +80,11 @@ object Constants {
   val RELATION_WITHIN = "within"
     
   /**
+   * Graph relationship type 'sameAs': Place -> Place
+   */
+  val RELATION_SAMEAS = "sameAs"  
+    
+  /**
    * Graph relationship type 'subset': Dataset -> Dataset
    */
   val RELATION_SUBSET = "subset"

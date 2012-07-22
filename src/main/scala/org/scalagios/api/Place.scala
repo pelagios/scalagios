@@ -31,6 +31,8 @@ trait Place {
 
   def within: Option[Place]
   
+  def sameAs: Option[Place]
+  
   def geometryWKT: Option[String]
   
   def location: Option[Geometry] = {
@@ -91,6 +93,8 @@ case class DefaultPlace(var uri: String) extends Place {
   var lat: Double = Double.NaN
   
   var within: Option[Place] = None
+  
+  var sameAs: Option[Place] = None
     
   var geometryWKT: Option[String] = None
     
