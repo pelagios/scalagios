@@ -88,8 +88,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     val vertices = datasetIndex.get(DATASET_URI, uri).iterator.asScala.toList    
     if (vertices.size > 1)
       throw new GraphIntegrityException("Index has " + vertices.size + " vertices listed for dataset " + uri)
-    
-    
+       
     var ctrAnnotations = 0
     var ctrDatasets = 0
     

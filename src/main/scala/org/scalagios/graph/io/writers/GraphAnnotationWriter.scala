@@ -183,26 +183,4 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     dataset.subsets.foreach(_postProcessDatasets(_))
   }
   
-  def dropAnnotations(annotations: Iterable[GeoAnnotation]) {
-    if (graph.isInstanceOf[TransactionalGraph]) {
-      val tGraph = graph.asInstanceOf[TransactionalGraph]
-      tGraph.setMaxBufferSize(0)
-      tGraph.startTransaction()
-    }
-    
-    annotations.map(_.asInstanceOf[GeoAnnotationVertex].vertex).foreach(vertex => {
-      // Remove annotation target vertex
-      vertex.getOutEdges(RELATION_HASTARGET).iterator.asScala.foreach(targetEdge => graph.removeVertex(targetEdge.getInVertex))
-      
-      // Remove annotation vertex
-      graph.removeVertex(vertex)
-      
-      // Note: edges get removed automatically when vertex gets removed!
-    })
-
-    // TODO catch GraphIOException and end the transaction with Conclusion.FAILURE!
-    if (graph.isInstanceOf[TransactionalGraph])
-      graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
-  }
-  
 }
