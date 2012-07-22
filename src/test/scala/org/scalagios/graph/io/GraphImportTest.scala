@@ -18,6 +18,7 @@ import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.scalagios.rdf.parser._
 import org.scalagios.graph.Constants._
 import org.scalagios.graph.DatasetVertex
+import com.tinkerpop.blueprints.pgm.Graph
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
@@ -113,7 +114,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
       assert(dataset.rootUri.equals(dataset.uri))
     })
     
-    val datasetsTotal = reader.getVertices(DATASET_VERTEX).map(new DatasetVertex(_))
+    val datasetsTotal = getVertices(graph, DATASET_VERTEX).map(new DatasetVertex(_))
     assert(datasetsTotal.size == 806)
      
     var ctRoot = 0
@@ -188,11 +189,14 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     print("  Deleting datasets. ")
     reader.getDatasets.foreach(dataset => writer.dropDataset(dataset.uri))
     assert(reader.getDatasets().size == 0)
-    assert(reader.getVertices(DATASET_VERTEX).size == 0)
+    assert(getVertices(graph, DATASET_VERTEX).size == 0)
     println("OK")
 
     graph.shutdown()
   }
+  
+  private def getVertices(graph: Graph, vertexType: String) = 
+    graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
 
   private def deleteNeo4j = {
     val neo4j = new File(NEO4J_DIR)

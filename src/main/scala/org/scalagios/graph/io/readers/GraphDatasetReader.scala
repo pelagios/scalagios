@@ -16,7 +16,7 @@ import org.scalagios.graph.exception.GraphIntegrityException
 trait GraphDatasetReader extends PelagiosGraphIOBase {
 
   def getDatasets(): List[Dataset] =
-    datasetIndex.get(DATASET_URI, VIRTUAL_ROOT_URI).iterator.asScala.map(v => new DatasetVertex(v)).toList
+    datasetIndex.get(DATASET_URI, ROOT_DATASET_URI).iterator.asScala.map(v => new DatasetVertex(v)).toList
   
   def getDataset(uri: String): Option[Dataset] = {
     val idxHits = datasetIndex.get(DATASET_URI, uri)

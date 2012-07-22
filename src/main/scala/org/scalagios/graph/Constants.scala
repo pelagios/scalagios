@@ -13,16 +13,22 @@ object Constants {
   val INDEX_FOR_PLACES = "place-index"
   val INDEX_FOR_DATASETS = "dataset-index"
   val INDEX_FOR_ANNOTATIONS = "annotation-index"
-  
+ 
+  /**
+   * 'Virtual URI' used to make place subreference node accessible via index  
+   */
+  val PLACE_SUBREFERENCE_NODE_URI = "scalagios://places/"
+
   /**
    * 'Virtual URI' used to make root datasets accessible via the index
    */
-  val VIRTUAL_ROOT_URI = "scalagios://datasets/"
-    
+  val ROOT_DATASET_URI = "scalagios://datasets/"
+     
   /**
    * Vertex types
    */
   val VERTEX_TYPE = "type"
+  val SUBREF_NODE = "subreference_node"
   val PLACE_VERTEX = "place"
   val DATASET_VERTEX = "dataset"
   val ANNOTATION_VERTEX = "geoannotation"
@@ -73,6 +79,11 @@ object Constants {
   val ANNOTATION_TARGET_URI = "targetUri"
   val ANNOTATION_TARGET_TITLE = "targetTitle"
   val ANNOTATION_TARGET_THUMBNAIL = "targetThumbnail"
+    
+  /**
+   * Graph relationship type 'place': Place Subref Node -> Place  
+   */
+  val RELATION_PLACE = "place"
     
   /**
    * Graph relationship type 'within': Place -> Place

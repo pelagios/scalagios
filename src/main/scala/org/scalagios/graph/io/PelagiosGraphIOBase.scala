@@ -25,6 +25,20 @@ private[io] trait PelagiosGraphIOBase {
     else 
       graph.getIndex(name, classOf[Vertex])
   }
+  
+  // Get (or lazily create) the place sub-reference node
+  lazy val placeSubreferenceNode = {
+    val idxHits = placeIndex.get(PLACE_URI, PLACE_SUBREFERENCE_NODE_URI)
+    
+    if (idxHits.hasNext()) {
+      idxHits.next()
+    } else {
+      val subrefVertex = graph.addVertex(null)
+      subrefVertex.setProperty(VERTEX_TYPE, SUBREF_NODE)
+      placeIndex.put(PLACE_URI, PLACE_SUBREFERENCE_NODE_URI, subrefVertex)
+      subrefVertex
+    }
+  }
       
   protected def normalizeURL(s: String): String = {
     val url = new URL(s)

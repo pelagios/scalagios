@@ -39,7 +39,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     // index easily, irrespective of their true URI. This is really ugly,
     // but I don't see another way, since Tinkerpop does not support
     // the concept of a reference node.
-    datasetIndex.put(DATASET_URI, VIRTUAL_ROOT_URI, rootVertex)
+    datasetIndex.put(DATASET_URI, ROOT_DATASET_URI, rootVertex)
 
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
@@ -95,7 +95,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     vertices.map(new DatasetVertex(_)).foreach(dataset => {
       // Drop annotation vertices
       ctrAnnotations += dataset.countAnnotations(true)
-      _dropGeoAnnotations(dataset.annotations(true))
+      dataset.annotations(true).grouped(2000).foreach(_dropGeoAnnotations(_))
 
       if (graph.isInstanceOf[TransactionalGraph]) {
         val tGraph = graph.asInstanceOf[TransactionalGraph]
@@ -104,7 +104,7 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
       }
 
       // Drop dataset vertices
-      ctrAnnotations += _dropDatasetVertex(dataset)
+      ctrDatasets += _dropDatasetVertex(dataset)
       
       // TODO catch GraphIOException and make sure the transaction is closed with FAILURE
       if (graph.isInstanceOf[TransactionalGraph])
@@ -115,15 +115,13 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
   }
   
   private def _dropGeoAnnotations(annotations: Iterable[GeoAnnotation]): Unit = {
-    val first2000 = annotations.take(2000)
-    
     if (graph.isInstanceOf[TransactionalGraph]) {
       val tGraph = graph.asInstanceOf[TransactionalGraph]
       tGraph.setMaxBufferSize(0)
       tGraph.startTransaction()
     }
 
-    first2000.map(_.asInstanceOf[GeoAnnotationVertex].vertex).foreach(vertex => {
+    annotations.map(_.asInstanceOf[GeoAnnotationVertex].vertex).foreach(vertex => {
       // Remove annotation target vertex
       vertex.getOutEdges(RELATION_HASTARGET).iterator.asScala.foreach(targetEdge => graph.removeVertex(targetEdge.getInVertex))
       
@@ -139,10 +137,6 @@ trait GraphDatasetWriter extends PelagiosGraphIOBase {
     // TODO catch GraphIOException and make sure the transaction is closed with FAILURE
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
-
-
-    if (annotations.size > 2000)
-      _dropGeoAnnotations(annotations.drop(2000))  
   }
   
   private def _dropDatasetVertex(dataset: DatasetVertex): Int = {

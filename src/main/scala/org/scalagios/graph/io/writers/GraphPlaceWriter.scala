@@ -5,10 +5,11 @@ import com.tinkerpop.blueprints.pgm.{IndexableGraph, TransactionalGraph}
 import com.tinkerpop.blueprints.pgm.TransactionalGraph.Conclusion
 import org.scalagios.api.{GeoAnnotation, Place}
 import org.scalagios.graph.Constants._
-import org.scalagios.graph.GeoAnnotationVertex
+import org.scalagios.graph.{GeoAnnotationVertex, PlaceVertex}
 import org.scalagios.graph.exception.GraphIOException
 import org.scalagios.graph.io.PelagiosGraphIOBase
 import org.neo4j.index.lucene.ValueContext
+import org.scalagios.graph.exception.GraphIntegrityException
 
 trait GraphPlaceWriter extends PelagiosGraphIOBase {
   
@@ -30,6 +31,7 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     places.foreach(place => {
       val normalizedURL = normalizeURL(place.uri)
       
+      // Create vertex
       val vertex = graph.addVertex(null)
       vertex.setProperty(VERTEX_TYPE, PLACE_VERTEX)
       vertex.setProperty(PLACE_URI, normalizedURL)
@@ -41,6 +43,9 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       if (place.geometryWKT.isDefined) vertex.setProperty(PLACE_GEOMETRY, place.geometryWKT.get)    
       vertex.setProperty(PLACE_LON, place.lon)
       vertex.setProperty(PLACE_LAT, place.lat)
+      
+      // Connect to subreference node
+      graph.addEdge(null, placeSubreferenceNode, vertex, RELATION_PLACE)
       
       // Add to index
       placeIndex.put(PLACE_URI, normalizedURL, vertex)

@@ -8,7 +8,9 @@ import org.scalagios.api.{Dataset, Place}
 
 trait GraphPlaceReader extends PelagiosGraphIOBase {
 
-  def getPlaces(): Iterable[Place] = getVertices(PLACE_VERTEX).map(vertex => new PlaceVertex(vertex))
+  def getPlaces(): Iterable[Place] =
+    placeSubreferenceNode.getOutEdges(RELATION_PLACE).iterator.asScala
+      .map(edge => new PlaceVertex(edge.getInVertex)).toIterable
   
   def getPlace(uri: String): Option[Place] = {
     val idxHits = placeIndex.get(PLACE_URI, uri)
@@ -38,8 +40,5 @@ trait GraphPlaceReader extends PelagiosGraphIOBase {
   def getReferencingDatasets(placeUri: String, datasetUri: String): Iterable[(Dataset, Int)] =
     getReferencingDatasets(placeUri).filter{ case(dataset, count) => 
       dataset.uri.equals(datasetUri) || dataset.isChildOf(datasetUri) }
-  
-  // TODO Might be slow in a large DB! Although we'll probably use this rarely, we'll need a more scalable solution
-  private[io] def getVertices(vertexType: String) = graph.getVertices().asScala.filter(_.getProperty(VERTEX_TYPE).equals(vertexType))
   
 }
