@@ -63,6 +63,24 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     if (graph.isInstanceOf[TransactionalGraph])
       graph.asInstanceOf[TransactionalGraph].stopTransaction(Conclusion.SUCCESS)
   }
+  
+  private def connectPlaces(from: Place, to:Place, relation: String): Unit = {
+      val normalizedFrom = normalizeURL(from.uri)
+      val normalizedTo = normalizeURL(to.uri)
+      
+      val origin =
+        if (placeIndex.count(PLACE_URI, normalizedFrom) > 0) placeIndex.get(PLACE_URI, normalizedFrom).next()
+        else null
+        
+      val destination = 
+        if (placeIndex.count(PLACE_URI, normalizedTo) > 0) placeIndex.get(PLACE_URI, normalizedTo).next()
+        else null
+        
+      if (origin == null || destination == null)
+        throw GraphIOException("Could not create relation: " + normalizedFrom + " " + relation + " " + normalizedTo)
+      else
+        graph.addEdge(null, origin, destination, relation)        
+  }
    
   def postProcessing(places: Iterable[Place] ) {
     if (graph.isInstanceOf[TransactionalGraph]) {
@@ -72,23 +90,17 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     }
 
     // Create PLACE -- within --> PLACE relations
-    places.filter(place => place.within.isDefined).foreach(place => {
-      val normalizedURL = normalizeURL(place.uri)
-      val normalizedWithin = normalizeURL(place.within.get.uri)
-      
-      val origin =
-        if (placeIndex.count(PLACE_URI, normalizedURL) > 0) placeIndex.get(PLACE_URI, normalizedURL).next()
-        else null
-        
-      val destination = 
-        if (placeIndex.count(PLACE_URI, normalizedWithin) > 0) placeIndex.get(PLACE_URI, normalizedWithin).next()
-        else null
-        
-      if (origin == null || destination == null)
-        throw GraphIOException("Could not create relation: " + normalizedURL + " WITHIN " + normalizedWithin)
-      else
-        graph.addEdge(null, origin, destination, RELATION_WITHIN)      
+    places.filter(place => place.within.isDefined).foreach(place => connectPlaces(place, place.within.get, RELATION_WITHIN))
+    
+    // Create PLACE -- connectsWith --> PLACE relations
+    places.filter(place => place.connectsWith.size > 0).foreach(place => {
+      // Note: this will create two relations (in both directions) 
+      // TODO make sure only one connectsWith relation is created!
+      place.connectsWith.foreach(connectsWith => connectPlaces(place, connectsWith, RELATION_CONNECTS_WITH))
     })
+    
+    // Create PLACE -- sameAs --> PLACE relations
+    places.filter(place => place.sameAs.isDefined).foreach(place => connectPlaces(place, place.sameAs.get, RELATION_SAMEAS))
     
     // If there are annotations in the DB already, re-wire them
     var floatingAnnotations = List.empty[GeoAnnotation]

@@ -167,7 +167,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
     val placeUris = nestedAnnotations.groupBy(_.body).keys
     placeUris.foreach(uri =>  {
       val idxHits = placeIndex.get(PLACE_URI, uri)
-      if (idxHits.hasNext) {
+      if (idxHits.hasNext) {        
         val location = new PlaceVertex(idxHits.next).location
         if (location.isDefined)
           coordinates.appendAll(location.get.getCoordinates)

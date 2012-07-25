@@ -6,6 +6,7 @@ import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.{OWL, RDFS}
 import org.scalagios.api.{Place, DefaultPlace}
 import org.scalagios.rdf.vocab.{SKOS, DCTerms, W3CGeo, OSSpatial, OSGeo, PleiadesPlaces}
+import org.scalagios.rdf.vocab.NeoGeoSpatial
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -42,6 +43,7 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
       case W3CGeo.lat => place.lat = obj.toDouble
       case W3CGeo.long => place.lon = obj.toDouble
       case OSSpatial.within => place.within = Some(getOrCreate(obj))
+      case NeoGeoSpatial.connectsWith => place.connectsWith = getOrCreate(obj) :: place.connectsWith 
       case OSGeo.asWKT => place.geometryWKT = Some(obj)
       case _ => triplesSkipped += 1
     }

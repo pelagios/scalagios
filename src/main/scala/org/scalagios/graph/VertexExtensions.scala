@@ -1,5 +1,6 @@
 package org.scalagios.graph
 
+import scala.collection.JavaConverters._
 import com.tinkerpop.blueprints.pgm.Vertex
 
 /**
@@ -24,6 +25,10 @@ class VertexExtensions(vertex: Vertex) {
     val property = vertex.getProperty(key)
     if (property == null) None else Some(property.toString.toLong)
   }
+  
+  def getNeighbours(relation: String): Seq[Vertex] =
+    (vertex.getInEdges(relation).iterator.asScala.map(_.getOutVertex) ++ 
+     vertex.getOutEdges(relation).iterator.asScala.map(_.getInVertex)).toSeq
     
   def getOutNeighbour(relation: String): Option[Vertex] = {
     val outEdges = vertex.getOutEdges(relation).iterator

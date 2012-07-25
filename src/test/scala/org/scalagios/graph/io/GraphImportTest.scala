@@ -24,7 +24,7 @@ import com.tinkerpop.blueprints.pgm.Graph
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
 
   private val NEO4J_DIR = "neo4j-test"
-  private val PLEIADES_DUMP = "src/test/resources/places-20120401.ttl.gz"
+  private val PLEIADES_DUMP = "src/test/resources/places-20120724.ttl.gz"
    
   private val VOID = "src/test/resources/gap-void-sample.ttl"
   private val ANNOTATIONS_DUMP = "src/test/resources/gap-triples-sample.n3.gz" 
@@ -46,7 +46,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val placeCollector = new PlaceCollector
     parser.setRDFHandler(placeCollector);
     parser.parse(inputStream, "http://pleiades.stoa.org")
-    assert(placeCollector.placesTotal == 36129)
+    assert(placeCollector.placesTotal == 36221)
     println("Took " + (System.currentTimeMillis() - startTime) + " milliseconds.")
     
     // Import data to Graph
@@ -101,7 +101,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     
     print("  Counting Places. ")
     val places = reader.getPlaces()
-    assert(places.size == 36129)
+    assert(places.size == 36221)
     println(places.size + ". OK")
 
     print("  Counting Datasets. ")
@@ -135,12 +135,10 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     for (i <- 0 to (hierarchy.size - 2)) {
       val child = hierarchy.drop(i).head
       val parent = hierarchy.drop(i + 1).head
-      println("parent: " + parent)
       assert(child.isChildOf(parent.uri))
       assert(child.isChildOf(root.uri))
     }
-        
-    println(topLevelDatasets.head.countAnnotations(true))
+    
     assert(topLevelDatasets.head.countAnnotations(true) == 2116)    
     graph.shutdown()
   }

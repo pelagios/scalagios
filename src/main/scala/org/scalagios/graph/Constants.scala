@@ -91,6 +91,11 @@ object Constants {
   val RELATION_WITHIN = "within"
     
   /**
+   * Graph relationship type 'connectsWith': Place -> Place
+   */
+  val RELATION_CONNECTS_WITH = "connectsWith"
+    
+  /**
    * Graph relationship type 'sameAs': Place -> Place
    */
   val RELATION_SAMEAS = "sameAs"  
