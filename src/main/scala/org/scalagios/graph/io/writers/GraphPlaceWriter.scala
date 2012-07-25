@@ -108,7 +108,10 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     
     // Create PLACE -- connectsWith --> PLACE relations
     places.filter(place => place.connectsWith.size > 0).foreach(place => {
-      place.connectsWith.foreach(connectsWith => connectPlaces(place, connectsWith, RELATION_CONNECTS_WITH))
+      place.connectsWith.foreach(connectsWith => {
+        if (!connectionExists(normalizeURL(place.uri), normalizeURL(connectsWith.uri)))
+          connectPlaces(place, connectsWith, RELATION_CONNECTS_WITH)
+      })
     })
     
     // Create PLACE -- sameAs --> PLACE relations
