@@ -89,11 +89,11 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       else 
         // Should never happen
         throw GraphIOException("Checking connectsWith for " + fromURI + " - but isn't in the graph")
-      
-      if (from.connectsWith.map(_.uri).contains(toURI))
-        true
-      else
-        false
+    
+    if (from.connectsWith.map(_.uri).contains(toURI))
+      true 
+    else
+      false
   }
    
   def postProcessing(places: Iterable[Place] ) {

@@ -103,6 +103,12 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val places = reader.getPlaces()
     assert(places.size == 36221)
     println(places.size + ". OK")
+    
+    print("  Sampling connections. Athens: ")
+    val athens = reader.getPlace("http://pleiades.stoa.org/places/579885")
+    assert(athens.isDefined)
+    assert(athens.get.connectsWith.size == 2)
+    println(athens.get.connectsWith.map(_.label.get).mkString(", "))
 
     print("  Counting Datasets. ")
     val topLevelDatasets = reader.getDatasets()
