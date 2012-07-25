@@ -93,7 +93,7 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       if (from.connectsWith.map(_.uri).contains(toURI))
         true
       else
-        true
+        false
   }
    
   def postProcessing(places: Iterable[Place] ) {
