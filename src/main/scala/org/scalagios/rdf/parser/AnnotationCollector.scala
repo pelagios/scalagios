@@ -4,17 +4,12 @@ import scala.collection.mutable.HashMap
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
-import org.scalagios.rdf.vocab.OAC
 import org.scalagios.rdf.parser.validation.HasValidation
 import org.scalagios.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
-import org.scalagios.rdf.vocab.DCTerms
-import org.scalagios.rdf.vocab.FOAF
+import org.scalagios.rdf.vocab.{DC, DCTerms, FOAF, OAC, VoID} 
 import org.scalagios.api.DefaultGeoAnnotationTarget
 import org.openrdf.model.vocabulary.RDFS
-import org.scalagios.rdf.parser.validation.ValidationIssue
-import org.scalagios.rdf.parser.validation.Severity
-import org.scalagios.rdf.vocab.VoID
-import org.scalagios.rdf.vocab.DC
+import org.scalagios.rdf.parser.validation.{ValidationIssue, Severity}
 
 /**
  * A default OACEntity implementation we can use as placeholder as long is we don't 

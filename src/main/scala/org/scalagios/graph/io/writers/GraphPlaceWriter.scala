@@ -81,6 +81,20 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
       else
         graph.addEdge(null, origin, destination, relation)        
   }
+  
+  private def connectionExists(fromURI: String, toURI: String): Boolean = {      
+    val from =
+      if (placeIndex.count(PLACE_URI, fromURI) > 0)
+        new PlaceVertex(placeIndex.get(PLACE_URI, fromURI).next())
+      else 
+        // Should never happen
+        throw GraphIOException("Checking connectsWith for " + fromURI + " - but isn't in the graph")
+      
+      if (from.connectsWith.map(_.uri).contains(toURI))
+        true
+      else
+        true
+  }
    
   def postProcessing(places: Iterable[Place] ) {
     if (graph.isInstanceOf[TransactionalGraph]) {
@@ -94,8 +108,6 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     
     // Create PLACE -- connectsWith --> PLACE relations
     places.filter(place => place.connectsWith.size > 0).foreach(place => {
-      // Note: this will create two relations (in both directions) 
-      // TODO make sure only one connectsWith relation is created!
       place.connectsWith.foreach(connectsWith => connectPlaces(place, connectsWith, RELATION_CONNECTS_WITH))
     })
     
