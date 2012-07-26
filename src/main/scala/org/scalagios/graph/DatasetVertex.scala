@@ -59,7 +59,7 @@ case class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   }
   
   def isChildOf(uri: String) = {
-    val parent = vertex.getInNeighbour(RELATION_SUBSET).map(new DatasetVertex(_))
+    val parent = vertex.getFirstInNeighbour(RELATION_SUBSET).map(new DatasetVertex(_))
     if (parent.isEmpty)
       false
     else

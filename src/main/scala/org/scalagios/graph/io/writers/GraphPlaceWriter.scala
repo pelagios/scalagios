@@ -115,7 +115,8 @@ trait GraphPlaceWriter extends PelagiosGraphIOBase {
     })
     
     // Create PLACE -- sameAs --> PLACE relations
-    places.filter(place => place.sameAs.isDefined).foreach(place => connectPlaces(place, place.sameAs.get, RELATION_SAMEAS))
+    places.filter(place => place.isDuplicateOf.isDefined).foreach(place => 
+      connectPlaces(place, place.isDuplicateOf.get, RELATION_SAMEAS))
     
     // If there are annotations in the DB already, re-wire them
     var floatingAnnotations = List.empty[GeoAnnotation]

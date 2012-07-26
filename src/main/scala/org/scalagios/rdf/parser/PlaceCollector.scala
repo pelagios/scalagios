@@ -37,7 +37,7 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
       case RDFS.LABEL => place.label = Some(obj)
       case RDFS.COMMENT => place.comment = Some(obj)
       case SKOS.altLabel => place.addAltLabel(obj)
-      case OWL.SAMEAS => place.sameAs = Some(getOrCreate(obj))
+      case OWL.SAMEAS => place.isDuplicateOf = Some(getOrCreate(obj))
       case DCTerms.coverage => place.coverage = Some(obj)
       case PleiadesPlaces.hasFeatureType => place.featureType = Some(obj)
       case W3CGeo.lat => place.lat = obj.toDouble
@@ -47,6 +47,36 @@ class PlaceCollector extends RDFHandlerBase with HasStatistics {
       case OSGeo.asWKT => place.geometryWKT = Some(obj)
       case _ => triplesSkipped += 1
     }
+  }
+  
+  override def endRDF(): Unit = {
+    // For duplicates, copy properties from the master into the duplicate,
+    // otherwise the duplicate would stay 'empty'
+    placesBuffer.values.foreach(place => {
+      if (!place.isValid)
+        throw new RuntimeException("Invalid place: " + place.uri)
+      
+      val master = place.isDuplicateOf
+      if (master.isDefined) {
+        val m = master.get
+        place.label = m.label
+        place.comment = m.comment
+        
+        val altLabels = m.altLabels.map(_.split(","))
+        if (altLabels.isDefined)
+          altLabels.get.foreach(altLabel => place.addAltLabel(altLabel.trim))
+        else
+          place.clearAltLabels
+          
+        place.coverage = m.coverage
+        place.featureType = m.featureType
+        place.lat = m.lat
+        place.lon = m.lon
+        place.within = m.within
+        place.connectsWith = m.connectsWith.toList
+        place.geometryWKT = m.geometryWKT
+      }
+    })    
   }
 
   private def getOrCreate(uri: String): DefaultPlace = {   

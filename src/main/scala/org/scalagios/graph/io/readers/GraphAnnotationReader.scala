@@ -14,7 +14,7 @@ trait GraphAnnotationReader extends PelagiosGraphIOBase {
     annotationIndex.get(ANNOTATION_TARGET_URI, uri).iterator.asScala.toList.map(new GeoAnnotationVertex(_))
 
   def getReferencedPlace(annotation: GeoAnnotation): Place = {
-    val place = annotation.asInstanceOf[GeoAnnotationVertex].vertex.getOutNeighbour(RELATION_HASBODY)
+    val place = annotation.asInstanceOf[GeoAnnotationVertex].vertex.getFirstOutNeighbour(RELATION_HASBODY)
     if (place.isDefined)
       new PlaceVertex(place.get)
     else
@@ -22,7 +22,7 @@ trait GraphAnnotationReader extends PelagiosGraphIOBase {
   }
   
   def getParentDataset(annotation: GeoAnnotation): Dataset =  {
-    val dataset = annotation.asInstanceOf[GeoAnnotationVertex].vertex.getInNeighbour(RELATION_CONTAINS)
+    val dataset = annotation.asInstanceOf[GeoAnnotationVertex].vertex.getFirstInNeighbour(RELATION_CONTAINS)
     if (dataset.isDefined)
       new DatasetVertex(dataset.get)
     else

@@ -59,7 +59,7 @@ trait GraphDatasetReader extends PelagiosGraphIOBase {
   }
   
   private def _traverseHierarchy(dataset: Vertex, hierarchy: ListBuffer[Dataset]): ListBuffer[Dataset] = {
-    dataset.getInNeighbour(RELATION_SUBSET) match {
+    dataset.getFirstInNeighbour(RELATION_SUBSET) match {
       case Some(vertex) => {
         hierarchy.append(new DatasetVertex(vertex))
         _traverseHierarchy(vertex, hierarchy) 

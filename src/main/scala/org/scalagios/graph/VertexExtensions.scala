@@ -26,11 +26,15 @@ class VertexExtensions(vertex: Vertex) {
     if (property == null) None else Some(property.toString.toLong)
   }
   
-  def getNeighbours(relation: String): Seq[Vertex] =
-    (vertex.getInEdges(relation).iterator.asScala.map(_.getOutVertex) ++ 
-     vertex.getOutEdges(relation).iterator.asScala.map(_.getInVertex)).toSeq
-    
-  def getOutNeighbour(relation: String): Option[Vertex] = {
+  def getFirstInNeighbour(relation: String): Option[Vertex] = {
+    val inEdges = vertex.getInEdges(relation).iterator
+    if (inEdges.hasNext())
+      Some(inEdges.next().getOutVertex())
+    else
+      None    
+  }
+  
+  def getFirstOutNeighbour(relation: String): Option[Vertex] = {
     val outEdges = vertex.getOutEdges(relation).iterator
     if (outEdges.hasNext())
       Some(outEdges.next().getInVertex())
@@ -38,13 +42,11 @@ class VertexExtensions(vertex: Vertex) {
       None
   }
   
-  def getInNeighbour(relation: String): Option[Vertex] = {
-    val inEdges = vertex.getInEdges(relation).iterator
-    if (inEdges.hasNext())
-      Some(inEdges.next().getOutVertex())
-    else
-      None    
-  }
+  def getAllInNeighbours(relation: String): Seq[Vertex] = 
+    vertex.getInEdges(relation).iterator.asScala.map(_.getOutVertex).toSeq 
+  
+  def getAllOutNeighbours(relation: String): Seq[Vertex] =
+    vertex.getOutEdges(relation).iterator.asScala.map(_.getInVertex).toSeq
 
 }
 

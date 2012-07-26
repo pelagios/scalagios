@@ -29,11 +29,15 @@ case class PlaceVertex(vertex: Vertex) extends Place {
   
   def lat: Double = vertex.getPropertyAsDouble(PLACE_LAT)
   
-  lazy val within = vertex.getOutNeighbour(RELATION_WITHIN).map(new PlaceVertex(_))
+  lazy val within = vertex.getFirstOutNeighbour(RELATION_WITHIN).map(new PlaceVertex(_))
   
-  lazy val connectsWith = vertex.getNeighbours(RELATION_CONNECTS_WITH).map(new PlaceVertex(_))
+  lazy val connectsWith =
+    (vertex.getAllInNeighbours(RELATION_CONNECTS_WITH) ++
+     vertex.getAllOutNeighbours(RELATION_CONNECTS_WITH)).map(new PlaceVertex(_))
   
-  lazy val sameAs = vertex.getOutNeighbour(RELATION_SAMEAS).map(new PlaceVertex(_))
+  lazy val isDuplicateOf = vertex.getFirstOutNeighbour(RELATION_SAMEAS).map(new PlaceVertex(_)) 
+  
+  lazy val duplicates = vertex.getAllInNeighbours(RELATION_SAMEAS).map(new PlaceVertex(_))
   
   def geometryWKT = vertex.getPropertyAsString(PLACE_GEOMETRY)
 

@@ -31,9 +31,13 @@ trait Place {
 
   def within: Option[Place]
   
-  def connectsWith: Iterable[Place]
+  def connectsWith: Seq[Place]
   
-  def sameAs: Option[Place]
+  def isDuplicateOf: Option[Place]
+  
+  def duplicates: Seq[Place]
+  
+  def hasDuplicates: Boolean = duplicates.size > 0
   
   def geometryWKT: Option[String]
   
@@ -56,8 +60,8 @@ trait Place {
     if (uri == null) 
       // null URI not allowed
       false
-    else if (within == null && (lon == Double.NaN && lat == Double.NaN) && geometryWKT == null)
-      // Place must either have 'within' OR non-null lon/lat OR WKT geometry
+    else if (within == null && (lon == Double.NaN && lat == Double.NaN) && geometryWKT == null && isDuplicateOf.isEmpty)
+      // Place must either have 'within' OR non-null geometry OR must be a duplciate
       false
       
     true
@@ -71,7 +75,7 @@ trait Place {
  * 
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
-case class DefaultPlace(var uri: String) extends Place {
+case class DefaultPlace(val uri: String) extends Place {
   
   var label: Option[String] = None
 
@@ -83,6 +87,8 @@ case class DefaultPlace(var uri: String) extends Place {
     if (!altLabel.equals(label))
       altLabelsList.append(altLabel)
   }
+  
+  def clearAltLabels = altLabelsList.clear
   
   def altLabels: Option[String] = Some(altLabelsList.mkString(", "))
   
@@ -98,7 +104,9 @@ case class DefaultPlace(var uri: String) extends Place {
   
   var connectsWith = List.empty[Place]
   
-  var sameAs: Option[Place] = None
+  var isDuplicateOf: Option[Place] = None
+  
+  var duplicates: Seq[Place] = List.empty[Place]
     
   var geometryWKT: Option[String] = None
     
