@@ -15,7 +15,10 @@ import org.scalagios.rdf.parser.validation.{ValidationIssue, Severity}
  * A default OACEntity implementation we can use as placeholder as long is we don't 
  * know what type of entity we are dealing with
  */
-class DefaultOACEntity(var uri:String) { var title: Option[String] = None } 
+class DefaultOACEntity(var uri:String) { 
+  var title: Option[String] = None
+  var thumbnail: Option[String] = None
+} 
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler
@@ -58,7 +61,7 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
         getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].target = 
           getOrCreate(obj.stringValue, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget]       
       case (FOAF.thumbnail, _) => 
-        getOrCreate(subj, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget].thumbnail = 
+        getOrCreate(subj, classOf[DefaultOACEntity]).asInstanceOf[DefaultOACEntity].thumbnail = 
           Some(obj.stringValue)
       // NOTE: we support rdfs:label for titles, but it's deprecated - use dcterms:title instead!
       case (RDFS.LABEL, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
