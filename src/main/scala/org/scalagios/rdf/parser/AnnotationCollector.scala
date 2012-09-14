@@ -30,12 +30,13 @@ class DefaultOACEntity(var uri:String) {
 class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasValidation {
   
   // A utility type that covers common properties of GeoAnnotations and GeoAnnotationTargets 
-  type OACEntity = { var uri: String; var title: Option[String] }
+  type OACEntity = { var uri: String; var title: Option[String]; var thumbnail: Option[String] }
   
   // Utility method to convert from OACEntity place holder to concrete object
   private def _convert[T<: OACEntity](entity: OACEntity, clazz: Class[T]): T = {
     val converted = clazz.getConstructors()(0).newInstance(entity.uri).asInstanceOf[T]
     converted.title = entity.title
+    converted.thumbnail = entity.thumbnail
     converted
   }    
 
@@ -61,8 +62,7 @@ class AnnotationCollector extends RDFHandlerBase with HasStatistics with HasVali
         getOrCreate(subj, classOf[DefaultGeoAnnotation]).asInstanceOf[DefaultGeoAnnotation].target = 
           getOrCreate(obj.stringValue, classOf[DefaultGeoAnnotationTarget]).asInstanceOf[DefaultGeoAnnotationTarget]       
       case (FOAF.thumbnail, _) => 
-        getOrCreate(subj, classOf[DefaultOACEntity]).asInstanceOf[DefaultOACEntity].thumbnail = 
-          Some(obj.stringValue)
+        getOrCreate(subj, classOf[DefaultOACEntity]).thumbnail = Some(obj.stringValue)
       // NOTE: we support rdfs:label for titles, but it's deprecated - use dcterms:title instead!
       case (RDFS.LABEL, _) => getOrCreate(subj, classOf[DefaultOACEntity]).title = 
         Some(obj.stringValue)

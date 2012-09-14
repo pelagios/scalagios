@@ -28,4 +28,6 @@ case class GeoAnnotationVertex(private[graph] val vertex: Vertex) extends GeoAnn
 
   def title: Option[String] = vertex.getPropertyAsString(ANNOTATION_TITLE)
   
+  def thumbnail: Option[String] = vertex.getPropertyAsString(ANNOTATION_THUMBNAIL)
+  
 }

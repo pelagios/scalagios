@@ -70,6 +70,7 @@ object Constants {
    */
   val ANNOTATION_URI = "uri"
   val ANNOTATION_TITLE = "title"
+  val ANNOTATION_THUMBNAIL = "thumbnail"
   val ANNOTATION_BODY = "body"
   val ANNOTATION_TARGET = "target"
     

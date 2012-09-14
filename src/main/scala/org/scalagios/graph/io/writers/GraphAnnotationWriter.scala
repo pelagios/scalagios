@@ -123,6 +123,7 @@ trait GraphAnnotationWriter extends PelagiosGraphIOBase {
       annotationVertex.setProperty(ANNOTATION_URI, annotation.uri)
       annotationVertex.setProperty(ANNOTATION_BODY, normalizedBody)
       if (annotation.title.isDefined) annotationVertex.setProperty(ANNOTATION_TITLE, annotation.title.get)
+      if (annotation.thumbnail.isDefined) annotationVertex.setProperty(ANNOTATION_THUMBNAIL, annotation.thumbnail.get)
     
       // Create ANNOTATION_TARGET vertex
       val annotationTargetVertex = graph.addVertex(null)
