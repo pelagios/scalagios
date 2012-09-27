@@ -1,5 +1,7 @@
 # Scalagios
 
+__[Download scalagios v1.0](https://github.com/downloads/pelagios/scalagios/scalagios-1.0.jar)__
+
 Scalagios is a utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on the Java Virtual Machine. Scalagios provides
 
 * Domain model classes for Pelagios' core data primitives: _Places_, _Datasets_, _GeoAnnotations_ and _GeoAnnotationTargets_
