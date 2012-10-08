@@ -13,6 +13,8 @@ import org.apache.lucene.analysis.KeywordAnalyzer
 import org.apache.lucene.search.NumericRangeQuery
 import org.apache.lucene.search.BooleanQuery
 import org.apache.lucene.search.BooleanClause
+import org.neo4j.graphdb.index.Index
+import org.neo4j.graphdb.Node
 
 trait Neo4jIndexReader extends PelagiosGraphIOBase {
 
@@ -22,18 +24,22 @@ trait Neo4jIndexReader extends PelagiosGraphIOBase {
   val datasetNodeIndex = neo4jGraph.getRawGraph.index().forNodes(INDEX_FOR_DATASETS)
   
   def queryPlaces(q: String, fuzzy: Boolean = false): List[Place] = {
-    val query = if (fuzzy)
-      new QueryParser(Version.LUCENE_35, PLACE_LABEL, new KeywordAnalyzer)
-        .parse(q + "* " + q + "~ " + 
-          PLACE_ALTLABELS + ":" + q + "* " + q + "~ " +
-          PLACE_COVERAGE + ":" + q + "* " + q + "~ " +
-          PLACE_COMMENT + ":" + q + "*")
-      else
-        new QueryParser(Version.LUCENE_35, PLACE_LABEL, new KeywordAnalyzer)
-        .parse(q + "* " +
-          PLACE_ALTLABELS + ":" + q + "* " + 
-          PLACE_COVERAGE + ":" + q + "* " +
-          PLACE_COMMENT + ":" + q + "*")
+    val rewritten = 
+      if (q.contains("\"")) { 
+        q
+      } else {
+        if (fuzzy)
+          q + "~ "
+        else
+          q + "* "
+      }
+      
+    val query = new QueryParser(Version.LUCENE_35, PLACE_LABEL, new KeywordAnalyzer)
+        .parse(
+          rewritten +
+          PLACE_ALTLABELS + ":" + rewritten +
+          PLACE_COVERAGE + ":" + rewritten +
+          PLACE_COMMENT + ":" + q)
     
     placeNodeIndex.query(new QueryContext(query).sortByScore).iterator.asScala 
       .map(node =>  new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList 
@@ -50,6 +56,8 @@ trait Neo4jIndexReader extends PelagiosGraphIOBase {
     placeNodeIndex.query(compound).iterator.asScala
       .map(node => new PlaceVertex(new Neo4jVertex(node, neo4jGraph))).toList
   }
+  
+  def getRawIndex: Index[Node] = placeNodeIndex
   
   def queryDatasets(query: String): List[Dataset] = {
     datasetNodeIndex.query(DATASET_TITLE, query).iterator().asScala.map(node => 
