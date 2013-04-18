@@ -1,11 +1,13 @@
 package org.scalagios.graph.io.writers
 
 import scala.collection.JavaConverters._
-import com.weiglewilczek.slf4s.Logging
 import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
 import org.scalagios.graph.Constants._
+import grizzled.slf4j.Logger
 
-trait Neo4jPlaceWriter extends GraphPlaceWriter with Logging {
+trait Neo4jPlaceWriter extends GraphPlaceWriter {
+  
+  val logger = Logger(classOf[Neo4jPlaceWriter])
   
   val graph: Neo4jGraph
   

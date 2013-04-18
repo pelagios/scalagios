@@ -31,7 +31,7 @@ case class DatasetVertex(private[graph] val vertex: Vertex)  extends Dataset {
   def associatedDatadumps = {
     val dumpList = vertex.getPropertyAsString(DATASET_DATADUMP)
     if (dumpList.isDefined)
-      dumpList.map(_.split(",")).flatten.toList
+      dumpList.map(_.split(",")).toList.flatten
     else
       List.empty[String]
   }

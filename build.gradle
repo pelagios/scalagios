@@ -7,7 +7,6 @@ files("src")
 repositories {
     mavenCentral()
     mavenRepo urls: 'http://scala-tools.org/repo-releases/'
-    mavenRepo urls: 'http://repo.aduna-software.org/maven2/releases/'
     mavenRepo urls: 'http://tinkerpop.com/maven2/'
 }
 
@@ -19,20 +18,20 @@ eclipse {
 }
 
 dependencies {    
-    scalaTools 'org.scala-lang:scala-compiler:2.9.1'
-    scalaTools 'org.scala-lang:scala-library:2.9.1'
+    scalaTools 'org.scala-lang:scala-compiler:2.10.0'
+    scalaTools 'org.scala-lang:scala-library:2.10.0'
 
-    compile 'com.weiglewilczek.slf4s:slf4s_2.9.1:1.0.7'
     compile 'org.slf4j:slf4j-simple:1.6.4'
-    compile 'org.scala-lang:scala-library:2.9.1'
-    compile 'org.openrdf.sesame:sesame-rio-n3:2.6.3'
-    compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.6.3'
+	compile 'org.clapper:grizzled-slf4j_2.10:1.0.1'
+    compile 'org.scala-lang:scala-library:2.10'
+	compile 'org.openrdf.sesame:sesame-rio-n3:2.7.0'
+	compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.7.0'
     compile 'com.tinkerpop.blueprints:blueprints-neo4j-graph:1.2'
     compile 'com.tinkerpop.blueprints:blueprints-neo4jbatch-graph:1.2'
     compile 'com.vividsolutions:jts:1.12' 
 
     testCompile 'junit:junit:4.8.2'
-    testCompile 'org.scalatest:scalatest_2.9.0:1.6.1'
+    testCompile 'org.scalatest:scalatest_2.10:1.9.1'
 }
 
 task createEmptyDB(type: JavaExec) { 
