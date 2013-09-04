@@ -1,8 +1,6 @@
 package org.pelagios.legacy.api
 
 import org.junit.runner.RunWith
-import org.pelagios.legacy.api.DefaultDataset;
-import org.pelagios.legacy.api.DefaultGeoAnnotation;
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 

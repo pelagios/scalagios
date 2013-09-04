@@ -1,6 +1,5 @@
 package org.pelagios.legacy.rdf.parser
 
-import org.pelagios.legacy.rdf.parser.AnnotationCollector;
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

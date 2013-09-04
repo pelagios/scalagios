@@ -7,7 +7,6 @@ import org.openrdf.rio.turtle.TurtleParserFactory
 import java.io.{File, FileInputStream}
 import org.openrdf.rio.RDFParserRegistry
 import org.pelagios.legacy.api.Dataset
-import org.pelagios.legacy.rdf.parser.DatasetCollector;
 
 @RunWith(classOf[JUnitRunner])
 class VoIDParserTest extends FunSuite { 

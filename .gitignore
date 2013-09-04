@@ -1,9 +1,4 @@
-/.settings
-/.classpath
-/.gradle
-/.project
-/bin
 /.cache
-/build
-/neo4j-test
-/neo4j
+/.classpath
+/.project
+/target

@@ -23,7 +23,6 @@ import com.tinkerpop.blueprints.pgm.impls.neo4jbatch.Neo4jBatchGraph
 import org.pelagios.legacy.rdf.parser._
 import org.pelagios.legacy.graph.Constants._
 import org.pelagios.legacy.graph.DatasetVertex
-import org.pelagios.legacy.graph.io.PelagiosNeo4jReader;
 
 import com.tinkerpop.blueprints.pgm.Graph
 
