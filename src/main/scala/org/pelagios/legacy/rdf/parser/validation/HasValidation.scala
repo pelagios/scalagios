@@ -2,10 +2,10 @@ package org.pelagios.legacy.rdf.parser.validation
 
 import scala.collection.mutable.ListBuffer
 import org.openrdf.model.Statement
-import org.pelagios.legacy.rdf.vocab.DCTerms
+import org.pelagios.rdf.vocab.DCTerms
 import org.openrdf.model.vocabulary.RDFS
-import org.pelagios.legacy.rdf.vocab.VoID
-import org.pelagios.legacy.rdf.vocab.DC
+import org.pelagios.rdf.vocab.VoID
+import org.pelagios.rdf.vocab.DC
 
 private[parser] trait HasValidation {
 

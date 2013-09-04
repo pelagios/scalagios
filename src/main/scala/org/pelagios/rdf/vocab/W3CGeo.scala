@@ -1,4 +1,4 @@
-package org.pelagios.legacy.rdf.vocab
+package org.pelagios.rdf.vocab
 
 object W3CGeo extends BaseVocab {
   

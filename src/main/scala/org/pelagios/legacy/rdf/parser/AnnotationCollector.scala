@@ -6,7 +6,8 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 import org.pelagios.legacy.rdf.parser.validation.HasValidation
 import org.pelagios.legacy.api.{DefaultGeoAnnotation, DefaultGeoAnnotationTarget}
-import org.pelagios.legacy.rdf.vocab.{DC, DCTerms, FOAF, OAC, VoID} 
+import org.pelagios.rdf.vocab.{DC, DCTerms, FOAF, VoID} 
+import org.pelagios.legacy.rdf.vocab.OAC
 import org.pelagios.legacy.api.DefaultGeoAnnotationTarget
 import org.openrdf.model.vocabulary.RDFS
 import org.pelagios.legacy.rdf.parser.validation.{ValidationIssue, Severity}

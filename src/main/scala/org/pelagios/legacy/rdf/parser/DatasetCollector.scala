@@ -7,7 +7,7 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 
 import org.pelagios.legacy.api.{Dataset, DefaultDataset}
-import org.pelagios.legacy.rdf.vocab.{VoID, DCTerms, FOAF, Formats}
+import org.pelagios.rdf.vocab.{VoID, DCTerms, FOAF}
 import org.pelagios.legacy.rdf.parser.validation.HasValidation
 
 /**

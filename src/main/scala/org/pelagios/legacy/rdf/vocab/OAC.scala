@@ -1,6 +1,10 @@
 package org.pelagios.legacy.rdf.vocab
 
-object OAC extends BaseVocab {
+import org.openrdf.model.impl.ValueFactoryImpl
+
+object OAC {
+  
+  private val factory = ValueFactoryImpl.getInstance()
   
   val NAMESPACE = "http://www.openannotation.org/ns/"
   
