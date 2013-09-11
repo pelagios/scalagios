@@ -12,6 +12,7 @@ import java.io.PrintWriter
 import org.pelagios.api.AnnotatedThing
 import org.pelagios.rdf.parser.PelagiosDumpCollector
 import java.net.URI
+import org.pelagios.rdf.parser.CachedResource
 
 object Scalagios {
   
@@ -28,12 +29,12 @@ object Scalagios {
    * Parses a Pelagios data dump, auto-detecting the RDF serialization
    * by the file extension.
    */
-  def parse(file: File): Iterable[AnnotatedThing] = {
+  def parse(file: File) = {
     val parser = getParser(file.getName)
     val handler = new PelagiosDumpCollector
     parser.setRDFHandler(handler)
     parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
-    null
+    handler.annotatedThings
   }
   
   /**
