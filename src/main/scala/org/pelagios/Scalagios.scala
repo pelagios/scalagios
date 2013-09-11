@@ -1,4 +1,4 @@
-package org.pelagios.legacy
+package org.pelagios
 
 import org.openrdf.rio.n3.N3ParserFactory
 import org.pelagios.legacy.rdf.parser.AnnotationCollector
@@ -6,14 +6,41 @@ import java.io.FileInputStream
 import java.io.File
 import org.openrdf.rio.UnsupportedRDFormatException
 import org.openrdf.rio.turtle.TurtleParserFactory
-import org.openrdf.rio.RDFParserFactory
 import org.openrdf.rio.rdfxml.RDFXMLParserFactory
 import org.pelagios.legacy.api.GeoAnnotation
 import java.io.PrintWriter
+import org.pelagios.api.AnnotatedThing
+import org.pelagios.rdf.parser.PelagiosDumpCollector
+import java.net.URI
 
 object Scalagios {
   
-  def parse(file: String): Iterable[GeoAnnotation] = {
+  // TODO enum for serializations
+  
+  private def getParser(file: String) = file match {
+    case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
+    case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
+    case f if f.endsWith("n3") => new N3ParserFactory().getParser()
+    case _ => throw new UnsupportedRDFormatException("Format not supported")
+  }
+  
+  /**
+   * Parses a Pelagios data dump, auto-detecting the RDF serialization
+   * by the file extension.
+   */
+  def parse(file: File): Iterable[AnnotatedThing] = {
+    val parser = getParser(file.getName)
+    val handler = new PelagiosDumpCollector
+    parser.setRDFHandler(handler)
+    parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
+    null
+  }
+  
+  /**
+   * A legacy method that parses a data dump in the old (OAC-based) Pelagios
+   * format, auto-detecting the RDF serialization by the file extension.
+   */
+  def parseOAC(file: String): Iterable[GeoAnnotation] = {
     val parser = file match {
       case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
       case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
@@ -45,7 +72,7 @@ object Scalagios {
     writer.println("@prefix foaf: <http://xmlns.com/foaf/0.1/> .")
     writer.println("@prefix oa: <http://www.w3.org/ns/oa#> .\n")
       
-    parse(source).foreach(annotation => {
+    parseOAC(source).foreach(annotation => {
       // Annotated thing
       writer.println("<" + annotation.target.uri + "> a pelagios:AnnotatedThing ;")
       if (annotation.target.title.isDefined)
