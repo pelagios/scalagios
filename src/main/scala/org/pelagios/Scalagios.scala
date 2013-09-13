@@ -16,8 +16,6 @@ import org.pelagios.rdf.parser.CachedResource
 
 object Scalagios {
   
-  // TODO enum for serializations
-  
   private def getParser(file: String) = file match {
     case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
     case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()

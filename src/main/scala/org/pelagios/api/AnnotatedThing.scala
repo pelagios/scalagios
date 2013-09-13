@@ -7,6 +7,8 @@ trait AnnotatedThing {
   def title: Option[String]
   
   def description: Option[String]
+  
+  
 
 }
 
