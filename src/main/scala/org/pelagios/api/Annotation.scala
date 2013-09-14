@@ -1,5 +1,9 @@
 package org.pelagios.api
 
-class Annotation {
+/**
+ * 'Annotation' model entity.
+ * @author Rainer Simon <rainer.simon@ait.ac.at>
+ */
+trait Annotation {
 
 }

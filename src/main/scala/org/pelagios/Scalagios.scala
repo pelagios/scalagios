@@ -10,9 +10,8 @@ import org.openrdf.rio.rdfxml.RDFXMLParserFactory
 import org.pelagios.legacy.api.GeoAnnotation
 import java.io.PrintWriter
 import org.pelagios.api.AnnotatedThing
-import org.pelagios.rdf.parser.PelagiosDumpCollector
+import org.pelagios.rdf.parser.PelagiosDataParser
 import java.net.URI
-import org.pelagios.rdf.parser.CachedResource
 
 object Scalagios {
   
@@ -29,7 +28,7 @@ object Scalagios {
    */
   def parse(file: File) = {
     val parser = getParser(file.getName)
-    val handler = new PelagiosDumpCollector
+    val handler = new PelagiosDataParser
     parser.setRDFHandler(handler)
     parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
     handler.annotatedThings
