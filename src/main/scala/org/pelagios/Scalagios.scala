@@ -12,8 +12,35 @@ import java.io.PrintWriter
 import org.pelagios.api.AnnotatedThing
 import org.pelagios.rdf.parser.PelagiosDataParser
 import java.net.URI
+import org.pelagios.rdf.parser.GazetteerParser
+import org.pelagios.api.Place
 
+/**
+ * A utility to parse & write Pelagios data.
+ */
 object Scalagios {
+  
+  /**
+   * Parses a Pelagios data dump file.
+   */
+  def parseDataFile(file: File): Iterable[AnnotatedThing] = {
+    val parser = getParser(file.getName)
+    val handler = new PelagiosDataParser
+    parser.setRDFHandler(handler)
+    parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
+    handler.annotatedThings    
+  }
+  
+  /**
+   * Parses a Pelagios-style gazetteer dump file.
+   */
+  def parseGazetteerFile(file: File): Iterable[Place] = {
+    val parser = getParser(file.getName)
+    val handler = new GazetteerParser
+    parser.setRDFHandler(handler)
+    parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
+    handler.places
+  }
   
   private def getParser(file: String) = file match {
     case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
@@ -22,17 +49,20 @@ object Scalagios {
     case _ => throw new UnsupportedRDFormatException("Format not supported")
   }
   
+  // TODO implement serialization/write Pelagios data
+  
   /**
-   * Parses a Pelagios data dump, auto-detecting the RDF serialization
-   * by the file extension.
+   * Returns a handle on the legacy import- and migration utilities.
    */
-  def parse(file: File) = {
-    val parser = getParser(file.getName)
-    val handler = new PelagiosDataParser
-    parser.setRDFHandler(handler)
-    parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
-    handler.annotatedThings
-  }
+  def Legacy: { def parseOAC(file: String): Iterable[GeoAnnotation]; 
+                def migrateOAC(source: String, destination: String): Unit } = LegacyInterop
+  
+}
+
+/**
+ * Legacy import and migration utilities.
+ */
+private object LegacyInterop {
   
   /**
    * A legacy method that parses a data dump in the old (OAC-based) Pelagios
@@ -57,7 +87,7 @@ object Scalagios {
     annotationCollector.getAnnotations
   }
   
-  def migrate(source: String, destination: String) = {
+  def migrateOAC(source: String, destination: String) = {
     val destFile = new File(destination)
     if (!destFile.exists)
       destFile.createNewFile
@@ -90,5 +120,5 @@ object Scalagios {
     writer.flush
     writer.close
   }
-
+  
 }

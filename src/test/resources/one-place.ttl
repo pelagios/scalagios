@@ -1,0 +1,18 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix pleiades: <http://pleiades.stoa.org/places/vocab#> .
+@prefix pelagios: <http://pelagios.github.org/vocab#> .
+
+<http://pleiades.stoa.org/places/1234567> a pelagios:PlaceRecord ;
+    dcterms:title "Athens"@en ;
+    dcterms:description "A major Greek city-state" ;
+    pleiades:hasName <http://pleiades.stoa.org/places/1234567/athens> ;
+    pleiades:hasLocation <http://pleiades.stoa.org/places/1234567/athens-location> .
+
+<http://pleiades.stoa.org/places/1234567/athens> a pleiades:Name ;
+    skos:label "Athenae" .
+
+<http://pleiades.stoa.org/places/1234567/athens-location> a pleiades:Location ;
+    osgeo:asGeoJSON "{\"type\": \"Point\", \"coordinates\": [2.5860150000000002, 49.206826]}" ;
+    osgeo:asWKT "POINT (2.5860150000000002 49.2068259999999995)" .

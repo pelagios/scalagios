@@ -4,6 +4,6 @@ import org.pelagios.Scalagios
 
 object CLI extends App {
   
-  Scalagios.migrate("src/test/resources/nomisma.rdf", "nomisma-annotations-v2.ttl")
+  Scalagios.Legacy.migrateOAC("src/test/resources/nomisma.rdf", "nomisma-annotations-v2.ttl")
 
 }

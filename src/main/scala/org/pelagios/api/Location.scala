@@ -1,7 +1,7 @@
 package org.pelagios.api
 
-import com.vividsolutions.jts.geom.{ Coordinate, Geometry, GeometryFactory }
 import com.vividsolutions.jts.io.WKTReader
+import com.vividsolutions.jts.geom.{ Coordinate, Geometry, GeometryFactory }
 
 /**
  * 'Location' model primitive.

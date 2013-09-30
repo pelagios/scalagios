@@ -31,10 +31,10 @@ private[parser] class CachedAnnotation(resource: Resource) extends Annotation {
 
 class PelagiosDataParser extends ResourceCollector {
 
-  lazy val annotations = 
+  def annotations = 
     resources.values.filter(_.hasType(OA.Annotation)).map(new CachedAnnotation(_))
   
-  lazy val annotatedThings = {
+  def annotatedThings = {
     val annotationsPerThing = annotations.groupBy(_.uri)
       
     resources.values

@@ -15,7 +15,7 @@ class PelagiosDumpParserTest extends FunSuite {
     println("Starting Pelagios data import")
     val startTime = System.currentTimeMillis
     
-    val things = Scalagios.parse(new File(TEST_FILE))
+    val things = Scalagios.parseDataFile(new File(TEST_FILE))
     things.foreach(thing => {
       println(thing.title)
     })
