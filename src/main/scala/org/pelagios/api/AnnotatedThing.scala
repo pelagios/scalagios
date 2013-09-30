@@ -12,12 +12,6 @@ trait AnnotatedThing {
   
   def description: Option[String]
 
-}
-
-case class DefaultAnnotatedThing(var uri: String) extends AnnotatedThing {
-  
-  var title: Option[String] = None
-  
-  var description: Option[String] = None
+  def annotations: Seq[Annotation]
   
 }

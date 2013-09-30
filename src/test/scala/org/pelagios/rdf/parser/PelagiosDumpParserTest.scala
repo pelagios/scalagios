@@ -18,6 +18,7 @@ class PelagiosDumpParserTest extends FunSuite {
     val things = Scalagios.parseDataFile(new File(TEST_FILE))
     things.foreach(thing => {
       println(thing.title)
+      thing.annotations.foreach(annotation => println(annotation.motivatedBy))
     })
     println("Parsed " + things.size + " items")
   
