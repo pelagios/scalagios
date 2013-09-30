@@ -1,7 +1,7 @@
 package org.pelagios.api
 
-/**
- * 'Place' model entity.
+/** Pelagios 'Place' model entity.
+ *  
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
 trait Place {

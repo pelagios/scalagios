@@ -7,11 +7,22 @@ import org.pelagios.rdf.vocab.{OSGeo, Pelagios, PleiadesPlaces, SKOS, W3CGeo }
 import org.pelagios.rdf.vocab.DCTerms
 import org.openrdf.model.vocabulary.RDFS
 
-/**
- * A resource collector implementation that handles Pelagios Gazetteer dump files.
- */
+/** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
+  * 
+  * @author Rainer Simon <rainer.simon@ait.ac.at>
+  */
 class GazetteerParser extends ResourceCollector {
   
+  /** Private helper method that adds explicit type information to the collected resources.
+    *
+    * The method will go through the resources, and first look for explicit RDF types of 
+    * pelagios:PlaceRecord, pleiades:Name, and pleiades:Location. If no explicit RDF type
+    * is provided, it will attempt to determine the type based on other properties.
+    * 
+    * @param resources the RDF resources
+    * @return a map of resources, grouped by the RDF types pelagios:PlaceRecord, pleiades:Name
+    *         and pleiades:Location
+    */
   private def determineType(resources: Map[String, Resource]): Map[URI, Map[String, Resource]] = {
     val typedResources = resources.map { case (subjURI, resource) => {
       val types = resource.get(RDF.TYPE)
@@ -42,6 +53,10 @@ class GazetteerParser extends ResourceCollector {
     typedResources.groupBy(_._1).mapValues(_.map { case (typeURI, subjURI, resource) => subjURI -> resource }.toMap)
   } 
   
+  /** The Places collected by the parser.
+   *  
+    * @return the list of Places
+    */
   def places: Iterable[Place] = {
     // All RDF resources, grouped by type (Place, Name, Location) 
     val typedResources = determineType(resources.toMap)
@@ -62,8 +77,12 @@ class GazetteerParser extends ResourceCollector {
 
 }
 
-/**
- * Wraps a pelagios:PlaceRecord RDF resource as a Place domain model primitive, with Names and Locations in-lined.
+/** Wraps a pelagios:PlaceRecord resource as a Place domain model primitive, with Names and Locations in-lined.
+ *  
+ *  @constructor create a new PlaceResource
+ *  @param resource the RDF resource to wrap
+ *  @param names the names connected to the resource
+ *  @param locations the locations connected to the resource
  */
 private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResource], val locations: Seq[LocationResource]) extends Place {
 
@@ -79,9 +98,11 @@ private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResou
 
 }
 
-/**
- * Wraps a pleiades:Name RDF resource as a Name domain model primitive. 
- */
+/** Wraps a pleiades:Name RDF resource as a Name domain model primitive.
+  *
+  * @constructor create a new NameResource
+  * @param resource the RDF resource to wrap   
+  */
 private[parser] class NameResource(resource: Resource) extends Name {
   
   def labels: Seq[Label] = resource.get(SKOS.label).map(ResourceCollector.toLabel(_))
@@ -90,9 +111,11 @@ private[parser] class NameResource(resource: Resource) extends Name {
     
 }
 
-/**
- * Wraps a pleiades:Location RDF resource as a Location domain model primitive.
- */
+/** Wraps a pleiades:Location RDF resource as a Location domain model primitive.
+  *  
+  * @constructor create a new LocationResource
+  * @param resource the RDF resource to wrap
+  */
 private[parser] class LocationResource(resource: Resource) extends Location {
 
   def wkt: Option[String] = resource.getFirst(OSGeo.asWKT).map(_.stringValue)
