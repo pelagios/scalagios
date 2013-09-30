@@ -15,14 +15,17 @@ import java.net.URI
 import org.pelagios.rdf.parser.GazetteerParser
 import org.pelagios.api.Place
 
-/**
- * A utility to parse & write Pelagios data.
- */
+/** A utility to parse & write Pelagios data.
+  *
+  * @author Rainer Simon <rainer.simon@ait.ac.at>  
+  */
 object Scalagios {
   
-  /**
-   * Parses a Pelagios data dump file.
-   */
+  /** Parses a Pelagios annotation dump file.
+    *
+    * @param file the dump file to parse
+    * @return the list of annotated things, with annotations in-lined
+    */
   def parseDataFile(file: File): Iterable[AnnotatedThing] = {
     val parser = getParser(file.getName)
     val handler = new PelagiosDataParser
@@ -31,9 +34,11 @@ object Scalagios {
     handler.annotatedThings    
   }
   
-  /**
-   * Parses a Pelagios-style gazetteer dump file.
-   */
+  /** Parses a Pelagios-style gazetteer dump file.
+    *
+    *  @param file the gazetteer dump file to parse
+    *  @return the places, with names and locations in-lined  
+    */
   def parseGazetteerFile(file: File): Iterable[Place] = {
     val parser = getParser(file.getName)
     val handler = new GazetteerParser
@@ -42,7 +47,7 @@ object Scalagios {
     handler.places
   }
   
-  private def getParser(file: String) = file match {
+  private[pelagios] def getParser(file: String) = file match {
     case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
     case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
     case f if f.endsWith("n3") => new N3ParserFactory().getParser()
@@ -51,42 +56,37 @@ object Scalagios {
   
   // TODO implement serialization/write Pelagios data
   
-  /**
-   * Returns a handle on the legacy import- and migration utilities.
-   */
+  /** Returns a handle on the legacy import- and migration utilities. **/
   def Legacy: { def parseOAC(file: String): Iterable[GeoAnnotation]; 
                 def migrateOAC(source: String, destination: String): Unit } = LegacyInterop
   
 }
 
-/**
- * Legacy import and migration utilities.
- */
+/** Legacy import and migration utilities. **/
 private object LegacyInterop {
   
-  /**
-   * A legacy method that parses a data dump in the old (OAC-based) Pelagios
-   * format, auto-detecting the RDF serialization by the file extension.
-   */
+  /** Parses a data dump in the old OAC-based Pelagios format into the legacy API.
+    *
+    * @param file the legacy dump file
+    * @return a list of legacy [[org.pelagios.legacy.api.GeoAnnotation]] objects  
+    */
   def parseOAC(file: String): Iterable[GeoAnnotation] = {
-    val parser = file match {
-      case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
-      case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
-      case f if f.endsWith("n3") => new N3ParserFactory().getParser()
-      case _ => throw new UnsupportedRDFormatException("Format not supported")
-    } 
-    
-    val annotationCollector = new AnnotationCollector()
+    val parser = Scalagios.getParser(file)
+    val annotationCollector = new AnnotationCollector
     parser.setRDFHandler(annotationCollector)
     parser.parse(new FileInputStream(new File(file)), "http://pelagios.github.io/")
-    
-    println(annotationCollector.triplesTotal + " triples total in file")
-    println(annotationCollector.triplesProcessed + " triples processed during import")
-    println(annotationCollector.annotationsTotal + " annotations imported")
-    
     annotationCollector.getAnnotations
   }
   
+  /** A helper method to migrate an old OAC dump file into the new Pelagios format.
+    * 
+    * Note that the migration will result in a very 'underpopulated' dump file. The 
+    * new Pelagios model is much richer, and has lots of information that is not
+    * available in OAC dump files.
+    * 
+    * @param source the source file location
+    * @param destination the destination file location 
+    */
   def migrateOAC(source: String, destination: String) = {
     val destFile = new File(destination)
     if (!destFile.exists)
