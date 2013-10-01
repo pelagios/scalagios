@@ -25,6 +25,5 @@ class PelagiosDumpParserTest extends FunSuite {
     println("Import complete. Took " + (System.currentTimeMillis - startTime) + " milliseconds")
     assert(things.size > 0)
   }
-
   
 }

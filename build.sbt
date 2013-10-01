@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "com.tinkerpop.blueprints" % "blueprints-neo4j-graph" % "1.2",
   "com.tinkerpop.blueprints" % "blueprints-neo4jbatch-graph" % "1.2",
   "com.vividsolutions" % "jts" % "1.13",
+  "com.github.scopt" %% "scopt" % "3.1.0",
   "junit" % "junit" % "4.11" % "test",
   "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
 )
