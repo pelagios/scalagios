@@ -2,6 +2,9 @@ package org.pelagios
 
 import org.pelagios
 import java.io.File
+import org.pelagios.index.PlaceIndex
+import scala.io.Source
+import java.io.PrintWriter
 
 case class Config(input: File = new File("."), output: File = new File("."), format: String = "", mode: String = "")
 
@@ -31,6 +34,14 @@ object CLI extends App {
         opt[File]('d', "destination") required() valueName("<destination>") action { (x, c) =>
           c.copy(output = x) } text("the destination file to migrate to (required)\n")
       )
+      
+    cmd ("gmatch") action { (_, c) => 
+      c.copy(mode = "gmatch") } text("Performs gazetteer matching on a list of placenames.\n") children(
+        opt[File]('i', "input") required() valueName("<input>") action { (x, c) =>
+          c.copy(input = x) } text("the source file to match (required)\n"),
+        opt[File]('o', "output") required() valueName("<output>") action { (x, c) =>
+          c.copy(output = x) } text("the output file for results (required)\n")
+      )
   } 
   
   parser.parse(args, Config()) map { config =>
@@ -38,6 +49,7 @@ object CLI extends App {
       case c if c.isEmpty => { Console.err.println("Error: You did not specify a command!"); parser.showUsage }
       case c if c.equals("profile") => profile(config)
       case c if c.equals("migrate") => migrate(config)
+      case c if c.equals("gmatch") => gmatch(config)
       case c => 
     }
   } getOrElse {
@@ -54,6 +66,33 @@ object CLI extends App {
         Scalagios.Legacy.migratePleiadesDumps(config.input.listFiles, config.output)
       }
     }
+  }
+  
+  def gmatch(config: Config) = {
+    // TODO only build index if it isn't there!
+    print("Loading test data from file... ")
+    val places = Scalagios.parseGazetteerFile(new File("places-new.ttl"))
+    println(places.size + " places.")
+    
+    print("Writing index... ")
+    val index = PlaceIndex.open(new File("test-idx"))
+    index.addPlaces(places)
+    println("done.")
+    
+    // Matching...
+    val writer = new PrintWriter(config.output)
+    
+    Source.fromFile(config.input).getLines.foreach(placename => {  
+      val results = index.query(placename)
+      if (results.size > 0)
+        writer.println(placename + "; " + results(0).uri + "; " + results(0).title.label + ";")
+      else
+        writer.println(placename + "; no match;;")
+    })
+            
+    writer.flush
+    writer.close
+    println("Done.")
   }
 
 }
