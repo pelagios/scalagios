@@ -8,13 +8,13 @@ import org.pelagios.legacy.graph.Constants._
 import org.pelagios.legacy.graph.{DatasetVertex, PlaceVertex}
 import org.pelagios.legacy.graph.io.PelagiosGraphIOBase
 import org.apache.lucene.util.Version
-import org.apache.lucene.queryParser.QueryParser
-import org.apache.lucene.analysis.KeywordAnalyzer
 import org.apache.lucene.search.NumericRangeQuery
 import org.apache.lucene.search.BooleanQuery
 import org.apache.lucene.search.BooleanClause
 import org.neo4j.graphdb.index.Index
 import org.neo4j.graphdb.Node
+import org.apache.lucene.queryparser.classic.QueryParser
+import org.apache.lucene.analysis.core.KeywordAnalyzer
 
 trait Neo4jIndexReader extends PelagiosGraphIOBase {
 
