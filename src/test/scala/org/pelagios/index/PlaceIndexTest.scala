@@ -11,8 +11,9 @@ import org.apache.commons.io.FileUtils
 @RunWith(classOf[JUnitRunner])
 class PlaceIndexTest extends FunSuite with BeforeAndAfter {
 
-  val TEST_PLACES_FILE = "src/test/resources/one-place.ttl"
+  val TEST_PLACES_FILE = "places-new.ttl"
   val TEST_INDEX_DIR = "test-idx"
+  val TEST_QUERY = "linz"
     
   before {
     val indexDir = new File(TEST_INDEX_DIR)
@@ -21,19 +22,21 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
   }
   
   test("Gazetteer Dump Import") {
-    println("Loading test data from file")
+    print("Loading test data from file... ")
     val places = Scalagios.parseGazetteerFile(new File(TEST_PLACES_FILE))
+    println(places.size + " places.")
     
-    println("Writing index")
+    print("Writing index... ")
     val index = PlaceIndex.open(new File(TEST_INDEX_DIR))
     index.addPlaces(places)
+    println("done.")
     
-    println("Running test query")
-    val results = index.query("athens")
-    
-    results.foreach(place => {
+    println("Running test query: '" + TEST_QUERY + "'")
+    index.query(TEST_QUERY).foreach(place => {
       println(place.uri + " - " + place.title.label)
     })
+    
+    println("Done.")
   }
   
   after {

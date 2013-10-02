@@ -14,6 +14,8 @@ import org.pelagios.rdf.parser.PelagiosDataParser
 import java.net.URI
 import org.pelagios.rdf.parser.GazetteerParser
 import org.pelagios.api.Place
+import org.pelagios.legacy.api.{Place => LegacyPlace}
+import org.pelagios.legacy.rdf.parser.PlaceCollector
 
 /** A utility to parse & write Pelagios data.
   *
@@ -57,10 +59,13 @@ object Scalagios {
   // TODO implement serialization/write Pelagios data
   
   /** Returns a handle on the legacy import- and migration utilities. **/
-  def Legacy: { def parseOAC(file: String): Iterable[GeoAnnotation]; 
-                def migrateOAC(source: String, destination: String): Unit } = LegacyInterop
+  def Legacy: { def parseOAC(file: File): Iterable[GeoAnnotation]; 
+                def migrateOAC(source: File, destination: File): Unit;
+                def parsePleiadesDumps(files: Seq[File]): Seq[LegacyPlace];
+                def migratePleiadesDumps(sources: Seq[File], destination: File) } = LegacyInterop
   
 }
+
 
 /** Legacy import and migration utilities. **/
 private object LegacyInterop {
@@ -70,11 +75,11 @@ private object LegacyInterop {
     * @param file the legacy dump file
     * @return a list of legacy [[org.pelagios.legacy.api.GeoAnnotation]] objects  
     */
-  def parseOAC(file: String): Iterable[GeoAnnotation] = {
-    val parser = Scalagios.getParser(file)
+  def parseOAC(file: File): Iterable[GeoAnnotation] = {
+    val parser = Scalagios.getParser(file.getName)
     val annotationCollector = new AnnotationCollector
     parser.setRDFHandler(annotationCollector)
-    parser.parse(new FileInputStream(new File(file)), "http://pelagios.github.io/")
+    parser.parse(new FileInputStream(file), "http://pelagios.github.io/")
     annotationCollector.getAnnotations
   }
   
@@ -87,12 +92,11 @@ private object LegacyInterop {
     * @param source the source file location
     * @param destination the destination file location 
     */
-  def migrateOAC(source: String, destination: String) = {
-    val destFile = new File(destination)
-    if (!destFile.exists)
-      destFile.createNewFile
+  def migrateOAC(source: File, destination: File) = {
+    if (!destination.exists)
+      destination.createNewFile
       
-    val writer = new PrintWriter(destFile)
+    val writer = new PrintWriter(destination)
       
     // Write header
     writer.println("@prefix pelagios: <http://pelagios.github.io/terms#> .")
@@ -119,6 +123,54 @@ private object LegacyInterop {
     
     writer.flush
     writer.close
+  }
+  
+  def parsePleiadesDumps(files: Seq[File]): Seq[LegacyPlace] = files.map(file => {
+    println("Parsing file " + file.getName)
+    
+    val parser = Scalagios.getParser(file.getName)
+    val placeCollector = new PlaceCollector      
+    parser.setRDFHandler(placeCollector)
+    parser.parse(new FileInputStream(file), "http://pelagios.github.io/")
+    placeCollector.getPlaces     
+  }).flatten
+  
+  def migratePleiadesDumps(sources: Seq[File], destination: File) = {
+    if (!destination.exists)
+      destination.createNewFile
+      
+    val writer = new PrintWriter(destination)
+      
+    // Write header
+    writer.println("@prefix pelagios: <http://pelagios.github.com/terms#> .")
+    writer.println("@prefix pleiades: <http://pleiades.stoa.org/places/vocab#> .")
+    writer.println("@prefix dcterms: <http://purl.org/dc/terms/> .\n")   
+    
+    val places = parsePleiadesDumps(sources)
+    places.foreach(place => {
+      writer.println("<" + place.uri + "> a pelagios:PlaceRecord ;")
+      writer.println("  dcterms:title \"" + place.label.getOrElse("[unknown]").replaceAll("\\\"", "\\\\\"") + "\" ;")
+      if (place.comment.isDefined)
+        writer.println("  dcterms:description \"" + place.comment.get.replaceAll("\\\"", "\\\\\"") + "\" ;")
+      if (place.featureType.isDefined)
+        writer.println("  dcterms:subject <" + place.featureType.get + "> ;")
+        
+      if (place.altLabels.isDefined && !place.altLabels.get.isEmpty)
+        place.altLabels.get.split(",").foreach(altLabel => { 
+          writer.println("  pleiades:hasName [ skos:label \"" + altLabel.trim + "\" ] ;")
+        })
+        
+      if (place.coverage.isDefined && !place.coverage.get.isEmpty)
+        place.coverage.get.split(",").foreach(altLabel => { 
+          writer.println("  pleiades:hasName [ skos:label \"" + altLabel.trim + "\" ] ;")
+        })
+        
+      writer.println("  .\n")
+    })
+    
+    writer.flush
+    writer.close
+    println("Migrated " + places.size + " places")
   }
   
 }

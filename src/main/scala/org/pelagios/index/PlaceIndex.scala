@@ -11,6 +11,7 @@ import org.apache.lucene.index.{ IndexReader, IndexWriter, IndexWriterConfig }
 import org.apache.lucene.search.{ IndexSearcher, TopScoreDocCollector }
 import org.pelagios.api.DefaultPlace
 import org.pelagios.api.Label
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser
 
 class PlaceIndex(directory: File) {
   
@@ -32,7 +33,9 @@ class PlaceIndex(directory: File) {
       doc.add(new TextField(FIELD_TITLE, place.title.label, Field.Store.YES))
       place.descriptions.foreach(description => doc.add(new TextField(FIELD_DESCRIPTION, description.label, Field.Store.YES)))
       place.names.foreach(name => {
-        name.labels.foreach(label => doc.add(new TextField(FIELD_NAME_LABEL, label.label, Field.Store.YES)))
+        name.labels.foreach(label => {
+          doc.add(new TextField(FIELD_NAME_LABEL, label.label, Field.Store.YES)) 
+        })
         name.altLabels.foreach(altLabel => doc.add(new TextField(FIELD_NAME_ALTLABEL, altLabel.label, Field.Store.YES)))
       })
       writer.addDocument(doc)
@@ -42,7 +45,8 @@ class PlaceIndex(directory: File) {
   }
   
   def query(query: String): Seq[Place] = {
-    val q = new QueryParser(Version.LUCENE_44, FIELD_TITLE, analyzer).parse(query)
+    val fields = Seq(FIELD_TITLE, FIELD_NAME_LABEL, FIELD_NAME_ALTLABEL).toArray    
+    val q = new MultiFieldQueryParser(Version.LUCENE_44, fields, analyzer).parse(query)
     
     val reader = IndexReader.open(index)
     val searcher = new IndexSearcher(reader)

@@ -24,7 +24,7 @@ class GazetteerParser extends ResourceCollector {
     *         and pleiades:Location
     */
   private def determineType(resources: Map[String, Resource]): Map[URI, Map[String, Resource]] = {
-    val typedResources = resources.map { case (subjURI, resource) => {
+    val typedResources = resources.map { case (subjURI, resource) => {        
       val types = resource.get(RDF.TYPE)
       
       // The easy case: resource is explicitly typed      
@@ -37,10 +37,10 @@ class GazetteerParser extends ResourceCollector {
       } else {
         // No explicit typing - guess based on properties
         val predicates = resource.properties.map(_._1)
-        if (predicates.filter(p => { p == OSGeo.asWKT | p == OSGeo.asGeoJSON | p == W3CGeo.lat }).size > 0) {
+        if (predicates.filter(p => { p.equals(OSGeo.asWKT) | p.equals(OSGeo.asGeoJSON) | p.equals(W3CGeo.lat) }).size > 0) {
           // If it has any form of geometry, assume it's a location
           (PleiadesPlaces.Location, subjURI, resource)  
-        } else if (predicates.filter(p => { p == SKOS.label }).size > 0) {
+        } else if (predicates.filter(_.equals(SKOS.label)).size > 0) {
           // If it has a skos:label, assume it's a name
           (PleiadesPlaces.Name, subjURI, resource)  
         } else {
@@ -69,7 +69,7 @@ class GazetteerParser extends ResourceCollector {
     
     // Places, with Names and Locations in-lined 
     typedResources.get(Pelagios.PlaceRecord).getOrElse(Map.empty[String, Resource]).map { case (uri, resource) => 
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.get(uri.toString).map(new NameResource(_))).toSeq.flatten
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.get(uri.stringValue).map(new NameResource(_))).toSeq.flatten
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.get(uri.toString).map(new LocationResource(_))).toSeq.flatten
       new PlaceResource(resource, names, locations)
     }

@@ -9,9 +9,12 @@ object QueryTest {
     val neo4j = new Neo4jGraph("neo4j")
     val reader = new PelagiosNeo4jReader(neo4j)
     
+    /*
     reader.queryPlaces("attica").foreach(place => {
       println(place.label.get)
     })
+    *
+    */
     
     neo4j.shutdown
   }
