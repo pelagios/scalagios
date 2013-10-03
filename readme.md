@@ -1,9 +1,5 @@
 # Scalagios
 
-<p style="float:right">
-  <img style="width:200px;" src="http://github.com/pelagios/scalagios/raw/master/scalagios-logo.png" />
-</p> 
-
 Scalagios is a utility software library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on
 the Java Virtual Machine. Scalagios provides:
 
