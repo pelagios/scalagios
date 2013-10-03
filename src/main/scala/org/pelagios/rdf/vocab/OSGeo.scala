@@ -1,13 +1,12 @@
 package org.pelagios.rdf.vocab
 
-object OSGeo extends BaseVocab {
+/** Ordnance Survey Geometry Ontology - http://data.ordnancesurvey.co.uk/ontology/geometry/ **/
+object OSGeo extends BaseVocab("http://data.ordnancesurvey.co.uk/ontology/geometry/") {
   
-  val NAMESPACE = "http://data.ordnancesurvey.co.uk/ontology/geometry/"
-    
-  val asWKT = factory.createURI(NAMESPACE, "asWKT")
+  val asWKT = createURI("asWKT")
   
-  val asGeoJSON = factory.createURI(NAMESPACE, "asGeoJSON")
+  val asGeoJSON = createURI("asGeoJSON")
     
-  val extent = factory.createURI(NAMESPACE, "extent")
+  val extent = createURI("extent")
 
 }

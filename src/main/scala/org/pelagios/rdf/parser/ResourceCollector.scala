@@ -14,7 +14,7 @@ import org.pelagios.api.Label
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class ResourceCollector extends RDFHandlerBase {
+private[parser] abstract class ResourceCollector extends RDFHandlerBase {
   
   protected val resources = new HashMap[String, Resource]
   
@@ -78,7 +78,7 @@ private[parser] class Resource(val uri:String) {
 }
 
 /** A companion to [[ResourceCollector]] providing helper methods **/
-object ResourceCollector {
+private[parser] object ResourceCollector {
   
   /** Converts an RDF value to a [[org.pelagios.api.Label]] domain object.
     * 

@@ -1,17 +1,16 @@
 package org.pelagios.rdf.vocab
 
-object PleiadesPlaces extends BaseVocab {
-  
-  val NAMESPACE = "http://pleiades.stoa.org/places/vocab#"
+/** Pleiades RDF Vocabulary - http://pleiades.stoa.org/places/vocab **/
+object PleiadesPlaces extends BaseVocab("http://pleiades.stoa.org/places/vocab#") {
     
-  val hasFeatureType = factory.createURI(NAMESPACE, "hasFeatureType") 
+  val hasFeatureType = createURI("hasFeatureType") 
   
-  val Name = factory.createURI(NAMESPACE, "Name")
+  val Name = createURI("Name")
   
-  val Location = factory.createURI(NAMESPACE, "Location")
+  val Location = createURI("Location")
   
-  val hasName = factory.createURI(NAMESPACE, "hasName")
+  val hasName = createURI("hasName")
   
-  val hasLocation = factory.createURI(NAMESPACE, "hasLocation")  
+  val hasLocation = createURI("hasLocation")  
 
 }

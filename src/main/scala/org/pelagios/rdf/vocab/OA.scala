@@ -1,15 +1,14 @@
 package org.pelagios.rdf.vocab
 
-object OA extends BaseVocab {
-  
-  val NAMESPACE = "http://www.w3.org/ns/oa#"
+/** Open Annotation Data Model - http://www.openannotation.org/spec/core/ **/
+object OA extends BaseVocab("http://www.w3.org/ns/oa#") {
 
-  val Annotation = factory.createURI(NAMESPACE, "Annotation")
+  val Annotation = createURI("Annotation")
   
-  val hasBody = factory.createURI(NAMESPACE, "hasBody")
+  val hasBody = createURI("hasBody")
   
-  val hasTarget = factory.createURI(NAMESPACE, "hasTarget")
+  val hasTarget = createURI("hasTarget")
     
-  val motivatedBy = factory.createURI(NAMESPACE, "motivatedBy")
+  val motivatedBy = createURI("motivatedBy")
   
 }

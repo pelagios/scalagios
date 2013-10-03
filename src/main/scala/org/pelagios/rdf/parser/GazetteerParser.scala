@@ -13,7 +13,29 @@ import org.openrdf.model.vocabulary.RDFS
   */
 class GazetteerParser extends ResourceCollector {
   
-  /** Private helper method that adds explicit type information to the collected resources.
+  /** The Places collected by the parser.
+   *  
+    * @return the list of Places
+    */
+  def places: Iterable[Place] = {
+    // All RDF resources, grouped by their type (Place, Name, Location) 
+    val typedResources = determineType(resources.toMap)
+    
+    // Just the Names
+    val allNames = typedResources.get(PleiadesPlaces.Name).getOrElse(Map.empty[String, Resource])
+    
+    // Just the Locations
+    val allLocations = typedResources.get(PleiadesPlaces.Location).getOrElse(Map.empty[String, Resource])
+    
+    // Places, with Names and Locations in-lined 
+    typedResources.get(Pelagios.PlaceRecord).getOrElse(Map.empty[String, Resource]).map { case (uri, resource) => 
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.get(uri.stringValue).map(new NameResource(_))).toSeq.flatten
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.get(uri.toString).map(new LocationResource(_))).toSeq.flatten
+      new PlaceResource(resource, names, locations)
+    }
+  }  
+
+  /** Private helper method that determines explicit type information to the collected resources.
     *
     * The method will go through the resources, and first look for explicit RDF types of 
     * pelagios:PlaceRecord, pleiades:Name, and pleiades:Location. If no explicit RDF type
@@ -52,28 +74,6 @@ class GazetteerParser extends ResourceCollector {
     
     typedResources.groupBy(_._1).mapValues(_.map { case (typeURI, subjURI, resource) => subjURI -> resource }.toMap)
   } 
-  
-  /** The Places collected by the parser.
-   *  
-    * @return the list of Places
-    */
-  def places: Iterable[Place] = {
-    // All RDF resources, grouped by type (Place, Name, Location) 
-    val typedResources = determineType(resources.toMap)
-    
-    // Just the Names
-    val allNames = typedResources.get(PleiadesPlaces.Name).getOrElse(Map.empty[String, Resource])
-    
-    // Just the Locations
-    val allLocations = typedResources.get(PleiadesPlaces.Location).getOrElse(Map.empty[String, Resource])
-    
-    // Places, with Names and Locations in-lined 
-    typedResources.get(Pelagios.PlaceRecord).getOrElse(Map.empty[String, Resource]).map { case (uri, resource) => 
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.get(uri.stringValue).map(new NameResource(_))).toSeq.flatten
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.get(uri.toString).map(new LocationResource(_))).toSeq.flatten
-      new PlaceResource(resource, names, locations)
-    }
-  }
 
 }
 

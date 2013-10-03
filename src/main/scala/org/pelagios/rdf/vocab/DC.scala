@@ -1,9 +1,8 @@
 package org.pelagios.rdf.vocab
 
-object DC extends BaseVocab {
-  
-  val NAMESPACE = "http://purl.org/dc/elements/1.1/"
+/** Dublin Core **/
+object DC extends BaseVocab("http://purl.org/dc/elements/1.1/") {
 
-  val title = factory.createURI(NAMESPACE, "title")
+  val title = createURI("title")
 
 }

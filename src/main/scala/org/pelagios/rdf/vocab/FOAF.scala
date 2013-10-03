@@ -1,11 +1,10 @@
 package org.pelagios.rdf.vocab
 
-object FOAF extends BaseVocab {
+/** Fried-of-a-Friend vocabulary **/
+object FOAF extends BaseVocab("http://xmlns.com/foaf/0.1/") {
+     
+  val homepage = createURI("homepage")
   
-  val NAMESPACE = "http://xmlns.com/foaf/0.1/"
-    
-  val homepage = factory.createURI(NAMESPACE, "homepage")
-  
-  val thumbnail = factory.createURI(NAMESPACE, "thumbnail")
+  val thumbnail = createURI("thumbnail")
 
 }

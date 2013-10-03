@@ -1,123 +1,122 @@
 package org.pelagios.rdf.vocab
 
-object PleiadesPlaceTypes extends BaseVocab {
-  
-  val NAMESPACE = "http://pleiades.stoa.org/vocabularies/place-types/"
+/** Pleiades Feature/Place Types - http://pleiades.stoa.org/vocabularies/place-types **/
+object PleiadesPlaceTypes extends BaseVocab("http://pleiades.stoa.org/vocabularies/place-types/") {
     
-  val bridge = factory.createURI(NAMESPACE, "bridge")
+  val bridge = createURI("bridge")
   
-  val falseName = factory.createURI(NAMESPACE, "false")
+  val falseName = createURI("false")
 
-  val villa = factory.createURI(NAMESPACE, "villa")
+  val villa = createURI("villa")
   
-  val estuary = factory.createURI(NAMESPACE, "estuary")
+  val estuary = createURI("estuary")
   
-  val people = factory.createURI(NAMESPACE, "people")
+  val people = createURI("people")
   
-  val wall = factory.createURI(NAMESPACE, "wall")
+  val wall = createURI("wall")
 
-  val spring = factory.createURI(NAMESPACE, "spring")
+  val spring = createURI("spring")
   
-  val pass = factory.createURI(NAMESPACE, "pass")
+  val pass = createURI("pass")
 
-  val mine = factory.createURI(NAMESPACE, "mine")
+  val mine = createURI("mine")
   
-  val bath = factory.createURI(NAMESPACE, "bath")
+  val bath = createURI("bath")
 
-  val waterInland = factory.createURI(NAMESPACE, "water-inland")
+  val waterInland = createURI("water-inland")
   
-  val church = factory.createURI(NAMESPACE, "church")
+  val church = createURI("church")
   
-  val station = factory.createURI(NAMESPACE, "station")
+  val station = createURI("station")
   
-  val settlement = factory.createURI(NAMESPACE, "settlement")
+  val settlement = createURI("settlement")
   
-  val port = factory.createURI(NAMESPACE, "port")
+  val port = createURI("port")
   
-  val canal = factory.createURI(NAMESPACE, "canal")
+  val canal = createURI("canal")
   
-  val mountain = factory.createURI(NAMESPACE, "mountain")
+  val mountain = createURI("mountain")
   
-  val lighthouse = factory.createURI(NAMESPACE, "lighthouse")
+  val lighthouse = createURI("lighthouse")
   
-  val ridge = factory.createURI(NAMESPACE, "ridge")
+  val ridge = createURI("ridge")
   
-  val estate = factory.createURI(NAMESPACE, "estate")
+  val estate = createURI("estate")
   
-  val aqueduct = factory.createURI(NAMESPACE, "aqueduct")
+  val aqueduct = createURI("aqueduct")
   
-  val unknown = factory.createURI(NAMESPACE, "unknown")
+  val unknown = createURI("unknown")
   
-  val cave = factory.createURI(NAMESPACE, "cave")
+  val cave = createURI("cave")
   
-  val cemetery = factory.createURI(NAMESPACE, "cemetery")
+  val cemetery = createURI("cemetery")
 
-  val production = factory.createURI(NAMESPACE, "production")
+  val production = createURI("production")
   
-  val hill = factory.createURI(NAMESPACE, "hill")
+  val hill = createURI("hill")
   
-  val findspot = factory.createURI(NAMESPACE, "findspot")
+  val findspot = createURI("findspot")
   
-  val whirlpool = factory.createURI(NAMESPACE, "whirlpool")
+  val whirlpool = createURI("whirlpool")
   
-  val valley = factory.createURI(NAMESPACE, "valley")
+  val valley = createURI("valley")
   
-  val temple = factory.createURI(NAMESPACE, "temple")
+  val temple = createURI("temple")
   
-  val tumulus = factory.createURI(NAMESPACE, "tumulus")
+  val tumulus = createURI("tumulus")
   
-  val forest = factory.createURI(NAMESPACE, "forest")
+  val forest = createURI("forest")
   
-  val waterWheel = factory.createURI(NAMESPACE, "wheel")
+  val waterWheel = createURI("wheel")
   
-  val settlementModern = factory.createURI(NAMESPACE, "settlement-modern")
+  val settlementModern = createURI("settlement-modern")
   
-  val dam = factory.createURI(NAMESPACE, "dam")
+  val dam = createURI("dam")
   
-  val reservoir = factory.createURI(NAMESPACE, "reservoir")
+  val reservoir = createURI("reservoir")
   
-  val coast = factory.createURI(NAMESPACE, "coast")
+  val coast = createURI("coast")
   
-  val oasis = factory.createURI(NAMESPACE, "oasis")
+  val oasis = createURI("oasis")
   
-  val waterOpen = factory.createURI(NAMESPACE, "water-open")
+  val waterOpen = createURI("water-open")
   
-  val cape = factory.createURI(NAMESPACE, "cape")
+  val cape = createURI("cape")
   
-  val fort = factory.createURI(NAMESPACE, "fort")
+  val fort = createURI("fort")
   
-  val unlocated = factory.createURI(NAMESPACE, "unlocated")
+  val unlocated = createURI("unlocated")
   
-  val undefined = factory.createURI(NAMESPACE, "undefined")
+  val undefined = createURI("undefined")
   
-  val island = factory.createURI(NAMESPACE, "island")
+  val island = createURI("island")
   
-  val region = factory.createURI(NAMESPACE, "region")
+  val region = createURI("region")
   
-  val well = factory.createURI(NAMESPACE, "well")
+  val well = createURI("well")
   
-  val bay = factory.createURI(NAMESPACE, "bay")
+  val bay = createURI("bay")
   
-  val saltMarsh = factory.createURI(NAMESPACE, "salt-marsh")
+  val saltMarsh = createURI("salt-marsh")
 
-  val centuriation = factory.createURI(NAMESPACE, "centuriation")
+  val centuriation = createURI("centuriation")
   
-  val plain = factory.createURI(NAMESPACE, "plain")
+  val plain = createURI("plain")
   
-  val river = factory.createURI(NAMESPACE, "river")
+  val river = createURI("river")
   
-  val road = factory.createURI(NAMESPACE, "road")  
+  val road = createURI("road")  
   
-  val province = factory.createURI(NAMESPACE, "province")
+  val province = createURI("province")
   
-  val urban = factory.createURI(NAMESPACE, "urban")
+  val urban = createURI("urban")
   
-  val rapid = factory.createURI(NAMESPACE, "rapid")
+  val rapid = createURI("rapid")
   
-  val lake = factory.createURI(NAMESPACE, "lake")
+  val lake = createURI("lake")
   
-  val tunnel = factory.createURI(NAMESPACE, "tunnel")
+  val tunnel = createURI("tunnel")
   
-  val mosque = factory.createURI(NAMESPACE, "mosque")
+  val mosque = createURI("mosque")
   
 }

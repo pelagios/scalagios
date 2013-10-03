@@ -1,19 +1,18 @@
 package org.pelagios.rdf.vocab
 
-object VoID extends BaseVocab {
+/** Vocabulary of Interlinked Datasets - http://www.w3.org/TR/void/ **/
+object VoID extends BaseVocab("http://rdfs.org/ns/void#") {
   
-  val NAMESPACE = "http://rdfs.org/ns/void#"
-    
-  val Dataset = factory.createURI(NAMESPACE, "Dataset")
+   val Dataset = createURI("Dataset")
 
-  val dataDump = factory.createURI(NAMESPACE, "dataDump")
+  val dataDump = createURI("dataDump")
   
-  val inDataset = factory.createURI(NAMESPACE, "inDataset")
+  val inDataset = createURI("inDataset")
 
-  val subset = factory.createURI(NAMESPACE, "subset")  
+  val subset = createURI("subset")  
   
-  val uriRegexPattern = factory.createURI(NAMESPACE, "uriRegexPattern")
+  val uriRegexPattern = createURI("uriRegexPattern")
   
-  val uriSpace = factory.createURI(NAMESPACE, "uriSpace")
+  val uriSpace = createURI("uriSpace")
   
 }

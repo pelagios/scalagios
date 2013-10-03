@@ -1,11 +1,10 @@
 package org.pelagios.rdf.vocab
 
-object Pelagios extends BaseVocab {
-  
-  val NAMESPACE = "http://pelagios.github.io/terms#"
+/** Pelagios custom metadata terms **/
+object Pelagios extends BaseVocab("http://pelagios.github.io/terms#") {
 
-  val AnnotatedThing = factory.createURI(NAMESPACE, "AnnotatedThing")
+  val AnnotatedThing = createURI("AnnotatedThing")
   
-  val PlaceRecord = factory.createURI(NAMESPACE, "PlaceRecord")
+  val PlaceRecord = createURI("PlaceRecord")
 
 }

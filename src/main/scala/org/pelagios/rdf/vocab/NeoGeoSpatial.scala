@@ -1,9 +1,8 @@
 package org.pelagios.rdf.vocab
 
-object NeoGeoSpatial extends BaseVocab {
-  
-  val NAMESPACE = "http://geovocab.org/spatial#"
-    
-  val connectsWith = factory.createURI(NAMESPACE, "C")
+/** NeoGeo Spatial Ontology - http://geovocab.org/spatial.html **/
+object NeoGeoSpatial extends BaseVocab("http://geovocab.org/spatial#") {
+ 
+  val connectsWith = createURI("C")
 
 }

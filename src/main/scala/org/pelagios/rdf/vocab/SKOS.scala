@@ -1,13 +1,12 @@
 package org.pelagios.rdf.vocab
 
-object SKOS extends BaseVocab {
-  
-  val NAMESPACE = "http://www.w3.org/2004/02/skos/core#"
+/** Simple Knowledge Organization System - http://www.w3.org/2004/02/skos/ **/
+object SKOS extends BaseVocab("http://www.w3.org/2004/02/skos/core#") {
     
-  val label = factory.createURI(NAMESPACE, "label")
+  val label = createURI("label")
     
-  val altLabel = factory.createURI(NAMESPACE, "altLabel")
+  val altLabel = createURI("altLabel")
   
-  val closeMatch = factory.createURI(NAMESPACE, "closeMatch")
+  val closeMatch = createURI("closeMatch")
 
 }
