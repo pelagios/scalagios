@@ -30,10 +30,10 @@ import com.tinkerpop.blueprints.pgm.Graph
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
 
   private val NEO4J_DIR = "neo4j-test"
-  private val PLEIADES_DUMP = "src/test/resources/places-20120724.ttl.gz"
+  private val PLEIADES_DUMP = "src/test/resources/legacy/test-places-pleiades.2012.07.ttl.gz"
    
-  private val VOID = "src/test/resources/gap-void-sample.ttl"
-  private val ANNOTATIONS_DUMP = "src/test/resources/gap-triples-sample.n3.gz" 
+  private val VOID = "src/test/resources/legacy/test-void-gap.ttl"
+  private val ANNOTATIONS_DUMP = "src/test/resources/legacy/test-annotations-gap.n3.gz" 
   private val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j

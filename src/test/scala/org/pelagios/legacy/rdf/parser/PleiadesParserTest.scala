@@ -14,7 +14,7 @@ import java.io.FileInputStream
 @RunWith(classOf[JUnitRunner])
 class PleiadesParserTest extends FunSuite {
   
-  val PLEIADES_DUMP = "src/test/resources/places-20120724.ttl.gz"
+  val PLEIADES_DUMP = "src/test/resources/legacy/test-places-pleiades.2012.07.ttl.gz"
   
   test("Pleiades RDF Import") {
     println("Starting Pleiades import")

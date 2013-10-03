@@ -9,7 +9,7 @@ import java.io.File
 @RunWith(classOf[JUnitRunner])
 class GazetteerParserTest extends FunSuite {
   
-  val TEST_FILE = "src/test/resources/one-place.ttl"
+  val TEST_FILE = "src/test/resources/test-places-pleiades.ttl"
 
   test("Gazetteer Dump Import") {
     println("Starting gazetteer data import")
@@ -17,11 +17,10 @@ class GazetteerParserTest extends FunSuite {
     
     val places = Scalagios.parseGazetteerFile(new File(TEST_FILE))
     places.foreach(place => {
-      println(place.uri)
       println(place.title)
-      place.names.foreach(name => println(name.labels))
-      place.locations.foreach(location => println(location.geometry))
     })  
+    
+    println(places.size + " places")
   }
   
 }

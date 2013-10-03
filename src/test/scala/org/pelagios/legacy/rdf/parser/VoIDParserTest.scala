@@ -11,7 +11,7 @@ import org.pelagios.legacy.api.Dataset
 @RunWith(classOf[JUnitRunner])
 class VoIDParserTest extends FunSuite { 
 
-  val SAMPLE_RDF = "src/test/resources/gap-void-sample.ttl"
+  val SAMPLE_RDF = "src/test/resources/legacy/test-void-gap.ttl"
   val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
     
   test("Pelagios VoID Import") {    

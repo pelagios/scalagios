@@ -1,8 +1,6 @@
 package org.pelagios.legacy.graph.io.readers
 
-import org.pelagios.legacy.graph.io.PelagiosGraphIOBase
 
-/*
 import scala.collection.JavaConverters._
 import com.tinkerpop.blueprints.pgm.impls.neo4j.{Neo4jGraph, Neo4jVertex}
 import org.neo4j.index.lucene.QueryContext
@@ -16,11 +14,11 @@ import org.apache.lucene.search.BooleanQuery
 import org.apache.lucene.search.BooleanClause
 import org.neo4j.graphdb.index.Index
 import org.neo4j.graphdb.Node
-import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.analysis.core.KeywordAnalyzer
-*/
+import org.apache.lucene.queryParser.QueryParser
+import org.apache.lucene.analysis.KeywordAnalyzer
+
 trait Neo4jIndexReader extends PelagiosGraphIOBase {
-/*
+
   val neo4jGraph = graph.asInstanceOf[Neo4jGraph]
   
   val placeNodeIndex = neo4jGraph.getRawGraph.index().forNodes(INDEX_FOR_PLACES)
@@ -66,5 +64,5 @@ trait Neo4jIndexReader extends PelagiosGraphIOBase {
     datasetNodeIndex.query(DATASET_TITLE, query).iterator().asScala.map(node => 
       new DatasetVertex(new Neo4jVertex(node, neo4jGraph))).toList
   }
-*/
+
 }
