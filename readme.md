@@ -1,15 +1,12 @@
 # Scalagios
 
-__[Download scalagios v1.0](https://github.com/downloads/pelagios/scalagios/scalagios-1.0.jar)__
+Scalagios is a utility software library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on
+the Java Virtual Machine. Scalagios provides:
 
-Scalagios is a utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on the Java Virtual Machine. Scalagios provides
-
-* Domain model classes for Pelagios' core data primitives: _Places_, _Datasets_, _GeoAnnotations_ and _GeoAnnotationTargets_
-* Custom RDF handlers for the [OpenRDF](http://www.openrdf.org/) Rio parser toolkit to read Pelagios
-  data and Pleiades dump files with low memory overhead
-* Parse validation that verifies data against Pelagios conventions and the Pelagios Cookbook (under development)
-* Graph database I/O utilities based on [Tinkerpop Blueprints](http://tinkerpop.com/), with special support for
-  [Neo4j](http://neo4j.org/). 
+* a convenient programming API based on Pelagios' domain model primitives: _Datasets_, _AnnotatedThings_, _Annotations_, _Places_, etc.
+* utilities to parse Pelagios data and gazetteer dump files into their domain model graph structure
+* utilities to work with Pelagios "legacy data" (from Pelagios project phases 1 & 2)
+* graph database I/O utilities based on [Tinkerpop Blueprints](http://tinkerpop.com/) 
 
 ## License
 
@@ -17,12 +14,11 @@ Scalagios is licensed under the [GNU General Public License v3.0](http://www.gnu
 
 ## Developer Information
 
-Scalagios is written in [Scala](http://www.scala-lang.org) and built with [Gradle](http://www.gradle.org).
-(Download and installation instructions for Gradle are [here](http://www.gradle.org/installation.html)). 
+Scalagios is written in [Scala](http://www.scala-lang.org) and built with [SBT](http://www.scala-sbt.org/).
 
-* To build and test the project, run `gradle build`. (Test reports will be in `build/reports/tests`)
-* To generate a jar package, run `gradle jar`. (The jar will be in `build/libs`)
-* To generate an Eclipse project, run `gradle eclipse`.
-* To generate ScalaDoc, run `gradle scaladoc`.  (Docs will be in `build/docs`)
+* To build the library, run `sbt package`.
+* To run the unit tests, use `sbt test`
+* To generate an Eclipse project, run `sbt eclipse`.
+* To generate ScalaDoc, run `sbt doc`.  (Docs will be in `target/scala-2.10/api/`)
 
 __Note:__ dependency download may take a while the first time you build the project!
