@@ -16,6 +16,11 @@ import org.pelagios.rdf.parser.GazetteerParser
 import org.pelagios.api.Place
 import org.pelagios.legacy.api.{Place => LegacyPlace}
 import org.pelagios.legacy.rdf.parser.PlaceCollector
+import org.openrdf.rio.RDFFormat
+import java.io.InputStream
+import org.openrdf.rio.RDFParser
+import org.openrdf.rio.RDFParserFactory
+import org.openrdf.rio.RDFParserRegistry
 
 /** A utility to parse & write Pelagios data.
   *
@@ -28,12 +33,23 @@ object Scalagios {
     * @param file the dump file to parse
     * @return the list of annotated things, with annotations in-lined
     */
-  def parseDataFile(file: File): Iterable[AnnotatedThing] = {
-    val parser = getParser(file.getName)
+  def parseData(file: File): Iterable[AnnotatedThing] =
+    parseData(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
+  
+  /** Parses Pelagios annotations from an input stream.
+    *
+    * @param is the input stream
+    * @param baseURI the base URI
+    * @param format the RDF serialization format the data is in  
+    */
+  def parseData(is: InputStream, baseURI: String, format: RDFFormat): Iterable[AnnotatedThing] =
+    parseData(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
+  
+  private def parseData(is: InputStream, baseURI: String, parser: RDFParser): Iterable[AnnotatedThing] = {
     val handler = new PelagiosDataParser
     parser.setRDFHandler(handler)
-    parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
-    handler.annotatedThings    
+    parser.parse(is, baseURI)
+    handler.annotatedThings      
   }
   
   /** Parses a Pelagios-style gazetteer dump file.
@@ -41,15 +57,26 @@ object Scalagios {
     *  @param file the gazetteer dump file to parse
     *  @return the places, with names and locations in-lined  
     */
-  def parseGazetteerFile(file: File): Iterable[Place] = {
-    val parser = getParser(file.getName)
+  def parseGazetteer(file: File): Iterable[Place] =
+    parseGazetteer(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
+  
+  /** Parses Pelagios-style gazetteer data from an input stream.
+    * 
+    * @param is the input stream
+    * @param baseURI the base URI
+    * @param format the RDF serialization format the data is in
+    */
+  def parseGazetteer(is: InputStream, baseURI: String, format: RDFFormat): Iterable[Place] =
+    parseGazetteer(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
+  
+  private def parseGazetteer(is: InputStream, baseURI:String, parser: RDFParser): Iterable[Place] = {
     val handler = new GazetteerParser
     parser.setRDFHandler(handler)
-    parser.parse(new FileInputStream(file), new URI(file.getAbsolutePath()).toString)
-    handler.places
+    parser.parse(is, baseURI)
+    handler.places    
   }
   
-  private[pelagios] def getParser(file: String) = file match {
+  private[pelagios] def getParser(file: String): RDFParser = file match {
     case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
     case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
     case f if f.endsWith("n3") => new N3ParserFactory().getParser()

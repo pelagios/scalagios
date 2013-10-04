@@ -12,6 +12,6 @@
   from original source data provided by [ISAW Papers](http://isaw.nyu.edu/publications/isaw-papers). ISAW Papers'
   Pelagios annotations are licensed under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/)
   
-* The file "test-places-pleiades.ttl.gz" contains a sample of 500 places from the [Pleiades Gazetteer](http://pleiades.stoa.org/),
+* The file "test-places-pleiades.ttl" contains a sample of 500 places from the [Pleiades Gazetteer](http://pleiades.stoa.org/),
   migrated automatically to the Pelagios gazetteer interconnection format. Pleiades data is licensed under a
   [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/). 

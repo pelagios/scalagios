@@ -15,7 +15,7 @@ class GazetteerParserTest extends FunSuite {
     println("Starting gazetteer data import")
     val startTime = System.currentTimeMillis
     
-    val places = Scalagios.parseGazetteerFile(new File(TEST_FILE))
+    val places = Scalagios.parseGazetteer(new File(TEST_FILE))
     places.foreach(place => {
       println(place.title)
     })  
