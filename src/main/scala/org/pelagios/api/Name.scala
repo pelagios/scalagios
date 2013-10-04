@@ -11,3 +11,11 @@ trait Name {
   def altLabels: Seq[Label]
   
 }
+
+case class DefaultName extends Name {
+  
+  var labels = Seq.empty[Label]
+  
+  var altLabels = Seq.empty[Label]
+  
+}
