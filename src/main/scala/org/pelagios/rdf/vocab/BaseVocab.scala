@@ -7,7 +7,7 @@ import org.openrdf.model.impl.ValueFactoryImpl
   * @param namespace the vocabulary namespace
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-private[vocab] class BaseVocab(namespace: String) {
+private[vocab] class BaseVocab(val namespace: String) {
 
     private val factory = ValueFactoryImpl.getInstance()
     

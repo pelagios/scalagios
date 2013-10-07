@@ -15,3 +15,14 @@ trait AnnotatedThing {
   def annotations: Seq[Annotation]
   
 }
+
+/** A default POJO-style implementation of AnnotatedThing. **/
+class DefaultAnnotatedThing(val uri: String) extends AnnotatedThing {
+  
+  var title: Option[String] = None
+  
+  var description: Option[String] = None
+  
+  var annotations: Seq[Annotation] = Seq.empty[Annotation]
+  
+}

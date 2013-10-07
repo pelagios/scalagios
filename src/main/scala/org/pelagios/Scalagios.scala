@@ -21,6 +21,12 @@ import java.io.InputStream
 import org.openrdf.rio.RDFParser
 import org.openrdf.rio.RDFParserFactory
 import org.openrdf.rio.RDFParserRegistry
+import java.io.OutputStream
+import org.openrdf.model.Model
+import org.openrdf.model.impl.TreeModel
+import org.pelagios.rdf.PelagiosRDF
+import org.openrdf.rio.Rio
+import java.io.FileOutputStream
 
 /** A utility to parse & write Pelagios data.
   *
@@ -51,6 +57,9 @@ object Scalagios {
     parser.parse(is, baseURI)
     handler.annotatedThings      
   }
+
+  def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) =
+    Rio.write(PelagiosRDF.toRDF(data), new FileOutputStream(file), format)
   
   /** Parses a Pelagios-style gazetteer dump file.
     *
@@ -82,8 +91,6 @@ object Scalagios {
     case f if f.endsWith("n3") => new N3ParserFactory().getParser()
     case _ => throw new UnsupportedRDFormatException("Format not supported")
   }
-  
-  // TODO implement serialization/write Pelagios data
   
   /** Returns a handle on the legacy import- and migration utilities. **/
   def Legacy: { def parseOAC(file: File): Iterable[GeoAnnotation]; 

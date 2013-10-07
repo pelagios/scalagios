@@ -3,6 +3,7 @@ package org.pelagios.rdf.parser
 import org.pelagios.rdf.vocab.{ OA, Pelagios }
 import org.pelagios.api.{ AnnotatedThing, Annotation }
 import org.pelagios.rdf.vocab.DCTerms
+import org.pelagios.api.Neighbour
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -55,6 +56,10 @@ private[parser] class AnnotationResource(resource: Resource) extends Annotation 
   def hasTarget: String = resource.getFirst(OA.hasTarget).get.stringValue
   
   def motivatedBy: Option[String] = resource.getFirst(OA.motivatedBy).map(_.stringValue)
+  
+  def toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
+  
+  def hasNext: Option[Neighbour] = None // TODO implement! 
   
 }
 
