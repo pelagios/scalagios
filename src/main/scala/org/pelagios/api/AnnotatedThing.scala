@@ -8,10 +8,10 @@ trait AnnotatedThing {
   
   def uri: String
   
-  def homepages: Seq[String]
-  
   def title: String
-  
+
+  def homepages: Seq[String]
+    
   def description: Option[String]
   
   def variants: Seq[AnnotatedThing]
