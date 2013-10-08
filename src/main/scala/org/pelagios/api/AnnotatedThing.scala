@@ -10,10 +10,16 @@ trait AnnotatedThing {
   
   def title: String
 
-  def homepages: Seq[String]
-    
   def description: Option[String]
   
+  // TODO def sources: Seq[String]
+
+  def homepages: Seq[String]
+    
+  // TODO timestamp
+  
+  // TODO bibliographic references
+    
   def variants: Seq[AnnotatedThing]
   
   def annotations: Seq[Annotation]

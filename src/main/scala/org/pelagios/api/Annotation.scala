@@ -18,6 +18,13 @@ trait Annotation {
   
   def hasNext: Option[Neighbour]
   
+  // TODO def annotatedBy: Option[Agent]
+  
+  // TODO def annotatedAt: timestamp
+
+  // http://lov.okfn.org/dataset/lov/details/vocabulary_pav.html  
+  // TODO def pav_createdBy: Option[Agent]
+  
 }
 
 /** A default POJO-style implementation of Annotation. **/
