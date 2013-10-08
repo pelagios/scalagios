@@ -30,6 +30,10 @@ import java.io.FileOutputStream
 import org.apache.jena.riot.RDFDataMgr
 import org.openjena.riot.Lang
 import org.apache.jena.riot.{RDFFormat => JenaFormat}
+import org.pelagios.rdf.PelagiosRDFJena
+import org.openrdf.rio.RDFWriterFactory
+import org.callimachusproject.io.TurtleStreamWriterFactory
+import java.io.Writer
 
 /** A utility to parse & write Pelagios data.
   *
@@ -61,15 +65,25 @@ object Scalagios {
     handler.annotatedThings      
   }
 
-  //def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) =
-  //  Rio.write(PelagiosRDF.toRDF(data), new FileOutputStream(file), format)
-
   def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) = {
-    // val model = PelagiosRDF.toRDFJena(data)
-    // RDFDataMgr.write(System.out, model, JenaFormat.TURTLE_PRETTY)
-    // model.write(System.out, "TURTLE_BLOCKS")
-    Rio.write(PelagiosRDF.toRDF(data), System.out/*new FileOutputStream(file)*/, format)
+    val factory = new RDFWriterFactory() {
+      override def getRDFFormat(): RDFFormat = RDFFormat.TURTLE
+        
+      override def getWriter(out: OutputStream) = new TurtleStreamWriterFactory().createWriter(out, "http://example.org/")
+      
+      override def getWriter(writer: Writer) = new TurtleStreamWriterFactory().createWriter(writer, "http://example.org") 
+    }
+    
+    Rio.write(PelagiosRDF.toRDF(data), factory.getWriter(new FileOutputStream(file)))
   }
+
+  /*
+  def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) = {
+    val model = PelagiosRDFJena.toRDFJena(data)
+    // RDFDataMgr.write(System.out, model, JenaFormat.TRIG)
+    model.write(System.out, "TURTLE")
+  }
+  */
 
   
   /** Parses a Pelagios-style gazetteer dump file.

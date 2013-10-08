@@ -14,5 +14,11 @@ object Pelagios extends BaseVocab("http://pelagios.github.io/terms#") {
   val neighbour = createURI("neighbour")
   
   val distance = createURI("distance")
+  
+  val unit = createURI("unit")
+  
+  val hasVariant = createURI("hasVariant")
+  
+  val relationship = createURI("relationship")
 
 }
