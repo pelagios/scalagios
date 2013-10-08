@@ -27,6 +27,9 @@ import org.openrdf.model.impl.TreeModel
 import org.pelagios.rdf.PelagiosRDF
 import org.openrdf.rio.Rio
 import java.io.FileOutputStream
+import org.apache.jena.riot.RDFDataMgr
+import org.openjena.riot.Lang
+import org.apache.jena.riot.{RDFFormat => JenaFormat}
 
 /** A utility to parse & write Pelagios data.
   *
@@ -58,8 +61,16 @@ object Scalagios {
     handler.annotatedThings      
   }
 
-  def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) =
+  //def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) =
+  //  Rio.write(PelagiosRDF.toRDF(data), new FileOutputStream(file), format)
+
+  def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) = {
+    // val model = PelagiosRDF.toRDFJena(data)
+    // RDFDataMgr.write(System.out, model, JenaFormat.TURTLE_PRETTY)
+    // model.write(System.out, "TURTLE_BLOCKS")
     Rio.write(PelagiosRDF.toRDF(data), new FileOutputStream(file), format)
+  }
+
   
   /** Parses a Pelagios-style gazetteer dump file.
     *

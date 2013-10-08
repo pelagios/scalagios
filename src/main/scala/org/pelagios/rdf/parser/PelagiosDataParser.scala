@@ -4,6 +4,7 @@ import org.pelagios.rdf.vocab.{ OA, Pelagios }
 import org.pelagios.api.{ AnnotatedThing, Annotation }
 import org.pelagios.rdf.vocab.DCTerms
 import org.pelagios.api.Neighbour
+import org.pelagios.rdf.vocab.FOAF
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -21,6 +22,7 @@ class PelagiosDataParser extends ResourceCollector {
       .filter(_.hasType(Pelagios.AnnotatedThing)).map(resource => 
         new AnnotatedThingResource(
             resource, 
+            Seq.empty[AnnotatedThingResource],
             annotationsPerThing.get(resource.uri).getOrElse(Seq.empty[AnnotationResource]).toSeq))
   }
       
@@ -32,11 +34,13 @@ class PelagiosDataParser extends ResourceCollector {
   * @constructor create a new AnnotatedThing
   * @param resource the RDF resource to wrap
   */
-private[parser] class AnnotatedThingResource(resource: Resource, val annotations: Seq[AnnotationResource]) extends AnnotatedThing {
+private[parser] class AnnotatedThingResource(resource: Resource, val variants: Seq[AnnotatedThingResource], val annotations: Seq[AnnotationResource]) extends AnnotatedThing {
 
   def uri = resource.uri
   
-  def title = resource.getFirst(DCTerms.title).map(_.stringValue)
+  def homepages = resource.get(FOAF.homepage).map(_.stringValue)
+  
+  def title = resource.getFirst(DCTerms.title).map(_.stringValue()).getOrElse("[NO TITLE]")
 
   def description = resource.getFirst(DCTerms.description).map(_.stringValue)
   

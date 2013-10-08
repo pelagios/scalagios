@@ -2,8 +2,7 @@ package org.pelagios.rdf
 
 import scala.collection.JavaConverters._
 import org.pelagios.api.AnnotatedThing
-import org.openrdf.model.Model
-import org.openrdf.model.vocabulary.RDF
+import org.openrdf.model.{Model => RioModel}
 import org.pelagios.rdf.vocab.Pelagios
 import org.pelagios.rdf.vocab.DCTerms
 import org.openrdf.model.impl.LinkedHashModel
@@ -13,23 +12,72 @@ import org.openrdf.rio.RDFWriter
 import org.openrdf.rio.Rio
 import org.pelagios.rdf.vocab.OA
 import org.openrdf.model.impl.TreeModel
+import com.hp.hpl.jena.rdf.model.ModelFactory
+import com.hp.hpl.jena.rdf.model.Model
+import org.openrdf.model.vocabulary.RDF
+import org.openrdf.model.URI
+import org.openrdf.model.Resource
+import com.hp.hpl.jena.rdf.model.Property
+import org.pelagios.api.Annotation
+import com.hp.hpl.jena.rdf.model.RDFNode
+  
 
 object PelagiosRDF {
+
+  /*
+  private val jenaFactory = ModelFactory.createDefaultModel()
+
+  implicit def asJena(property: URI): Property = jenaFactory.createProperty(property.stringValue)
   
-  def toRDF(annotatedThings: Iterable[AnnotatedThing]): Model = {
+  implicit def asJena(resource: Resource) = jenaFactory.createResource(resource.stringValue)
+  
+  def toRDFJena(annotatedThings: Iterable[AnnotatedThing]): Model = {
+    val model = ModelFactory.createDefaultModel()
+    model.setNsPrefix("pelagios", Pelagios.NAMESPACE)
+    model.setNsPrefix("dcterms", DCTerms.NAMESPACE)
+    model.setNsPrefix("oa", OA.NAMESPACE)
+    
+    annotatedThings.foreach(thing => {
+      val thingResource = model.createResource(thing.uri)
+      thingResource.addProperty(RDF.TYPE, Pelagios.AnnotatedThing) 
+      thing.title.map(title => thingResource.addProperty(DCTerms.title, title))
+      
+      def toRDFNode(annotation: Annotation): RDFNode = {
+        val annotationResource = model.createResource(annotation.uri)
+        
+        annotationResource.addProperty(RDF.TYPE, OA.Annotation)
+        annotationResource.addProperty(OA.hasBody, model.createResource(annotation.hasBody))
+        annotationResource.addProperty(OA.hasTarget, model.createResource(annotation.hasTarget))
+        
+        annotation.hasNext.map(neighbour => {
+          val neighbourResource = model.createResource()
+          neighbourResource.addProperty(Pelagios.neighbour, neighbour.annotation.uri)
+          neighbourResource.addProperty(Pelagios.distance, model.createLiteral(neighbour.distance.get))
+          annotationResource.addProperty(Pelagios.hasNext, neighbourResource)
+        })
+        
+        annotationResource        
+      } 
+      
+      model.createList(thing.annotations.map(toRDFNode(_)).toArray)
+    })
+    
+    model
+  }*/
+  
+  def toRDF(annotatedThings: Iterable[AnnotatedThing]): RioModel = {
     val model = new LinkedHashModel()
     val vf = model.getValueFactory
 
-    model.setNamespace("pelagios", Pelagios.namespace)
-    model.setNamespace("dcterms", DCTerms.namespace)
-    model.setNamespace("oa", OA.namespace)
+    model.setNamespace("pelagios", Pelagios.NAMESPACE)
+    model.setNamespace("dcterms", DCTerms.NAMESPACE)
+    model.setNamespace("oa", OA.NAMESPACE)
     
     annotatedThings.foreach(thing => {
       val thingResource = vf.createURI(thing.uri) 
       
       model.add(thingResource, RDF.TYPE, Pelagios.AnnotatedThing)
-      if (thing.title.isDefined)
-        model.add(thingResource, DCTerms.title, vf.createLiteral(thing.title.get))
+      model.add(thingResource, DCTerms.title, vf.createLiteral(thing.title))
       if (thing.description.isDefined)
         model.add(thingResource, DCTerms.description, vf.createLiteral(thing.description.get))
       
