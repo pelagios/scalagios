@@ -68,7 +68,7 @@ object Scalagios {
     // val model = PelagiosRDF.toRDFJena(data)
     // RDFDataMgr.write(System.out, model, JenaFormat.TURTLE_PRETTY)
     // model.write(System.out, "TURTLE_BLOCKS")
-    Rio.write(PelagiosRDF.toRDF(data), new FileOutputStream(file), format)
+    Rio.write(PelagiosRDF.toRDF(data), System.out/*new FileOutputStream(file)*/, format)
   }
 
   

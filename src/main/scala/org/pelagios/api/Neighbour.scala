@@ -7,4 +7,4 @@ package org.pelagios.api
   * @param the distance (if applicable)
   * @author Rainer Simon <rainer.simon@ait.ac.at> 
   */
-case class Neighbour(val annotation: Annotation, val distance: Option[String] = None) { } 
+case class Neighbour(val annotation: Annotation, val distance: Option[Double] = None, val unit: Option[String] = None) { } 

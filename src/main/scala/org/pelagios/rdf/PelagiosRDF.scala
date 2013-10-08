@@ -20,6 +20,8 @@ import org.openrdf.model.Resource
 import com.hp.hpl.jena.rdf.model.Property
 import org.pelagios.api.Annotation
 import com.hp.hpl.jena.rdf.model.RDFNode
+import org.openrdf.model.ValueFactory
+import org.openrdf.model.impl.BNodeImpl
   
 
 object PelagiosRDF {
@@ -65,45 +67,48 @@ object PelagiosRDF {
     model
   }*/
   
-  def toRDF(annotatedThings: Iterable[AnnotatedThing]): RioModel = {
-    val model = new LinkedHashModel()
+  private def serializeAnnotatedThing(thing: AnnotatedThing, model: RioModel): Unit = {
     val vf = model.getValueFactory
-
-    model.setNamespace("pelagios", Pelagios.NAMESPACE)
-    model.setNamespace("dcterms", DCTerms.NAMESPACE)
-    model.setNamespace("oa", OA.NAMESPACE)
+    val thingResource = vf.createURI(thing.uri) 
+      
+    model.add(thingResource, RDF.TYPE, Pelagios.AnnotatedThing)
+    model.add(thingResource, DCTerms.title, vf.createLiteral(thing.title))
+    if (thing.description.isDefined)
+      model.add(thingResource, DCTerms.description, vf.createLiteral(thing.description.get))
     
-    annotatedThings.foreach(thing => {
-      val thingResource = vf.createURI(thing.uri) 
+    thing.variants.foreach(variant => serializeAnnotatedThing(variant, model))
       
-      model.add(thingResource, RDF.TYPE, Pelagios.AnnotatedThing)
-      model.add(thingResource, DCTerms.title, vf.createLiteral(thing.title))
-      if (thing.description.isDefined)
-        model.add(thingResource, DCTerms.description, vf.createLiteral(thing.description.get))
-      
-      thing.annotations.foreach(annotation => {
-        val annotationResource = vf.createURI(annotation.uri)
+    thing.annotations.foreach(annotation => {
+      val annotationResource = vf.createURI(annotation.uri)
         
-        model.add(annotationResource, RDF.TYPE, OA.Annotation)
-        model.add(annotationResource, OA.hasBody, vf.createURI(annotation.hasBody))
-        model.add(annotationResource, OA.hasTarget, vf.createURI(annotation.hasTarget))
-        annotation.motivatedBy.map(motivation => model.add(annotationResource, OA.motivatedBy, vf.createLiteral(motivation)))
-        annotation.toponym.map(toponym => model.add(annotationResource, Pelagios.toponym, vf.createLiteral(annotation.toponym.get)))
+      model.add(annotationResource, RDF.TYPE, OA.Annotation)
+      model.add(annotationResource, OA.hasBody, vf.createURI(annotation.hasBody))
+      model.add(annotationResource, OA.hasTarget, vf.createURI(annotation.hasTarget))
+      annotation.motivatedBy.map(motivation => model.add(annotationResource, OA.motivatedBy, vf.createLiteral(motivation)))
+      annotation.toponym.map(toponym => model.add(annotationResource, Pelagios.toponym, vf.createLiteral(annotation.toponym.get)))
         
-        annotation.hasNext.map(neighbour => {
-          /* if (neighbour.distance.isDefined) {
-            // Serialize as blank node
-            val bnode = vf.createBNode()
-            model.add(bnode, Pelagios.neighbour, vf.createURI(neighbour.annotation.uri))
-            model.add(bnode, Pelagios.distance, vf.createLiteral(neighbour.distance.get))
-            model.add(annotationResource, Pelagios.hasNext, bnode)
-          } else { */
-            // Serialize just the neighbour URI
-            model.add(annotationResource, Pelagios.hasNext, vf.createURI(neighbour.annotation.uri))
-          // }
-        })
+      annotation.hasNext.map(neighbour => {
+        if (neighbour.distance.isDefined) {
+          // Serialize as blank node
+          val bnode = vf.createBNode()
+          model.add(annotationResource, Pelagios.hasNext, bnode)
+          model.add(bnode, Pelagios.neighbour, vf.createURI(neighbour.annotation.uri))
+          model.add(bnode, Pelagios.distance, vf.createLiteral(neighbour.distance.get))
+        } else {
+          // Serialize just the neighbour URI
+          model.add(annotationResource, Pelagios.hasNext, vf.createURI(neighbour.annotation.uri))
+        }
       })
     })
+  }
+  
+  def toRDF(annotatedThings: Iterable[AnnotatedThing]): RioModel = {
+    val model = new LinkedHashModel()
+    model.setNamespace("oa", OA.NAMESPACE)
+    model.setNamespace("dcterms", DCTerms.NAMESPACE)
+    model.setNamespace("pelagios", Pelagios.NAMESPACE)
+
+    annotatedThings.foreach(thing => serializeAnnotatedThing(thing, model))
     
     model
   } 
