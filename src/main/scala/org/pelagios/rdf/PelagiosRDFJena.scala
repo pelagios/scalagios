@@ -34,7 +34,7 @@ object PelagiosRDFJena {
       val annotationResource = model.createResource(annotation.uri)
         
       annotationResource.addProperty(RDF.TYPE, OA.Annotation)
-      annotationResource.addProperty(OA.hasBody, model.createResource(annotation.hasBody))
+      annotation.hasBody.foreach(body => annotationResource.addProperty(OA.hasBody, model.createResource(body)))
       annotationResource.addProperty(OA.hasTarget, model.createResource(annotation.hasTarget))
         
       annotation.hasNext.map(neighbour => {

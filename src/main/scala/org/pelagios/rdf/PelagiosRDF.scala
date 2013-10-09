@@ -44,7 +44,7 @@ object PelagiosRDF {
         
       model.add(annotationResource, RDF.TYPE, OA.Annotation)
       model.add(annotationResource, Pelagios.relationship, GAWD.attestsTo)
-      model.add(annotationResource, OA.hasBody, vf.createURI(annotation.hasBody))
+      annotation.hasBody.foreach(body => model.add(annotationResource, OA.hasBody, vf.createURI(body)))
       model.add(annotationResource, OA.hasTarget, vf.createURI(annotation.hasTarget))
       annotation.motivatedBy.map(motivation => model.add(annotationResource, OA.motivatedBy, vf.createLiteral(motivation)))
       annotation.toponym.map(toponym => model.add(annotationResource, Pelagios.toponym, vf.createLiteral(annotation.toponym.get)))

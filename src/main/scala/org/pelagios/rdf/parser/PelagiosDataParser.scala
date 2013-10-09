@@ -9,6 +9,7 @@ import org.pelagios.api.PeriodOfTime
 import org.pelagios.api.Agent
 import org.pelagios.rdf.vocab.DCTerms
 import org.openrdf.model.vocabulary.RDFS
+import java.util.Date
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -42,7 +43,7 @@ private[parser] class AnnotatedThingResource(resource: Resource, val variants: S
 
   def uri = resource.uri
   
-  def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen
+  def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
   def identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
 
@@ -82,15 +83,28 @@ private[parser] class AnnotationResource(resource: Resource) extends Annotation 
 
   def uri = resource.uri
   
-  def hasBody: String = resource.getFirst(OA.hasBody).get.stringValue
+  def hasBody = resource.get(OA.hasBody).map(_.stringValue)
   
-  def hasTarget: String = resource.getFirst(OA.hasTarget).get.stringValue
+  def hasTarget = resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty") // '_:empty' should never happen!
   
-  def motivatedBy: Option[String] = resource.getFirst(OA.motivatedBy).map(_.stringValue)
+  def motivatedBy: Option[String] = Some(resource.getFirst(OA.motivatedBy).map(_.stringValue).getOrElse("geotagging")) // Default to geotagging
+  
+  // TODO 
+  def annotatedBy: Option[Agent] = None
+
+  // TODO
+  def annotatedAt: Option[Date] = None
+  
+  // TODO
+  def creator: Option[Agent] = None
+  
+  // TODO
+  def created: Option[Date] = None
   
   def toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
   
-  def hasNext: Option[Neighbour] = None // TODO implement! 
+  // TODO
+  def hasNext: Option[Neighbour] = None // TODO implement!   
   
 }
 
