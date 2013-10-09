@@ -61,21 +61,24 @@ object Scalagios {
     handler.annotatedThings      
   }
 
-  // TODO implement a method that works on any outputstream
+  /** Writes Pelagios data to an output stream.
+    * 
+    * @param data the data
+    * @param out the output stream
+    * @param format the RDF serialization format
+    */
+  def writeData(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) =
+    Serializer.writeToStream(data, out, format)
+
+  /** Writes Pelagios data to an RDF file.
+    * 
+    * @param data the data
+    * @param out the output file
+    * @param format the RDF serialization format
+    */
+  def writeData(data: Iterable[AnnotatedThing], out: File, format: RDFFormat) =
+    Serializer.writeToFile(data, out, format)
     
-  def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) = {
-    // TODO clean up!
-    val factory = new RDFWriterFactory() {
-      override def getRDFFormat(): RDFFormat = RDFFormat.TURTLE
-        
-      override def getWriter(out: OutputStream) = new TurtleStreamWriterFactory().createWriter(out, "http://example.org/")
-      
-      override def getWriter(writer: Writer) = new TurtleStreamWriterFactory().createWriter(writer, "http://example.org") 
-    }
-    
-    Rio.write(Serializer.toRDF(data), factory.getWriter(System.out)) // new FileOutputStream(file)))
-  }
-  
   /** Parses a Pelagios-style gazetteer dump file.
     *
     *  @param file the gazetteer dump file to parse
@@ -113,7 +116,7 @@ object Scalagios {
   
 }
 
-/** Legacy import and migration utilities. **/
+/** Legacy import utilities. **/
 private object LegacyInterop {
   
   /** Parses a data dump in the old OAC-based Pelagios format into the legacy API.

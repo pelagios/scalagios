@@ -8,6 +8,8 @@ import org.openrdf.model.impl.LinkedHashModel
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.{ Rio, RDFFormat, RDFWriter }
 import org.openrdf.model.vocabulary.RDFS
+import org.callimachusproject.io.TurtleStreamWriterFactory
+import java.io.FileOutputStream
 
 /** Utility object to serialize Pelagios data to RDF.
   *  
@@ -131,16 +133,30 @@ object Serializer {
     model.setNamespace("pelagios", Pelagios.NAMESPACE)
     annotatedThings.foreach(thing => serializeAnnotatedThing(thing, model))
     model
-  } 
+  }
+
+  /** Writes a list of [[AnnotatedThing]]s to an output stream.
+    *
+    * @param annotatedThings the annotated things
+    * @param out the output stream
+    * @param format the RDF serialization format
+    */
+  def writeToStream(annotatedThings: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) = {
+    if (format.equals(RDFFormat.TURTLE)) {
+      // A little hack - for turtle we'll use a custom serializer that handles blank nodes
+      Rio.write(toRDF(annotatedThings), new TurtleStreamWriterFactory().createWriter(out, null))
+    } else {
+      Rio.write(toRDF(annotatedThings), out, format)
+    } 
+  }
   
   /** Writes a list of [[AnnotatedThing]]s to an RDF output file.
     *
     * @param annotatedThings the annotated things
     * @param out the output file
-    * @param format the RDF serialization format to use 
+    * @param format the RDF serialization format
     */
-  def writeToFile(annotatedThings: Iterable[AnnotatedThing], out: File, format: RDFFormat) = {
-    // TODO implement!
-  }
+  def writeToFile(annotatedThings: Iterable[AnnotatedThing], out: File, format: RDFFormat) =
+    writeToStream(annotatedThings, new FileOutputStream(out), format)
   
 }
