@@ -4,7 +4,7 @@ package org.pelagios.api
   * 
   * @constructor create a new label
   * @param label the label
-  * @param lang the (optional) language code 
+  * @param lang the (optional) ISO 639-2 language code 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
 case class Label(label: String, lang: Option[String] = None)

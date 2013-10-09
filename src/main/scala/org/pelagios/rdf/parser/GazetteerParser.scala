@@ -86,13 +86,14 @@ class GazetteerParser extends ResourceCollector {
  */
 private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResource], val locations: Seq[LocationResource]) extends Place {
 
-  def uri: String = resource.uri
+  def uri = resource.uri
   
-  def title: Label = resource.getFirst(DCTerms.title).map(ResourceCollector.toLabel(_)).get
+  def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
   def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toLabel(_))
   
-  def subjects = Seq.empty[String] // TODO
+  // TODO
+  def subjects = Seq.empty[String]
   
   def closeMatches = resource.get(SKOS.closeMatch).map(_.stringValue)
 
