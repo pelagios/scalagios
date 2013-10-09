@@ -39,7 +39,7 @@ class PelagiosDataParser extends ResourceCollector {
   * @constructor create a new AnnotatedThing
   * @param resource the RDF resource to wrap
   */
-private[parser] class AnnotatedThingResource(resource: Resource, val variants: Seq[AnnotatedThingResource], val annotations: Seq[AnnotationResource]) extends AnnotatedThing {
+private[parser] class AnnotatedThingResource(resource: Resource, val expressions: Seq[AnnotatedThingResource], val annotations: Seq[AnnotationResource]) extends AnnotatedThing {
 
   def uri = resource.uri
   

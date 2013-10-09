@@ -24,12 +24,12 @@ import org.openrdf.rio.RDFParserRegistry
 import java.io.OutputStream
 import org.openrdf.model.Model
 import org.openrdf.model.impl.TreeModel
-import org.pelagios.rdf.PelagiosRDF
 import org.openrdf.rio.Rio
 import java.io.FileOutputStream
 import org.openrdf.rio.RDFWriterFactory
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.Writer
+import org.pelagios.rdf.Serializer
 
 /** A utility to parse & write Pelagios data.
   *
@@ -70,7 +70,7 @@ object Scalagios {
       override def getWriter(writer: Writer) = new TurtleStreamWriterFactory().createWriter(writer, "http://example.org") 
     }
     
-    Rio.write(PelagiosRDF.toRDF(data), factory.getWriter(new FileOutputStream(file)))
+    Rio.write(Serializer.toRDF(data), factory.getWriter(new FileOutputStream(file)))
   }
   
   /** Parses a Pelagios-style gazetteer dump file.

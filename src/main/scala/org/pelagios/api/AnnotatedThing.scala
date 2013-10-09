@@ -99,12 +99,21 @@ trait AnnotatedThing {
     */
   def seeAlso: Seq[String]
   
-  /** Different variants of the annotated thing (if any).
-    *
-    * According to the definition dcterms:isVersionOf "a related resource
-    * of which the described resource is a version, edition, or adaptation." 
+  /** Expressions - as defined by FRBR
+    *  
+    * An annotated thing may be a "Work" (such as "The Vicarello Beakers") or
+    * an "Expression" (such as "the fourth Vicarello Beaker, discovered in 1863"). 
+    * To quote the FRBR definition, a Work is "an abstract notion of an 
+    * artistic or intellectual creation", whereas an Expression is "a realization
+    * of a single work usually in a physical form."
+    *  
+    * http://en.wikipedia.org/wiki/Functional_Requirements_for_Bibliographic_Records
+    * http://vocab.org/frbr/core.html
+    * 
+    * If the annotated thing represents a Work, there may be several expressions
+    * linked to it.  We use "frbr:realizationOf" to link Expressions to their Work.
     */ 
-  def variants: Seq[AnnotatedThing]
+  def expressions: Seq[AnnotatedThing]
   
   /** The annotations on the annotated thing (if any). **/
   def annotations: Seq[Annotation]
@@ -138,7 +147,7 @@ class DefaultAnnotatedThing(val uri: String, val title: String) extends Annotate
   
   var seeAlso: Seq[String] = Seq.empty[String]
   
-  var variants: Seq[AnnotatedThing] = Seq.empty[AnnotatedThing]
+  var expressions: Seq[AnnotatedThing] = Seq.empty[AnnotatedThing]
   
   var annotations: Seq[Annotation] = Seq.empty[Annotation]
   
