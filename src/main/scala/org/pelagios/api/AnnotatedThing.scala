@@ -1,6 +1,7 @@
 package org.pelagios.api
 
 import java.util.Date
+import scala.collection.mutable.ListBuffer
 
 /** 'AnnotatedThing' model entity.
   * 
@@ -99,7 +100,7 @@ trait AnnotatedThing {
     */
   def seeAlso: Seq[String]
   
-  /** Expressions - as defined by FRBR
+  /** frbr:realizationOf
     *  
     * An annotated thing may be a "Work" (such as "The Vicarello Beakers") or
     * an "Expression" (such as "the fourth Vicarello Beaker, discovered in 1863"). 
@@ -110,8 +111,15 @@ trait AnnotatedThing {
     * http://en.wikipedia.org/wiki/Functional_Requirements_for_Bibliographic_Records
     * http://vocab.org/frbr/core.html
     * 
-    * If the annotated thing represents a Work, there may be several expressions
-    * linked to it.  We use "frbr:realizationOf" to link Expressions to their Work.
+    * If the annotated thing represents a Expression, frbr:realizationOf links
+    * to the work it realizes.
+    */
+  def realizationOf: Option[AnnotatedThing]  
+ 
+  /** Expressions (as defined by through frbr:realizationOf)
+    *   
+    * If the annotated thing represents a Work, this method returns the expressions
+    * linked to it.
     */ 
   def expressions: Seq[AnnotatedThing]
   
@@ -146,9 +154,16 @@ class DefaultAnnotatedThing(val uri: String, val title: String) extends Annotate
   var subjects: Seq[String] = Seq.empty[String]
   
   var seeAlso: Seq[String] = Seq.empty[String]
+
+  var realizationOf: Option[AnnotatedThing] = None
   
-  var expressions: Seq[AnnotatedThing] = Seq.empty[AnnotatedThing]
+  val expressions: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
   
   var annotations: Seq[Annotation] = Seq.empty[Annotation]
+  
+  def addExpression(thing: DefaultAnnotatedThing) = {
+    thing.realizationOf = Some(this)
+    expressions.append(thing)
+  }
   
 }

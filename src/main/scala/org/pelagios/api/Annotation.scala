@@ -84,14 +84,14 @@ trait Annotation {
     */
   def toponym: Option[String]
   
-  /** pelagios:hasNext
+  /** pelagios:hasNeighbour and pelagios:hasNext
     * 
     * This Pelagios-specific property is used to record sequence (e.g. in 
     * an itinerary or book) and topology (e.g. on a map) of annotations.
     * See definition of the [[Neighbour]] model entity for additional 
     * information
     */
-  def hasNext: Option[Neighbour]
+  def hasNeighbour: Seq[Neighbour]
   
 }
 
@@ -114,6 +114,6 @@ class DefaultAnnotation(val uri: String) extends Annotation {
   
   var toponym: Option[String] = None
   
-  var hasNext: Option[Neighbour] = None
+  var hasNeighbour: Seq[Neighbour] = Seq.empty[Neighbour]
   
 }

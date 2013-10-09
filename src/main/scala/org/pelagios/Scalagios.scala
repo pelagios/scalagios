@@ -61,7 +61,10 @@ object Scalagios {
     handler.annotatedThings      
   }
 
+  // TODO implement a method that works on any outputstream
+    
   def writeData(file: File, data: Iterable[AnnotatedThing], format: RDFFormat) = {
+    // TODO clean up!
     val factory = new RDFWriterFactory() {
       override def getRDFFormat(): RDFFormat = RDFFormat.TURTLE
         
@@ -70,7 +73,7 @@ object Scalagios {
       override def getWriter(writer: Writer) = new TurtleStreamWriterFactory().createWriter(writer, "http://example.org") 
     }
     
-    Rio.write(Serializer.toRDF(data), factory.getWriter(new FileOutputStream(file)))
+    Rio.write(Serializer.toRDF(data), factory.getWriter(System.out)) // new FileOutputStream(file)))
   }
   
   /** Parses a Pelagios-style gazetteer dump file.

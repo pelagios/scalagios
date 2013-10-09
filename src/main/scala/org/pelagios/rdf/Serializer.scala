@@ -67,11 +67,11 @@ object Serializer {
     // rdfs:seeAlso
     thing.seeAlso.foreach(seeAlso => model.add(rdfThing, RDFS.SEEALSO, f.createURI(seeAlso)))    
     
-    // TODO Expressions
-    thing.expressions.foreach(variant => {
-      // model.add(rdfThing, Pelagios.hasVariant, f.createURI(variant.uri))
-      serializeAnnotatedThing(variant, model)
-    })
+    // frbr:realizationOf
+    thing.realizationOf.map(work => model.add(rdfThing, FRBR.realizationOf, f.createURI(work.uri)))
+    
+    // Expressions
+    thing.expressions.foreach(expression => serializeAnnotatedThing(expression, model))
       
     // Annotations
     thing.annotations.foreach(annotation => {
@@ -103,18 +103,16 @@ object Serializer {
       annotation.toponym.map(toponym => model.add(rdfAnnotation, Pelagios.toponym, f.createLiteral(annotation.toponym.get)))
       
       // pelagios:hasNext
-      annotation.hasNext.map(neighbour => {
-        // TODO clean this up!
-        if (neighbour.distance.isDefined) {
-          // Serialize as blank node
+      annotation.hasNeighbour.foreach(neighbour => {
+        val relation = if (neighbour.directional) Pelagios.hasNext else Pelagios.hasNeighbour
+        if (neighbour.hasMetadata) {
           val bnode = f.createBNode()
-          model.add(bnode, Pelagios.neighbour, f.createURI(neighbour.annotation.uri))
-          model.add(bnode, Pelagios.distance, f.createLiteral(neighbour.distance.get))
-          neighbour.unit.map(unit => model.add(bnode, Pelagios.unit, f.createLiteral(unit)))
-          model.add(rdfAnnotation, Pelagios.hasNext, bnode)
+          model.add(bnode, Pelagios.neighbourURI, f.createURI(neighbour.annotation.uri))
+          neighbour.distance.map(distance => model.add(bnode, Pelagios.neighbourDistance, f.createLiteral(neighbour.distance.get)))
+          neighbour.unit.map(unit => model.add(bnode, Pelagios.distanceUnit, f.createLiteral(unit)))
+          model.add(rdfAnnotation, relation, bnode)
         } else {
-          // Serialize just the neighbour URI
-          model.add(rdfAnnotation, Pelagios.hasNext, f.createURI(neighbour.annotation.uri))
+          model.add(rdfAnnotation, relation, f.createURI(neighbour.annotation.uri))
         }
       })
     })
@@ -128,6 +126,7 @@ object Serializer {
   def toRDF(annotatedThings: Iterable[AnnotatedThing]): Model = {
     val model = new LinkedHashModel()
     model.setNamespace("oa", OA.NAMESPACE)
+    model.setNamespace("frbr", FRBR.NAMESPACE)
     model.setNamespace("dcterms", DCTerms.NAMESPACE)
     model.setNamespace("pelagios", Pelagios.NAMESPACE)
     annotatedThings.foreach(thing => serializeAnnotatedThing(thing, model))

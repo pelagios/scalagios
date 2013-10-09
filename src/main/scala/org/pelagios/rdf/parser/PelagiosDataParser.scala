@@ -1,15 +1,9 @@
 package org.pelagios.rdf.parser
 
-import org.pelagios.rdf.vocab.{ OA, Pelagios }
-import org.pelagios.api.{ AnnotatedThing, Annotation }
-import org.pelagios.rdf.vocab.DCTerms
-import org.pelagios.api.Neighbour
-import org.pelagios.rdf.vocab.FOAF
-import org.pelagios.api.PeriodOfTime
-import org.pelagios.api.Agent
-import org.pelagios.rdf.vocab.DCTerms
-import org.openrdf.model.vocabulary.RDFS
 import java.util.Date
+import org.pelagios.api._
+import org.pelagios.rdf.vocab._
+import org.openrdf.model.vocabulary.RDFS
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -72,6 +66,9 @@ private[parser] class AnnotatedThingResource(resource: Resource, val expressions
   
   def seeAlso = resource.get(RDFS.SEEALSO).map(_.stringValue)  
   
+  // TODO
+  def realizationOf = None
+  
 }
 
 /** Wraps an oa:Annotation RDF resource as an Annotation domain model primitive.
@@ -104,7 +101,7 @@ private[parser] class AnnotationResource(resource: Resource) extends Annotation 
   def toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
   
   // TODO
-  def hasNext: Option[Neighbour] = None // TODO implement!   
+  def hasNeighbour: Seq[Neighbour] = Seq.empty[Neighbour] // TODO implement!   
   
 }
 
