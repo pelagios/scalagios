@@ -69,7 +69,7 @@ object Serializer {
     
     // TODO Expressions
     thing.expressions.foreach(variant => {
-      model.add(rdfThing, Pelagios.hasVariant, f.createURI(variant.uri))
+      // model.add(rdfThing, Pelagios.hasVariant, f.createURI(variant.uri))
       serializeAnnotatedThing(variant, model)
     })
       
