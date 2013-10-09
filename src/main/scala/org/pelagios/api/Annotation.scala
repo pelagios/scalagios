@@ -16,7 +16,7 @@ trait Annotation {
     * file. Examples:
     * 
     * http://example.com/pelagios.rdf#annotation
-    * http://example.com/pelagios.rdf#annotaions/01
+    * http://example.com/pelagios.rdf#annotations/01
     */
   def uri: String
 
@@ -47,8 +47,8 @@ trait Annotation {
   
   /** oa:annotatedBy
     *  
-    * In Pelagios, we explicitly use this field to record who has produced
-    * the original (possibly "physical"/manual) annotations on the source document.
+    * In Pelagios, we use this field to record who has produced the original 
+    * (possibly physical/written/manual) annotations on the source document.
     * E.g. the historian that has transcribed a map into a toponym table, etc.     
     */
   def annotatedBy: Option[Agent]
@@ -84,14 +84,13 @@ trait Annotation {
     */
   def toponym: Option[String]
   
-  /**
-   * pelagios:hasNext
-   * 
-   * This Pelagios-specific property is used to record sequence (e.g. in 
-   * an itinerary or book) and topology (e.g. on a map) of annotations.
-   * See definition of the [[Neighbour]] model entity for additional 
-   * information
-   */
+  /** pelagios:hasNext
+    * 
+    * This Pelagios-specific property is used to record sequence (e.g. in 
+    * an itinerary or book) and topology (e.g. on a map) of annotations.
+    * See definition of the [[Neighbour]] model entity for additional 
+    * information
+    */
   def hasNext: Option[Neighbour]
   
 }
