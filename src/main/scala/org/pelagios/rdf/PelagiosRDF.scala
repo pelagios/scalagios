@@ -12,14 +12,10 @@ import org.openrdf.rio.RDFWriter
 import org.openrdf.rio.Rio
 import org.pelagios.rdf.vocab.OA
 import org.openrdf.model.impl.TreeModel
-import com.hp.hpl.jena.rdf.model.ModelFactory
-import com.hp.hpl.jena.rdf.model.Model
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.URI
 import org.openrdf.model.Resource
-import com.hp.hpl.jena.rdf.model.Property
 import org.pelagios.api.Annotation
-import com.hp.hpl.jena.rdf.model.RDFNode
 import org.openrdf.model.ValueFactory
 import org.openrdf.model.impl.BNodeImpl
 import org.pelagios.rdf.vocab.GAWD
