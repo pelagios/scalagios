@@ -7,8 +7,11 @@ import org.openrdf.model.{ BNode, Model, Resource, URI, ValueFactory }
 import org.openrdf.model.impl.LinkedHashModel
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.{ Rio, RDFFormat, RDFWriter }
+import org.openrdf.model.vocabulary.RDFS
 
 /** Utility object to serialize Pelagios data to RDF.
+  *  
+  * TODO agents are currently serialized as blank nodes - change this!  
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
@@ -49,32 +52,69 @@ object Serializer {
     // dcterms:language
     thing.languages.foreach(lang => model.add(rdfThing, DCTerms.language, f.createLiteral(lang)))
     
+    // foaf:homepage
+    thing.homepage.map(homepage => model.add(rdfThing, FOAF.homepage, f.createURI(homepage)))
+    
+    // foaf:thumbnails
+    thing.thumbnails.foreach(thumbnail => model.add(rdfThing, FOAF.thumbnail, f.createURI(thumbnail)))
+    
+    // dcterms:bibliographicCitation
+    thing.bibliographicCitations.foreach(citation => model.add(rdfThing, DCTerms.bibliographicCitation, f.createURI(citation)))
+    
+    // dcterms:subject
+    thing.subjects.foreach(subject => model.add(rdfThing, DCTerms.subject, f.createURI(subject)))
+    
+    // rdfs:seeAlso
+    thing.seeAlso.foreach(seeAlso => model.add(rdfThing, RDFS.SEEALSO, f.createURI(seeAlso)))    
+    
+    // TODO Expressions
     thing.expressions.foreach(variant => {
       model.add(rdfThing, Pelagios.hasVariant, f.createURI(variant.uri))
       serializeAnnotatedThing(variant, model)
     })
       
+    // Annotations
     thing.annotations.foreach(annotation => {
-      val annotationResource = f.createURI(annotation.uri)
-        
-      model.add(annotationResource, RDF.TYPE, OA.Annotation)
-      model.add(annotationResource, Pelagios.relationship, GAWD.attestsTo)
-      annotation.hasBody.foreach(body => model.add(annotationResource, OA.hasBody, f.createURI(body)))
-      model.add(annotationResource, OA.hasTarget, f.createURI(annotation.hasTarget))
-      annotation.motivatedBy.map(motivation => model.add(annotationResource, OA.motivatedBy, f.createLiteral(motivation)))
-      annotation.toponym.map(toponym => model.add(annotationResource, Pelagios.toponym, f.createLiteral(annotation.toponym.get)))
-        
+      val rdfAnnotation = f.createURI(annotation.uri)
+      model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
+      
+      // oa:hasBody
+      annotation.hasBody.foreach(body => model.add(rdfAnnotation, OA.hasBody, f.createURI(body)))
+      
+      // oa:hasTarget
+      model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget))
+      
+      // oa:motivatedBy
+      annotation.motivatedBy.map(motivation => model.add(rdfAnnotation, OA.motivatedBy, f.createLiteral(motivation)))
+      
+      // oa:annotatedBy
+      annotation.annotatedBy.map(annotator => model.add(rdfAnnotation, OA.annotatedBy, serializeAgent(annotator, model)))
+      
+      // oa:annotatedAt
+      annotation.annotatedAt.map(date => model.add(rdfAnnotation, OA.annotatedAt, f.createLiteral(date)))
+      
+      // dcterms:creator
+      annotation.creator.map(creator => model.add(rdfAnnotation, DCTerms.creator, serializeAgent(creator, model)))
+      
+      // dcterms:created
+      annotation.created.map(date => model.add(rdfAnnotation, DCTerms.created, f.createLiteral(date)))
+            
+      // pelagios:toponym
+      annotation.toponym.map(toponym => model.add(rdfAnnotation, Pelagios.toponym, f.createLiteral(annotation.toponym.get)))
+      
+      // pelagios:hasNext
       annotation.hasNext.map(neighbour => {
+        // TODO clean this up!
         if (neighbour.distance.isDefined) {
           // Serialize as blank node
           val bnode = f.createBNode()
           model.add(bnode, Pelagios.neighbour, f.createURI(neighbour.annotation.uri))
           model.add(bnode, Pelagios.distance, f.createLiteral(neighbour.distance.get))
           neighbour.unit.map(unit => model.add(bnode, Pelagios.unit, f.createLiteral(unit)))
-          model.add(annotationResource, Pelagios.hasNext, bnode)
+          model.add(rdfAnnotation, Pelagios.hasNext, bnode)
         } else {
           // Serialize just the neighbour URI
-          model.add(annotationResource, Pelagios.hasNext, f.createURI(neighbour.annotation.uri))
+          model.add(rdfAnnotation, Pelagios.hasNext, f.createURI(neighbour.annotation.uri))
         }
       })
     })
@@ -90,7 +130,6 @@ object Serializer {
     model.setNamespace("oa", OA.NAMESPACE)
     model.setNamespace("dcterms", DCTerms.NAMESPACE)
     model.setNamespace("pelagios", Pelagios.NAMESPACE)
-    model.setNamespace("gawd", GAWD.NAMESPACE)
     annotatedThings.foreach(thing => serializeAnnotatedThing(thing, model))
     model
   } 

@@ -7,6 +7,8 @@ object DCTerms extends BaseVocab("http://purl.org/dc/terms/") {
   
   val creator = createURI("creator")
   
+  val created = createURI("created")
+  
   val contributor = createURI("contributor")
   
   val coverage = createURI("coverage")
