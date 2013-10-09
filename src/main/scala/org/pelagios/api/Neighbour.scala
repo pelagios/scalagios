@@ -4,7 +4,9 @@ package org.pelagios.api
   *
   * @constructor create a new neighbour
   * @param annotation the neighbouring annotation
-  * @param the distance (if applicable)
+  * @param directional set to true if the direction of the link is relevant (defaults to false)
+  * @param distance the distance (if applicable, defaults to None)
+  * @param unit the unit distance is measured in (defaults to None)
   * @author Rainer Simon <rainer.simon@ait.ac.at> 
   */
-case class Neighbour(val annotation: Annotation, val distance: Option[Double] = None, val unit: Option[String] = None) { } 
+class Neighbour(val annotation: Annotation, val directional: Boolean = false, val distance: Option[Double] = None, val unit: Option[String] = None)

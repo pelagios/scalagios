@@ -91,9 +91,9 @@ private[parser] object ResourceCollector {
         val literal = v.asInstanceOf[Literal]
         val lang = literal.getLanguage
         if (lang != null)
-          Label(literal.stringValue, Some(lang))
+          new Label(literal.stringValue, Some(lang))
         else
-          Label(literal.stringValue)
+          new Label(literal.stringValue)
       }
       
       case v => new Label(v.stringValue)
