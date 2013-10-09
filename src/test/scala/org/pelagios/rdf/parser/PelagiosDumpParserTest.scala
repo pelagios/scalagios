@@ -9,7 +9,7 @@ import java.io.File
 @RunWith(classOf[JUnitRunner])
 class PelagiosDumpParserTest extends FunSuite {
 
-  val TEST_FILE = "src/test/resources/test-annotations-isaw-papers.v2.ttl"
+  val TEST_FILE = "src/test/resources/test-annotations-vicarello.ttl"
     
   test("Pelagios Data Dump Import") {
     println("Starting Pelagios data import")
