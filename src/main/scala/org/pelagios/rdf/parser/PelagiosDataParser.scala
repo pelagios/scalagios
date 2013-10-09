@@ -5,6 +5,10 @@ import org.pelagios.api.{ AnnotatedThing, Annotation }
 import org.pelagios.rdf.vocab.DCTerms
 import org.pelagios.api.Neighbour
 import org.pelagios.rdf.vocab.FOAF
+import org.pelagios.api.PeriodOfTime
+import org.pelagios.api.Agent
+import org.pelagios.rdf.vocab.DCTerms
+import org.openrdf.model.vocabulary.RDFS
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -38,11 +42,34 @@ private[parser] class AnnotatedThingResource(resource: Resource, val variants: S
 
   def uri = resource.uri
   
-  def homepages = resource.get(FOAF.homepage).map(_.stringValue)
+  def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen
   
-  def title = resource.getFirst(DCTerms.title).map(_.stringValue()).getOrElse("[NO TITLE]")
+  def identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
 
   def description = resource.getFirst(DCTerms.description).map(_.stringValue)
+  
+  def sources = resource.get(DCTerms.source).map(_.stringValue)
+  
+  // TODO
+  def temporal: Option[PeriodOfTime] = None
+
+  // TODO 
+  def creator: Option[Agent] = None
+
+  // TODO    
+  def contributors: Seq[Agent] = Seq.empty[Agent]
+  
+  def languages = resource.get(DCTerms.language).map(_.stringValue)
+  
+  def homepage = resource.getFirst(FOAF.homepage).map(_.stringValue)
+  
+  def thumbnails = resource.get(FOAF.thumbnail).map(_.stringValue)
+  
+  def bibliographicCitations = resource.get(DCTerms.bibliographicCitation).map(_.stringValue)
+  
+  def subjects = resource.get(DCTerms.subject).map(_.stringValue)
+  
+  def seeAlso = resource.get(RDFS.SEEALSO).map(_.stringValue)  
   
 }
 
