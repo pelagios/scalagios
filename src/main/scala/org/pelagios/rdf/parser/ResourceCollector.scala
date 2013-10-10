@@ -41,12 +41,11 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     * The type of the resource will be determined by the first rule that returns matches.
     * If no rule matches, the resource will be discared. 
     * 
-    * @param resources the RDF resources
     * @param supportedTypes the list of supported RDF types
     * @param typeRules the list of type checking rules
     * @return a map of the resources, grouped by RDF types (untyped resources are discarded)
     */
-  protected def groupByType(resources: Map[String, Resource], supportedTypes: Seq[Value], typeRules: Seq[Resource => Option[URI]]): Map[URI, Map[String, Resource]] = {
+  protected def groupByType(supportedTypes: Seq[Value], typeRules: Seq[Resource => Option[URI]]): Map[URI, Map[String, Resource]] = {
     val typedResources = resources.foldLeft(List.empty[(URI, String, Resource)])((result, current) => {
       val (uri, resource) = (current._1, current._2)
       val types = resource.get(RDF.TYPE).toSeq      

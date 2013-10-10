@@ -17,8 +17,7 @@ class GazetteerParser extends ResourceCollector {
     */
   def places: Iterable[Place] = {
     // All RDF resources, grouped by their type (Place, Name, Location) 
-    val typedResources = groupByType(resources.toMap, 
-        
+    val typedResources = groupByType(        
       // We're looking for PlaceRecords, Names and Locations
       Seq(Pelagios.PlaceRecord, PleiadesPlaces.Name, PleiadesPlaces.Location),
       

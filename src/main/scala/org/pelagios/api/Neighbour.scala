@@ -1,16 +1,27 @@
 package org.pelagios.api
 
-/** 'Neighbour' model primitive.
+/** 'Neighbour' model primitive. 
   *
-  * @constructor create a new neighbour
-  * @param annotation the neighbouring annotation
-  * @param directional set to true if the direction of the link is relevant (defaults to false)
-  * @param distance the distance (if applicable, defaults to None)
-  * @param unit the unit distance is measured in (defaults to None)
-  * @author Rainer Simon <rainer.simon@ait.ac.at> 
+  * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class Neighbour(val annotation: Annotation, val directional: Boolean = false, val distance: Option[Double] = None, val unit: Option[String] = None) {
+trait Neighbour {
   
+  /** The neighbouring annotation. **/
+  def annotation: Annotation
+
+  /** If true, the direction of the link is relevant. 
+    *
+    * In case the direction is relevant, the neighbour is considered
+    * to be the "next" in the sequence.
+    */
+  def directional: Boolean
+  
+  /** pelagios:neighbourDistance - distance the distance (if applicable) **/
+  def distance: Option[Double]
+  
+  /** pelagios:distanceUnit - the unit distance is measured in **/
+  def unit: Option[String] 
+
   /** Tests if the Neighbour has directional, distance or unit metadata.
     * 
     * This flag is helpful for serialization: if the serializer knows that the neighbour
@@ -18,6 +29,19 @@ class Neighbour(val annotation: Annotation, val directional: Boolean = false, va
     * update the method whenever the [[Neighbour]] class changes, we keep it in here rather
     * than in the serializer.
     */
-  lazy val hasMetadata: Boolean = distance.isDefined || unit.isDefined 
+  lazy val hasMetadata: Boolean = distance.isDefined || unit.isDefined
   
 }
+
+/** A default POJO-style implementation of Neighbour. **/
+class DefaultNeighbour(
+    
+    val annotation: Annotation, 
+    
+    val directional: Boolean = false, 
+    
+    val distance: Option[Double] = None, 
+    
+    val unit: Option[String] = None) 
+    
+    extends Neighbour

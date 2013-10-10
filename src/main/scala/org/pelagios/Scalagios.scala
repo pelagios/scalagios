@@ -58,7 +58,7 @@ object Scalagios {
     val handler = new PelagiosDataParser
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
-    handler.annotatedThings      
+    handler.data      
   }
 
   /** Writes Pelagios data to an output stream.
