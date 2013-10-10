@@ -14,33 +14,36 @@ import org.openrdf.model.Literal
   */
 class PelagiosDataParser extends ResourceCollector {   
   
-  def data: Seq[AnnotatedThing] = {
+  def data: Iterable[AnnotatedThing] = {
     val typedResources = groupByType(
       // We're looking for AnnotatedThings, Annotations, and Neighbours
       Seq(Pelagios.AnnotatedThing, OA.Annotation, Pelagios.Neighbour),
         
       // Identify resources that have a neighbourURI as Neighbours
       Seq(
-        (resource => if (resource.hasPredicate(Pelagios.hasNeighbour)) Some(Pelagios.Neighbour) else None)
+        (resource => if (resource.hasPredicate(Pelagios.neighbourURI)) Some(Pelagios.Neighbour) else None)
     ))
     
     // Step 1: wrap annotations
-    val allAnnotations = typedResources.get(OA.Annotation).getOrElse(Map.empty[String, Resource]).mapValues(new AnnotationResource(_))
+    val allAnnotations = typedResources.get(OA.Annotation).getOrElse(Map.empty[String, Resource]).values.map(new AnnotationResource(_))
     
     // Step 2: construct the neighbourhood network
-    val allNeighbours = typedResources.get(Pelagios.Neighbour).getOrElse(Map.empty[String, Resource])
+    val allNeighbours = typedResources.get(Pelagios.Neighbour).getOrElse(Map.empty[String, Resource]).values.map(new NeighbourResource(_))
     
     def toNeighbours(uris: Seq[String], directional: Boolean): Seq[NeighbourResource] = {
       uris.foldLeft(List.empty[NeighbourResource])((resultList, currentURI) => {
-        val n = allNeighbours.get(currentURI)
+        val n = allNeighbours.find(_.resource.uri.equals(currentURI))
         if (n.isDefined) {
-          val neighbourAnnotationURI = n.get.getFirst(Pelagios.neighbourURI)
+          val neighbourAnnotationURI = n.get.resource.getFirst(Pelagios.neighbourURI)
           if (neighbourAnnotationURI.isDefined) {
-            val neighbourAnnotation = allAnnotations.get(neighbourAnnotationURI.get.stringValue)
-            if (neighbourAnnotation.isDefined)
-              new NeighbourResource(n.get, directional,neighbourAnnotation.get) :: resultList
-            else
+            val neighbourAnnotation = allAnnotations.find(annotation => annotation.uri.equals(neighbourAnnotationURI.get.stringValue))
+            if (neighbourAnnotation.isDefined) {
+              n.get.annotation = neighbourAnnotation.get
+              n.get.directional = directional
+              n.get :: resultList
+            } else {
               resultList
+            }
           } else {
             resultList
           }
@@ -50,16 +53,36 @@ class PelagiosDataParser extends ResourceCollector {
       })
     }
     
-    // Step 3: attach annotations to their target things
-    
-    allAnnotations.foreach{ case (uri, annotation) => {
+    allAnnotations.foreach(annotation => {
       val neighbourURIs = annotation.resource.get(Pelagios.hasNeighbour).map(_.stringValue)
       val nextURIs = annotation.resource.get(Pelagios.hasNext).map(_.stringValue)
       val neighbours = toNeighbours(neighbourURIs, false) ++ toNeighbours(nextURIs, true)
-      annotation.setNeighbours(neighbours)
-    }}
+      annotation.hasNeighbour = neighbours
+    })
     
-    null
+    // Step 3: construct Work/Expression hierarchy
+    val allAnnotatedThings = typedResources.get(Pelagios.AnnotatedThing).getOrElse(Map.empty[String, Resource]).values.map(new AnnotatedThingResource(_))    
+    allAnnotatedThings.foreach(thing => {
+      val realizationOf = thing.resource.getFirst(FRBR.realizationOf).map(_.stringValue)
+      if (realizationOf.isDefined) {        
+        val work = allAnnotatedThings.find(t => { t.uri.equals(realizationOf.get) })
+        thing.realizationOf = work
+        if (work.isDefined) {
+          work.get.expressions = thing +: work.get.expressions
+        }
+      }
+    })
+    
+    // Step 4: link annotations and annotated things
+    val annotationsPerThing = allAnnotations.groupBy(_.hasTarget)
+    
+    allAnnotatedThings.foreach(thing => {
+      val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
+      thing.annotations = annotations.toSeq
+    })
+    
+    // Step 5: get top-level things (all that are not expressions of something else)
+    allAnnotatedThings.filter(thing => thing.realizationOf.isEmpty)
   }
       
 }
@@ -70,10 +93,6 @@ class PelagiosDataParser extends ResourceCollector {
   * @param resource the RDF resource to wrap
   */
 private[parser] class AnnotationResource(val resource: Resource) extends Annotation {
-  
-  private var _neighbours: Seq[NeighbourResource] = Seq.empty[NeighbourResource]
-  
-  def setNeighbours(n: Seq[NeighbourResource]) = { _neighbours = n } 
   
   val uri = resource.uri
   
@@ -97,7 +116,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   val toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
   
-  def hasNeighbour: Seq[Neighbour] = _neighbours
+  var hasNeighbour: Seq[Neighbour] = Seq.empty[NeighbourResource]
   
 }
 
@@ -108,8 +127,12 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   * @param annotation a reference to the annotation referenced by pelagios:neighbourURI
   * @param directional flag to distinguish between pelagios:hasNeighbour and pelagios:hasNext
   */
-private[parser] class NeighbourResource(val resource: Resource, val directional: Boolean, val annotation: AnnotationResource) extends Neighbour {
+private[parser] class NeighbourResource(val resource: Resource) extends Neighbour {
     
+  var annotation: AnnotationResource = null
+  
+  var directional: Boolean = false
+  
   val distance: Option[Double] = resource.getFirst(Pelagios.neighbourDistance).map(_.asInstanceOf[Literal].doubleValue)
    
   val unit: Option[String] = resource.getFirst(Pelagios.distanceUnit).map(_.stringValue)
@@ -122,8 +145,8 @@ private[parser] class NeighbourResource(val resource: Resource, val directional:
   * @constructor create a new AnnotatedThing
   * @param resource the RDF resource to wrap
   */
-private[parser] class AnnotatedThingResource(resource: Resource, val expressions: Seq[AnnotatedThingResource], val annotations: Seq[AnnotationResource]) extends AnnotatedThing {
-
+private[parser] class AnnotatedThingResource(val resource: Resource) extends AnnotatedThing {
+    
   def uri = resource.uri
   
   def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
@@ -155,8 +178,11 @@ private[parser] class AnnotatedThingResource(resource: Resource, val expressions
   
   def seeAlso = resource.get(RDFS.SEEALSO).map(_.stringValue)  
   
-  // TODO
-  def realizationOf = None
+  var realizationOf: Option[AnnotatedThing] = None
+  
+  var annotations = Seq.empty[AnnotationResource]
+  
+  var expressions = Seq.empty[AnnotatedThingResource]
   
 }
 

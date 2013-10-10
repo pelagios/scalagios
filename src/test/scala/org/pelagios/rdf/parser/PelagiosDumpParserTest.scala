@@ -28,8 +28,9 @@ class PelagiosDumpParserTest extends FunSuite {
     // Verify the properties of the expression
     val expression = work.expressions(0)
     assert(expression.title.equals("Vicarello Goblet I"))
-    assert(expression.realizationOf.isDefined && expression.realizationOf.get.equals(work.uri))
-    assert(expression.annotations.size == 100, "wrong number of annotations") 
+    assert(expression.realizationOf.isDefined, "Expression does not provide associated Work")
+    assert(expression.realizationOf.get.uri.equals(work.uri), "Expression's work URI is wrong")
+    assert(expression.annotations.size == 97, "wrong number of annotations") 
     assert(expression.expressions.size == 0, "Expression should not have more Expressions")
     
     // Verify the annotations
@@ -38,6 +39,17 @@ class PelagiosDumpParserTest extends FunSuite {
       assert(annotation.toponym.isDefined, "missing: toponym")
       assert(annotation.hasBody.size == 1, "invalid number of annotation bodies")
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
+    })
+    
+    // Verify annotation neighbourhood relations
+    val annotationsWithNeighbours = expression.annotations.filter(_.hasNeighbour.size > 0)
+    assert(annotationsWithNeighbours.size == 96, "annotations don't specify neighbours")
+    annotationsWithNeighbours.foreach(annotation => {
+      assert(annotation.hasNeighbour.size == 1, "annotations should have exactly one neighbour")
+      assert(annotation.hasNeighbour(0).directional, "neighbourhood relation should be directional")
+      assert(annotation.hasNeighbour(0).distance.isDefined, "neighbourhood relation should define a distance")
+      assert(annotation.hasNeighbour(0).unit.isDefined, "neighbourhood relation should define a unit")
+      assert(expression.annotations.contains(annotation.hasNeighbour(0).annotation), "neighbour annotation does not exist")
     })
   }
   
