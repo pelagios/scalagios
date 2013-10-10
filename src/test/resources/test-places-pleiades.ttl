@@ -1,4 +1,4 @@
-@prefix pelagios: <http://pelagios.github.com/terms#> .
+@prefix pelagios: <http://pelagios.github.io/terms#> .
 @prefix pleiades: <http://pleiades.stoa.org/places/vocab#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 

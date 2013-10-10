@@ -5,6 +5,8 @@ import org.openrdf.model.{ Literal, Statement, URI, Value }
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
 import org.pelagios.api.Label
+import org.pelagios.rdf.vocab.PleiadesPlaces
+import org.pelagios.rdf.vocab.Pelagios
 
 /** An RDFHandler that collects triples into a more convenient map. 
   *   
@@ -24,57 +26,51 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     resource.properties.append((statement.getPredicate, statement.getObject))
     resources.put(subj, resource)
   }
-
-}
-
-/** A helper structure to collect the triples for a specific RDF resource.
-  *  
-  * This helper structure aggregates all property/object pairs for one
-  * particular RDF resource. Since this is only a helper, we restrict
-  * visibility to this package.
-  * 
-  * @constructor create a new resource with a URI
-  * @param uri the URI
-  */
-private[parser] class Resource(val uri:String) {
   
-  val properties = new ArrayBuffer[(URI, Value)]
-  
-  /** Returns the values (objects) for a particular RDF property.
-    *
-    * @param property the property URI
-    * @return the object values for this property
+  /** A helper method that determines explicit type information to the collected resources.
+    * 
+    * The method takes three arguments: (i) the resources, (ii) a list of supported RDF 
+    * types,(iii) a list of rules for "guessing" the type of resources that are not 
+    * explicitly typed.
+    * 
+    * In the first step, the method retrieves all explicit rdf:type properties from the 
+    * resource and checks whether any match the list of supported types. The first one
+    * that does is used as the type.
+    * 
+    * If no explict matching type was found, the method goes through the type rules.
+    * The type of the resource will be determined by the first rule that returns matches.
+    * If no rule matches, the resource will be discared. 
+    * 
+    * @param resources the RDF resources
+    * @param supportedTypes the list of supported RDF types
+    * @param typeRules the list of type checking rules
+    * @return a map of the resources, grouped by RDF types (untyped resources are discarded)
     */
-  def get(property: URI): Seq[Value] = properties.filter(_._1 == property).map(_._2).toSeq
-  
-  /** Returns the first value (object) for a particular RDF property or 'None'
-    *  
-    * @param property the property URI
-    * @return the first value found for that property, or 'None', if the resource
-    *         does not have this property 
-    */ 
-  def getFirst(property: URI): Option[Value] = {
-    val properties = get(property)
-    if (properties.size > 0) 
-      Some(properties(0))
-    else
-      None
-  }
-  
-  /** Checks if the resource has a specific RDF type.
-    *  
-    * @param typ the RDF type value  
-    * @return true if the resource has the type
-    */
-  def hasType(typ: Value): Boolean = get(RDF.TYPE).contains(typ)
-
-  /** Checks if the resource has a specific RDF property.
-    *  
-    * @param property the property URI
-    * @return true if the resource has the property
-    */
-  def hasProperty(property: URI): Boolean = properties.filter(_._1 == property).size > 0
+  protected def groupByType(resources: Map[String, Resource], supportedTypes: Seq[Value], typeRules: Seq[Resource => Option[URI]]): Map[URI, Map[String, Resource]] = {
+    val typedResources = resources.foldLeft(List.empty[(URI, String, Resource)])((result, current) => {
+      val (uri, resource) = (current._1, current._2)
+      val types = resource.get(RDF.TYPE).toSeq      
+      
+      // Find the resource's first explicit rdf:type that's in the supported types list
+      val firstType = types.find(t => supportedTypes.contains(t))
+      
+      if (firstType.isDefined) {
+        // Found one -> add to result list & done.
+        (firstType.get.asInstanceOf[URI], uri, resource) :: result
+      } else {
+        // No luck - try the type rules & take the first match
+        val firstRuleHit = typeRules.collectFirst { case rule if { rule(resource).isDefined } => rule(resource).get }
+        if (firstRuleHit.isDefined) {
+          (firstRuleHit.get.asInstanceOf[URI], uri, resource) :: result          
+        } else {
+          result
+        }
+      }
+    })
     
+    typedResources.groupBy(_._1).mapValues(_.map { case (typeURI, subjURI, resource) => subjURI -> resource }.toMap)
+  }
+
 }
 
 /** A companion to [[ResourceCollector]] providing helper methods **/

@@ -1,11 +1,9 @@
 package org.pelagios.rdf.parser
 
-import org.pelagios.api.{ Label, Location, Name, Place }
+import org.pelagios.api._
+import org.pelagios.rdf.vocab._
 import org.openrdf.model.{ Literal, URI, Value }
-import org.openrdf.model.vocabulary.RDF
-import org.pelagios.rdf.vocab.{OSGeo, Pelagios, PleiadesPlaces, SKOS, W3CGeo }
-import org.pelagios.rdf.vocab.DCTerms
-import org.openrdf.model.vocabulary.RDFS
+import org.openrdf.model.vocabulary.{ RDF, RDFS }
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
   * 
@@ -19,7 +17,18 @@ class GazetteerParser extends ResourceCollector {
     */
   def places: Iterable[Place] = {
     // All RDF resources, grouped by their type (Place, Name, Location) 
-    val typedResources = determineType(resources.toMap)
+    val typedResources = groupByType(resources.toMap, 
+        
+      // We're looking for PlaceRecords, Names and Locations
+      Seq(Pelagios.PlaceRecord, PleiadesPlaces.Name, PleiadesPlaces.Location),
+      
+      Seq(
+        // Identify resources that have asWKT, asGeoJSON or lat predicates as Location
+        (resource => if (resource.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))) Some(PleiadesPlaces.Location) else None),
+        
+        // Identify resources that have a skos:label as place name
+        (resource => if (resource.hasPredicate(SKOS.label)) Some(PleiadesPlaces.Name) else None)
+      ))
     
     // Just the Names
     val allNames = typedResources.get(PleiadesPlaces.Name).getOrElse(Map.empty[String, Resource])
@@ -34,46 +43,6 @@ class GazetteerParser extends ResourceCollector {
       new PlaceResource(resource, names, locations)
     }
   }  
-
-  /** Private helper method that determines explicit type information to the collected resources.
-    *
-    * The method will go through the resources, and first look for explicit RDF types of 
-    * pelagios:PlaceRecord, pleiades:Name, and pleiades:Location. If no explicit RDF type
-    * is provided, it will attempt to determine the type based on other properties.
-    * 
-    * @param resources the RDF resources
-    * @return a map of resources, grouped by the RDF types pelagios:PlaceRecord, pleiades:Name
-    *         and pleiades:Location
-    */
-  private def determineType(resources: Map[String, Resource]): Map[URI, Map[String, Resource]] = {
-    val typedResources = resources.map { case (subjURI, resource) => {        
-      val types = resource.get(RDF.TYPE)
-      
-      // The easy case: resource is explicitly typed      
-      if (types.contains(PleiadesPlaces.Name)) {
-        (PleiadesPlaces.Name, subjURI, resource)    
-      } else if (types.contains(PleiadesPlaces.Location)) {
-        (PleiadesPlaces.Location, subjURI, resource)  
-      } else if (types.contains(Pelagios.PlaceRecord)) {
-        (Pelagios.PlaceRecord, subjURI, resource)  
-      } else {
-        // No explicit typing - guess based on properties
-        val predicates = resource.properties.map(_._1)
-        if (predicates.filter(p => { p.equals(OSGeo.asWKT) | p.equals(OSGeo.asGeoJSON) | p.equals(W3CGeo.lat) }).size > 0) {
-          // If it has any form of geometry, assume it's a location
-          (PleiadesPlaces.Location, subjURI, resource)  
-        } else if (predicates.filter(_.equals(SKOS.label)).size > 0) {
-          // If it has a skos:label, assume it's a name
-          (PleiadesPlaces.Name, subjURI, resource)  
-        } else {
-          // Everything that's untyped, and has neither geometry nor a skos:label is treated as Place
-          (Pelagios.PlaceRecord, subjURI, resource)  
-        }
-      }
-    }}
-    
-    typedResources.groupBy(_._1).mapValues(_.map { case (typeURI, subjURI, resource) => subjURI -> resource }.toMap)
-  } 
 
 }
 
