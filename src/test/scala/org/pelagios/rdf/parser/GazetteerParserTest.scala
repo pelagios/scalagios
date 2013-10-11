@@ -17,7 +17,7 @@ class GazetteerParserTest extends FunSuite {
     
     val places = Scalagios.parseGazetteer(new File(TEST_FILE))
     places.foreach(place => {
-      println(place.title)
+      println(place.locations)
     })  
     
     println(places.size + " places")

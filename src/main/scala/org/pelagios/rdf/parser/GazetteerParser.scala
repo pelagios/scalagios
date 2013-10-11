@@ -31,14 +31,14 @@ class GazetteerParser extends ResourceCollector {
     
     // Just the Names
     val allNames = typedResources.get(PleiadesPlaces.Name).getOrElse(Map.empty[String, Resource])
-    
+
     // Just the Locations
     val allLocations = typedResources.get(PleiadesPlaces.Location).getOrElse(Map.empty[String, Resource])
     
     // Places, with Names and Locations in-lined 
     typedResources.get(Pelagios.PlaceRecord).getOrElse(Map.empty[String, Resource]).map { case (uri, resource) => 
       val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.get(uri.stringValue).map(new NameResource(_))).toSeq.flatten
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.get(uri.toString).map(new LocationResource(_))).toSeq.flatten
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.get(uri.stringValue).map(new LocationResource(_))).toSeq.flatten
       new PlaceResource(resource, names, locations)
     }
   }  
