@@ -12,15 +12,23 @@ class GazetteerParserTest extends FunSuite {
   val TEST_FILE = "src/test/resources/test-places-pleiades.ttl"
 
   test("Gazetteer Dump Import") {
-    println("Starting gazetteer data import")
-    val startTime = System.currentTimeMillis
-    
     val places = Scalagios.parseGazetteer(new File(TEST_FILE))
+    assert(places.size == 483, "invalid number of places")
     places.foreach(place => {
-      println(place.locations)
-    })  
+      assert(place.title != null, "title is null")
+      assert(place.uri.startsWith("http://pleiades.stoa.org/places/") ||
+             place.uri.startsWith("http://atlantides.org/capgrids/"), "invalid place URI - " + place.uri)
+    })
     
-    println(places.size + " places")
+    val placesWithLocations = places.filter(_.locations.size > 0)
+    assert(placesWithLocations.size == 377, "invalid number of places with locations")
+    placesWithLocations.foreach(p => { 
+      assert(p.locations.size == 1, "place has more than one location")
+      assert(p.locations(0).geometry != null, "place has null geometry")
+    })
+    
+    val placesWithNames = places.filter(_.names.size > 0)
+    assert(placesWithNames.size == 449, "invalid number of places with names")
   }
   
 }
