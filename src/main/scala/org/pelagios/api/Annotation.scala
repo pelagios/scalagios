@@ -19,19 +19,6 @@ trait Annotation {
     * http://example.com/pelagios.rdf#annotations/01
     */
   def uri: String
-
-  /** oa:hasBody
-    *
-    * Pelagios supports multiple annotation bodies (as defined in the OA spec), but
-    * requires that bodies point to URIs from (a) gazetteer(s) participating in the
-    * Pelagios network.
-    * 
-    * It is valid for annotations to have no body (or no body that points to a known
-    * gazetteer URI). In this case, the annotation should provide a pelagios:toponym
-    * property, and will be treated as a toponym transcription without explict gazetteer
-    * mapping.
-    */
-  def hasBody: Seq[String]
   
   /** oa:hasTarget 
     *
@@ -41,6 +28,25 @@ trait Annotation {
     * TODO parts of [[AnnotatedItem]]s
     */
   def hasTarget: String
+
+  /** Place references expressed through oa:hasBody
+    *
+    * Pelagios supports multiple annotation bodies (as defined in the OA spec), but
+    * requires that annotation bodies either point to URIs that represent places
+    * in a gazetteer, or that they are textual bodies representing toponyms. This 
+    * method exposes annotation bodies of the former type (place references).
+    */
+  def placeTags: Seq[String]
+  
+  /** Toponym expressed through oa:hasBody
+    *  
+    * Pelagios supports multiple annotation bodies (as defined in the OA spec), but
+    * requires that annotation bodies either point to URIs that represent places
+    * in a gazetteer, or that they are textual bodies representing toponyms, (i.e.
+    * transcriptions of placenames as written in the source document). This
+    * method exposes annotation bodies of the latter type (toponyms).
+    */
+  def toponym: Option[String]
   
   /** oa:motivatedBy  **/
   def motivatedBy: Option[String]
@@ -76,13 +82,6 @@ trait Annotation {
     * The time when the digital annotations were produced.
     */
   def created: Option[Date]
-
-  /** pelagios:toponym
-    *
-    * If applicable, this Pelagios-specific property records the
-    * original toponym used in the annotated source document.   
-    */
-  def toponym: Option[String]
   
   /** pelagios:hasNeighbour and pelagios:hasNext
     * 
@@ -97,10 +96,12 @@ trait Annotation {
 
 /** A default POJO-style implementation of Annotation. **/
 class DefaultAnnotation(val uri: String) extends Annotation {
-  
-  var hasBody: Seq[String] = Seq.empty[String]
-    
+ 
   var hasTarget: String = ""
+  
+  var placeTags: Seq[String] = Seq.empty[String]
+  
+  var toponym: Option[String] = None
     
   var motivatedBy: Option[String] = Some("geotagging")
   
@@ -111,8 +112,6 @@ class DefaultAnnotation(val uri: String) extends Annotation {
   var creator: Option[Agent] = None
   
   var created: Option[Date] = None
-  
-  var toponym: Option[String] = None
   
   var hasNeighbour: Seq[Neighbour] = Seq.empty[Neighbour]
   

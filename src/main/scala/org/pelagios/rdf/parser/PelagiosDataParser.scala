@@ -96,9 +96,11 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   val uri = resource.uri
   
-  val hasBody = resource.get(OA.hasBody).map(_.stringValue)
-  
   val hasTarget = resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty") // '_:empty' should never happen!
+  
+  val placeTags = resource.get(OA.hasBody).map(_.stringValue)
+  
+  val toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
   
   val motivatedBy: Option[String] = Some(resource.getFirst(OA.motivatedBy).map(_.stringValue).getOrElse("geotagging")) // Default to geotagging
   
@@ -113,8 +115,6 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   // TODO
   def created: Option[Date] = None
-  
-  val toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
   
   var hasNeighbour: Seq[Neighbour] = Seq.empty[NeighbourResource]
   

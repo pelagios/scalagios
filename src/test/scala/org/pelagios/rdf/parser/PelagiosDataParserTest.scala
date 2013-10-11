@@ -7,7 +7,7 @@ import org.pelagios.Scalagios
 import java.io.File
 
 @RunWith(classOf[JUnitRunner])
-class PelagiosDumpParserTest extends FunSuite {
+class PelagiosDataParserTest extends FunSuite {
 
   val TEST_FILE = "src/test/resources/test-annotations-vicarello.ttl"
     
@@ -37,7 +37,7 @@ class PelagiosDumpParserTest extends FunSuite {
     expression.annotations.foreach(annotation => {
       assert(annotation.motivatedBy.isDefined && annotation.motivatedBy.get.equals("geotagging"), "missing or wrong: motivatedBy")
       assert(annotation.toponym.isDefined, "missing: toponym")
-      assert(annotation.hasBody.size == 1, "invalid number of annotation bodies")
+      assert(annotation.placeTags.size == 1, "invalid number of annotation bodies")
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
     })
     
