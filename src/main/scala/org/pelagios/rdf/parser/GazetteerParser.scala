@@ -52,7 +52,7 @@ class GazetteerParser extends ResourceCollector {
  *  @param names the names connected to the resource
  *  @param locations the locations connected to the resource
  */
-private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResource], val locations: Seq[LocationResource]) extends Place {
+private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResource], val locations: Seq[Location]) extends Place {
 
   def uri = resource.uri
   
@@ -86,22 +86,26 @@ private[parser] class NameResource(resource: Resource) extends Name {
   * @param resource the RDF resource to wrap
   */
 private[parser] class LocationResource(resource: Resource) extends Location {
+  
+  val geometry = {
+    val wkt = resource.getFirst(OSGeo.asWKT).map(_.stringValue)
+    val geoJSON = resource.getFirst(OSGeo.asGeoJSON).map(_.stringValue)
+    val (lon, lat) = (resource.getFirst(W3CGeo.long).map(_.asInstanceOf[Double]), 
+                      resource.getFirst(W3CGeo.lat).map(_.asInstanceOf[Double]))
 
-  def wkt: Option[String] = resource.getFirst(OSGeo.asWKT).map(_.stringValue)
-  
-  def geoJson: Option[String] = resource.getFirst(OSGeo.asGeoJSON).map(_.stringValue)
-  
-  def lonlat: Option[(Double, Double)] = {
-    val lon = resource.getFirst(W3CGeo.long).map(_.asInstanceOf[Double])
-    val lat = resource.getFirst(W3CGeo.lat).map(_.asInstanceOf[Double])
-    if (lon.isDefined && lat.isDefined)
-      Some((lon.get, lat.get))
+    if (wkt.isDefined)
+      Location.parseWKT(wkt.get)
+    else if (geoJSON.isDefined)
+      Location.parseGeoJSON(geoJSON.get)
+    else if (lat.isDefined && lon.isDefined)
+      Location.fromLatLon(lat.get, lon.get)
     else
-      None
+      // The spec prohibits Locations without geometry - purely for defensive purposes
+      Location.fromLatLon(0, 0) 
   }
   
   def descriptions: Seq[Label] =
     (resource.get(DCTerms.description) ++ resource.get(RDFS.LABEL)).map(ResourceCollector.toLabel(_))
-  
+
 }
 
