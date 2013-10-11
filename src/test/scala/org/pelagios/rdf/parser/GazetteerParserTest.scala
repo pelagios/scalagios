@@ -21,7 +21,7 @@ class GazetteerParserTest extends FunSuite {
     })
     
     val placesWithLocations = places.filter(_.locations.size > 0)
-    assert(placesWithLocations.size == 377, "invalid number of places with locations")
+    assert(placesWithLocations.size == 377, "invalid number of places with locations (" + placesWithLocations.size + ")")
     placesWithLocations.foreach(p => { 
       assert(p.locations.size == 1, "place has more than one location")
       assert(p.locations(0).geometry != null, "place has null geometry")

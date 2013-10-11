@@ -15,21 +15,10 @@ import org.openrdf.model.Literal
 class PelagiosDataParser extends ResourceCollector {   
   
   def data: Iterable[AnnotatedThing] = {
-    val typedResources = groupByType(
-      // We're looking for AnnotatedThings, Annotations, and Neighbours
-      Seq(Pelagios.AnnotatedThing, OA.Annotation, Pelagios.Neighbour),
-        
-      // Identify resources that have a neighbourURI as Neighbours
-      Seq(
-        (resource => if (resource.hasPredicate(Pelagios.neighbourURI)) Some(Pelagios.Neighbour) else None)
-    ))
+    val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))    
+    val allNeighbours = resourcesOfType(Pelagios.Neighbour, Seq(_.hasPredicate(Pelagios.neighbourURI))).map(new NeighbourResource(_))
     
-    // Step 1: wrap annotations
-    val allAnnotations = typedResources.get(OA.Annotation).getOrElse(Map.empty[String, Resource]).values.map(new AnnotationResource(_))
-    
-    // Step 2: construct the neighbourhood network
-    val allNeighbours = typedResources.get(Pelagios.Neighbour).getOrElse(Map.empty[String, Resource]).values.map(new NeighbourResource(_))
-    
+    /** Converts neighbour resources to neighbours, filtering out invalid URIs **/
     def toNeighbours(uris: Seq[String], directional: Boolean): Seq[NeighbourResource] = {
       uris.foldLeft(List.empty[NeighbourResource])((resultList, currentURI) => {
         val n = allNeighbours.find(_.resource.uri.equals(currentURI))
@@ -53,6 +42,7 @@ class PelagiosDataParser extends ResourceCollector {
       })
     }
     
+    /** Creates neighbourhood links **/
     allAnnotations.foreach(annotation => {
       val neighbourURIs = annotation.resource.get(Pelagios.hasNeighbour).map(_.stringValue)
       val nextURIs = annotation.resource.get(Pelagios.hasNext).map(_.stringValue)
@@ -60,8 +50,8 @@ class PelagiosDataParser extends ResourceCollector {
       annotation.hasNeighbour = neighbours
     })
     
-    // Step 3: construct Work/Expression hierarchy
-    val allAnnotatedThings = typedResources.get(Pelagios.AnnotatedThing).getOrElse(Map.empty[String, Resource]).values.map(new AnnotatedThingResource(_))    
+    /** Constructs Work/Expression hierarchy **/
+    val allAnnotatedThings = resourcesOfType(Pelagios.AnnotatedThing).map(new AnnotatedThingResource(_))
     allAnnotatedThings.foreach(thing => {
       val realizationOf = thing.resource.getFirst(FRBR.realizationOf).map(_.stringValue)
       if (realizationOf.isDefined) {        
@@ -73,15 +63,14 @@ class PelagiosDataParser extends ResourceCollector {
       }
     })
     
-    // Step 4: link annotations and annotated things
+    /** Link annotations and annotated things **/
     val annotationsPerThing = allAnnotations.groupBy(_.hasTarget)
-    
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
       thing.annotations = annotations.toSeq
     })
     
-    // Step 5: get top-level things (all that are not expressions of something else)
+    /** Filters out top-level things, i.e. those that are not expressions of something else **/
     allAnnotatedThings.filter(thing => thing.realizationOf.isEmpty)
   }
       

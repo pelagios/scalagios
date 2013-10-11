@@ -16,31 +16,16 @@ class GazetteerParser extends ResourceCollector {
     * @return the list of Places
     */
   def places: Iterable[Place] = {
-    // All RDF resources, grouped by their type (Place, Name, Location) 
-    val typedResources = groupByType(        
-      // We're looking for PlaceRecords, Names and Locations
-      Seq(Pelagios.PlaceRecord, PleiadesPlaces.Name, PleiadesPlaces.Location),
+    val allNames = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(SKOS.label)))
+      .map(new NameResource(_))
+    val allLocations = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
+      .map(new LocationResource(_))
       
-      Seq(
-        // Identify resources that have asWKT, asGeoJSON or lat predicates as Location
-        (resource => if (resource.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))) Some(PleiadesPlaces.Location) else None),
-        
-        // Identify resources that have a skos:label as place name
-        (resource => if (resource.hasPredicate(SKOS.label)) Some(PleiadesPlaces.Name) else None)
-      ))
-    
-    // Just the Names
-    val allNames = typedResources.get(PleiadesPlaces.Name).getOrElse(Map.empty[String, Resource])
-
-    // Just the Locations
-    val allLocations = typedResources.get(PleiadesPlaces.Location).getOrElse(Map.empty[String, Resource])
-    
-    // Places, with Names and Locations in-lined 
-    typedResources.get(Pelagios.PlaceRecord).getOrElse(Map.empty[String, Resource]).map { case (uri, resource) => 
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.get(uri.stringValue).map(new NameResource(_))).toSeq.flatten
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.get(uri.stringValue).map(new LocationResource(_))).toSeq.flatten
+    resourcesOfType(Pelagios.PlaceRecord).map(resource => {
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.filter(_.resource.uri.equals(uri.stringValue))).flatten
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.filter(_.resource.uri.equals(uri.stringValue))).flatten
       new PlaceResource(resource, names, locations)
-    }
+    })
   }  
 
 }
@@ -52,7 +37,7 @@ class GazetteerParser extends ResourceCollector {
  *  @param names the names connected to the resource
  *  @param locations the locations connected to the resource
  */
-private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResource], val locations: Seq[Location]) extends Place {
+private[parser] class PlaceResource(val resource: Resource, val names: Seq[NameResource], val locations: Seq[Location]) extends Place {
 
   def uri = resource.uri
   
@@ -72,7 +57,7 @@ private[parser] class PlaceResource(resource: Resource, val names: Seq[NameResou
   * @constructor create a new NameResource
   * @param resource the RDF resource to wrap   
   */
-private[parser] class NameResource(resource: Resource) extends Name {
+private[parser] class NameResource(val resource: Resource) extends Name {
   
   def labels: Seq[Label] = resource.get(SKOS.label).map(ResourceCollector.toLabel(_))
   
@@ -85,7 +70,7 @@ private[parser] class NameResource(resource: Resource) extends Name {
   * @constructor create a new LocationResource
   * @param resource the RDF resource to wrap
   */
-private[parser] class LocationResource(resource: Resource) extends Location {
+private[parser] class LocationResource(val resource: Resource) extends Location {
   
   val geometry = {
     val wkt = resource.getFirst(OSGeo.asWKT).map(_.stringValue)

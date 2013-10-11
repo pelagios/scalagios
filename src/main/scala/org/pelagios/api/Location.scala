@@ -39,7 +39,7 @@ trait Location {
 }
 
 /** A default POJO-style implementation of Location. **/
-class DefaultLocation(val geometry: Geometry, val descriptions: Seq[Label] = Seq.empty[Label]) {
+class DefaultLocation(val geometry: Geometry, val descriptions: Seq[Label] = Seq.empty[Label]) extends Location {
   
   def this(lat: Double, lon: Double, descriptions: Seq[Label] = Seq.empty[Label]) =
     this(Location.fromLatLon(lat, lon), descriptions)
