@@ -12,7 +12,8 @@ trait Name {
   
 }
 
-case class DefaultName extends Name {
+/** A default POJO-style implementation of Name. **/
+class DefaultName extends Name {
   
   var labels = Seq.empty[Label]
   

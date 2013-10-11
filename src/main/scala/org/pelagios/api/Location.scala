@@ -41,3 +41,16 @@ trait Location {
   }
   
 }
+
+/** A default POJO-style implementation of Location. **/
+class DefaultLocation extends Location {
+  
+  var wkt: Option[String] = None
+  
+  var geoJson: Option[String] = None
+  
+  var lonlat: Option[(Double, Double)] = None
+  
+  var descriptions = Seq.empty[Label]
+  
+}
