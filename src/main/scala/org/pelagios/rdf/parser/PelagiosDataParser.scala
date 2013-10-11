@@ -87,7 +87,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   val hasTarget = resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty") // '_:empty' should never happen!
   
-  val placeTags = resource.get(OA.hasBody).map(_.stringValue)
+  val places = resource.get(OA.hasBody).map(_.stringValue)
   
   val toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
   

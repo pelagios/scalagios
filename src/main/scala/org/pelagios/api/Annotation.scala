@@ -36,7 +36,7 @@ trait Annotation {
     * in a gazetteer, or that they are textual bodies representing toponyms. This 
     * method exposes annotation bodies of the former type (place references).
     */
-  def placeTags: Seq[String]
+  def places: Seq[String]
   
   /** Toponym expressed through oa:hasBody
     *  
@@ -99,7 +99,7 @@ class DefaultAnnotation(val uri: String) extends Annotation {
  
   var hasTarget: String = ""
   
-  var placeTags: Seq[String] = Seq.empty[String]
+  var places: Seq[String] = Seq.empty[String]
   
   var toponym: Option[String] = None
     
