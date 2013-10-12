@@ -31,26 +31,35 @@ trait Annotation {
 
   /** Place reference expressed through oa:hasBody
     *
-    * Pelagios supports multiple annotation bodies (as defined in the OA spec), but
-    * requires that annotation bodies either point to URIs that represent places
-    * in a gazetteer, or that they are textual bodies representing toponyms. This 
-    * method exposes annotation bodies of the former type (place references).
+    * A Pelagios annotation relates (part of) an annotated item with a 
+    * place. By convention, Pelagios requires that annotation bodies either
+    * point to a URI that represents this place in a gazetteer; or that 
+    * they are textual bodies containing the place name transcription (see 
+    * method 'transcription' below). The 'place' method exposes annotation
+    * bodies of the former type (place references).
+    * 
+    * Note: there should be at most one body containing a transcription. It
+    * is, however, possible to add multiple bodies that point to gazetteer 
+    * URIs - but only in order to refer to the same place in different
+    * gazetteers.
     */
   def place: Seq[String]
   
-  /** Toponym expressed through oa:hasBody
+  /** Transcription expressed through oa:hasBody
     *  
-    * Pelagios supports multiple annotation bodies (as defined in the OA spec), but
-    * requires that annotation bodies either point to URIs that represent places
-    * in a gazetteer, or that they are textual bodies representing toponyms, (i.e.
-    * transcriptions of placenames as written in the source document). This
-    * method exposes annotation bodies of the latter type (toponyms).
+    * A Pelagios annotation relates (part of) an annotated item with a 
+    * place. By convention, Pelagios requires that annotation bodies either
+    * point to a URI that represents this place in a gazetteer; or that 
+    * they are textual bodies containing the place name transcription. This
+    * method exposes annotation bodies of the latter type (transcriptions).
     */
   def transcription: Option[Transcription]
     
   /** pelagios:relation
     * 
-    * The relation between the annotation target and the place.
+    * This method returns the <em>type</em> of the relation that this annotation 
+    * establishes between (part of) an annotated item and the place (e.g. found at,
+    * located at, attests to, etc.)
     */
   def relation: Option[Relation.Type]
   
