@@ -5,6 +5,7 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
 import java.io.File
+import org.pelagios.api.Transcription
 
 @RunWith(classOf[JUnitRunner])
 class PelagiosDataParserTest extends FunSuite {
@@ -35,9 +36,9 @@ class PelagiosDataParserTest extends FunSuite {
     
     // Verify the annotations
     expression.annotations.foreach(annotation => {
-      assert(annotation.motivatedBy.isDefined && annotation.motivatedBy.get.equals("geotagging"), "missing or wrong: motivatedBy")
-      assert(annotation.toponym.isDefined, "missing: toponym")
-      assert(annotation.places.size == 1, "invalid number of annotation bodies")
+      assert(annotation.transcription.isDefined, "missing: toponym")
+      assert(annotation.transcription.get.nameType == Transcription.Toponym)
+      assert(annotation.place.size == 1, "invalid number of annotation bodies")
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
     })
     

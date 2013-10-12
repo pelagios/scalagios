@@ -81,14 +81,11 @@ object Serializer {
       model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
       
       // oa:hasBody
-      annotation.places.foreach(body => model.add(rdfAnnotation, OA.hasBody, f.createURI(body)))
+      annotation.place.foreach(body => model.add(rdfAnnotation, OA.hasBody, f.createURI(body)))
       
       // oa:hasTarget
       model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget))
-      
-      // oa:motivatedBy
-      annotation.motivatedBy.map(motivation => model.add(rdfAnnotation, OA.motivatedBy, f.createLiteral(motivation)))
-      
+            
       // oa:annotatedBy
       annotation.annotatedBy.map(annotator => model.add(rdfAnnotation, OA.annotatedBy, serializeAgent(annotator, model)))
       
@@ -101,8 +98,7 @@ object Serializer {
       // dcterms:created
       annotation.created.map(date => model.add(rdfAnnotation, DCTerms.created, f.createLiteral(date)))
             
-      // pelagios:toponym
-      annotation.toponym.map(toponym => model.add(rdfAnnotation, Pelagios.toponym, f.createLiteral(annotation.toponym.get)))
+      // TODO pelagios:toponym
       
       // pelagios:hasNext
       annotation.hasNeighbour.foreach(neighbour => {

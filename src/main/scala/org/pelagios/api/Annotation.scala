@@ -29,14 +29,14 @@ trait Annotation {
     */
   def hasTarget: String
 
-  /** Place references expressed through oa:hasBody
+  /** Place reference expressed through oa:hasBody
     *
     * Pelagios supports multiple annotation bodies (as defined in the OA spec), but
     * requires that annotation bodies either point to URIs that represent places
     * in a gazetteer, or that they are textual bodies representing toponyms. This 
     * method exposes annotation bodies of the former type (place references).
     */
-  def places: Seq[String]
+  def place: Seq[String]
   
   /** Toponym expressed through oa:hasBody
     *  
@@ -46,10 +46,13 @@ trait Annotation {
     * transcriptions of placenames as written in the source document). This
     * method exposes annotation bodies of the latter type (toponyms).
     */
-  def toponym: Option[String]
-  
-  /** oa:motivatedBy  **/
-  def motivatedBy: Option[String]
+  def transcription: Option[Transcription]
+    
+  /** pelagios:relation
+    * 
+    * The relation between the annotation target and the place.
+    */
+  def relation: Option[Relation.Type]
   
   /** oa:annotatedBy
     *  
@@ -99,11 +102,11 @@ class DefaultAnnotation(val uri: String) extends Annotation {
  
   var hasTarget: String = ""
   
-  var places: Seq[String] = Seq.empty[String]
+  var place: Seq[String] = Seq.empty[String]
   
-  var toponym: Option[String] = None
-    
-  var motivatedBy: Option[String] = Some("geotagging")
+  var transcription: Option[Transcription] = None
+      
+  var relation: Option[Relation.Value] = None
   
   var annotatedBy: Option[Agent] = None
 

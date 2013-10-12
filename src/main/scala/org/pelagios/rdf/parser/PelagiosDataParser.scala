@@ -87,12 +87,15 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   val hasTarget = resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty") // '_:empty' should never happen!
   
-  val places = resource.get(OA.hasBody).map(_.stringValue)
+  val place = resource.get(OA.hasBody).map(_.stringValue)
   
-  val toponym: Option[String] = resource.getFirst(Pelagios.toponym).map(_.stringValue)
+  // TODO
+  val transcription: Option[Transcription] = resource.getFirst(Pelagios.toponym)
+    .map(value => new Transcription(value.stringValue, Transcription.Toponym))
   
-  val motivatedBy: Option[String] = Some(resource.getFirst(OA.motivatedBy).map(_.stringValue).getOrElse("geotagging")) // Default to geotagging
-  
+  // TODO
+  def relation: Option[Relation.Type] = None
+    
   // TODO 
   def annotatedBy: Option[Agent] = None
 
