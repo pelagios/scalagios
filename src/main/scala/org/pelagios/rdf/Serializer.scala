@@ -26,6 +26,22 @@ object Serializer {
     bnode
   }
   
+  private def serializeTranscription(transcription: Transcription, model: Model): BNode = {
+    val f = model.getValueFactory()
+    val bnode = f.createBNode()
+    model.add(bnode, RDFS.LABEL, f.createLiteral(transcription.name))
+    
+    val bodyType = transcription.nameType match {
+      case Transcription.Toponym => Pelagios.Toponym
+      case Transcription.Metonym => Pelagios.Metonym
+      case Transcription.Ethnonym => Pelagios.Ethnonym
+    }
+    model.add(bnode, RDF.TYPE, bodyType)
+    
+    transcription.lang.map(lang => model.add(bnode, DCTerms.language, f.createLiteral(lang)))
+    bnode
+  }
+  
   private def serializeAnnotatedThing(thing: AnnotatedThing, model: Model): Unit = {
     val f = model.getValueFactory()
     val rdfThing = f.createURI(thing.uri) 
@@ -79,13 +95,19 @@ object Serializer {
     thing.annotations.foreach(annotation => {
       val rdfAnnotation = f.createURI(annotation.uri)
       model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
-      
-      // oa:hasBody
-      annotation.place.foreach(body => model.add(rdfAnnotation, OA.hasBody, f.createURI(body)))
-      
+
       // oa:hasTarget
       model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget))
+      
+      // oa:hasBody (place)
+      annotation.place.foreach(uri => model.add(rdfAnnotation, OA.hasBody, f.createURI(uri)))
+      
+      // oa:hasBody (transcription)
+      annotation.transcription.map(transcription => model.add(rdfAnnotation, OA.hasBody, serializeTranscription(transcription, model)))
             
+      // pelagios:relation
+      annotation.relation.map(relation => model.add(rdfAnnotation, Pelagios.relation, f.createLiteral(relation.toString)))
+      
       // oa:annotatedBy
       annotation.annotatedBy.map(annotator => model.add(rdfAnnotation, OA.annotatedBy, serializeAgent(annotator, model)))
       

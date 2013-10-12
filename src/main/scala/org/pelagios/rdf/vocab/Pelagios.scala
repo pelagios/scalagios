@@ -5,9 +5,15 @@ object Pelagios extends BaseVocab("http://pelagios.github.io/terms#") {
 
   val AnnotatedThing = createURI("AnnotatedThing")
   
+  val Ethnonym = createURI("Ethnonym")
+    
+  val Metonym = createURI("Metonym")
+  
   val Neighbour = createURI("Neighbour")
   
   val PlaceRecord = createURI("PlaceRecord") 
+  
+  val Toponym = createURI("Toponym")
   
   val distanceUnit = createURI("distanceUnit")
   
@@ -19,6 +25,6 @@ object Pelagios extends BaseVocab("http://pelagios.github.io/terms#") {
   
   val neighbourURI = createURI("neighbourURI")
 
-  val toponym = createURI("toponym")
+  val relation = createURI("relation")
   
 }

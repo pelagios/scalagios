@@ -26,6 +26,7 @@ trait Annotation {
     * points to an [[AnnotatedItem]].
     * 
     * TODO parts of [[AnnotatedItem]]s
+    * TODO type shouldn't be String, but 'Target' (?)
     */
   def hasTarget: String
 

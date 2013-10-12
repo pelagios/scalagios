@@ -90,8 +90,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   val place = resource.get(OA.hasBody).map(_.stringValue)
   
   // TODO
-  val transcription: Option[Transcription] = resource.getFirst(Pelagios.toponym)
-    .map(value => new Transcription(value.stringValue, Transcription.Toponym))
+  val transcription: Option[Transcription] = None
   
   // TODO
   def relation: Option[Relation.Type] = None
