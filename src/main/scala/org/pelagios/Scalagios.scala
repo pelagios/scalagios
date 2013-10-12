@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 import org.openrdf.rio.RDFWriterFactory
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.Writer
-import org.pelagios.rdf.Serializer
+import org.pelagios.rdf.serializer.RDFSerializer
 
 /** A utility to parse & write Pelagios data.
   *
@@ -68,7 +68,7 @@ object Scalagios {
     * @param format the RDF serialization format
     */
   def writeData(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) =
-    Serializer.writeToStream(data, out, format)
+    RDFSerializer.writeToStream(data, out, format)
 
   /** Writes Pelagios data to an RDF file.
     * 
@@ -77,7 +77,7 @@ object Scalagios {
     * @param format the RDF serialization format
     */
   def writeData(data: Iterable[AnnotatedThing], out: File, format: RDFFormat) =
-    Serializer.writeToFile(data, out, format)
+    RDFSerializer.writeToFile(data, out, format)
     
   /** Parses a Pelagios-style gazetteer dump file.
     *

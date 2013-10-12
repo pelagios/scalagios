@@ -1,12 +1,12 @@
-package org.pelagios.rdf
+package org.pelagios.rdf.serializer
 
 import java.io.{ File, OutputStream }
 import org.pelagios.api._
 import org.pelagios.rdf.vocab._
-import org.openrdf.model.{ BNode, Model, Resource, URI, ValueFactory }
+import org.openrdf.model.{BNode, Model}
 import org.openrdf.model.impl.LinkedHashModel
 import org.openrdf.model.vocabulary.RDF
-import org.openrdf.rio.{ Rio, RDFFormat, RDFWriter }
+import org.openrdf.rio.{Rio, RDFFormat}
 import org.openrdf.model.vocabulary.RDFS
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.FileOutputStream
@@ -17,7 +17,7 @@ import java.io.FileOutputStream
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-object Serializer {
+object RDFSerializer {
   
   private def serializeAgent(agent: Agent, model: Model): BNode = {
     val f = model.getValueFactory()
