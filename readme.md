@@ -12,6 +12,22 @@ the Java Virtual Machine. Scalagios provides:
 
 Scalagios is licensed under the [GNU General Public License v3.0](http://www.gnu.org/licenses/gpl.html).
 
+## Getting Started
+
+Reading Pelagios RDF data from a file:
+
+```scala
+val data: Iterable[AnnotatedThing] = Scalagios.parseData(new File("data-file.ttl"))
+
+data.foreach(thing => {
+  thing.annotations.foreach(annotation => {
+  
+    // Do something with annotations
+  
+  })
+})
+```
+
 ## Developer Information
 
 Scalagios is written in [Scala](http://www.scala-lang.org) and built with [SBT](http://www.scala-sbt.org/).
