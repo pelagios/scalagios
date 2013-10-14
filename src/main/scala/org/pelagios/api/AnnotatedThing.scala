@@ -159,11 +159,16 @@ class DefaultAnnotatedThing(val uri: String, val title: String) extends Annotate
   
   val expressions: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
   
-  var annotations: Seq[Annotation] = Seq.empty[Annotation]
+  val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
   
   def addExpression(thing: DefaultAnnotatedThing) = {
     thing.realizationOf = Some(this)
     expressions.append(thing)
+  }
+  
+  def addAnnotation(annotation: DefaultAnnotation) = {
+    annotation.hasTarget = this.uri
+    annotations.append(annotation)
   }
   
 }

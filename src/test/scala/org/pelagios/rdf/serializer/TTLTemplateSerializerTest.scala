@@ -11,12 +11,11 @@ class TTLTemplateSerializerTest extends FunSuite {
   
   test("Test TTL template rendering") {
     val thing = new DefaultAnnotatedThing("http://example.org/pelagios/annotated-things/1", "My EGD")
-    val annotations = Seq.range(0, 10).map(idx => {
-      val a = new DefaultAnnotation("http://example.org/pelagios/annotations/" + idx, thing)
+    val annotations = Seq.range(0, 10).foreach(idx => {
+      val a = new DefaultAnnotation("http://example.org/pelagios/annotations/" + idx)
       a.place = Seq("http://pleiades.stoa.org/places/1234567")
       a.transcription = Some(new Transcription("Athens", Transcription.Toponym))
-      thing.annotations = thing.annotations :+ a
-      a
+      thing.addAnnotation(a)
     })
     
     val ttl = TTLTemplateSerializer.toString(Seq(thing))
