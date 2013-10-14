@@ -1,9 +1,10 @@
 # Scalagios
 
-Scalagios is a utility software library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on
+Scalagios is a utility library for working with data from the [PELAGIOS project](http://pelagios-project.blogspot.com) on
 the Java Virtual Machine. Scalagios provides:
 
-* a convenient programming API based on Pelagios' domain model primitives: _Datasets_, _AnnotatedThings_, _Annotations_, _Places_, etc.
+* a convenient programming API based on Pelagios' domain model primitives: _Annotations_, _AnnotatedThings_,
+  _Places_, _Locations_, etc.
 * utilities to parse Pelagios data and gazetteer dump files into a domain model graph structure
 * utilities to work with Pelagios "legacy data" (from Pelagios project phases 1 & 2)
 * graph database I/O utilities based on [Tinkerpop Blueprints](http://tinkerpop.com/)
