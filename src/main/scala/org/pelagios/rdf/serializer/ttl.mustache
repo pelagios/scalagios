@@ -15,8 +15,6 @@
   .
 
 {{#annotations}}
-<{{uri}}> a oa:Annotation ; 
-{{/annotations}}
 <{{uri}}> a oa:Annotation ;
   {{#place}}
   oa:hasBody <{{.}}> ;
@@ -27,13 +25,12 @@
   {{/transcription}}
   
   oa:hasTarget <{{hasTarget}}> ;
-  {{#neighbour}}
-  pelagios:hasNext [
-    pelagios:neighbourURI <{{neighbourURI}}> ;
-  ]
-  {{/neighbour}}
+  {{#hasNeighbour}}
+  pelagios:hasNext [ {{#annotation}}pelagios:neighbourURI <{{uri}}> ; {{/annotation}} ]
+  {{/hasNeighbour}}
   .
-  
+
+{{/annotations}}  
 {{/expressions}}
 
 {{#annotations}}
@@ -49,7 +46,7 @@
   oa:hasTarget <{{hasTarget}}> ;
   {{#neighbour}}
   pelagios:hasNext [
-    pelagios:neighbourURI <{{neighbourURI}}> ;
+    pelagios:neighbourURI <{{annotation}}> ;
   ]
   {{/neighbour}}
   .
