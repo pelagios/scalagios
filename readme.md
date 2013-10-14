@@ -17,7 +17,7 @@ Scalagios is licensed under the [GNU General Public License v3.0](http://www.gnu
 Reading Pelagios RDF data from a file:
 
 ```scala
-val data: Iterable[AnnotatedThing] = Scalagios.parseData(new File("data-file.ttl"))
+val data: Iterable[AnnotatedThing] = Scalagios.readFromFile(new File("data-file.ttl"))
 
 data.foreach(thing => {
   thing.annotations.foreach(annotation => {
@@ -26,6 +26,18 @@ data.foreach(thing => {
   
   })
 })
+```
+
+Writing Pelagios RDF data to a file:
+
+```scala
+val thing = AnnotatedThing("http://pelagios.org/egds/01", "My EGD")
+
+val annotation = Annotation("http://pelagios.org/egds/01/annotations/01", thing, 
+                            place = "http://pleiades.stoa.org/places/423025",
+                            transcription = "ROMA")
+
+Scalagios.writeToFile(annotatedThing, new File("data-file.ttl")
 ```
 
 ## Developer Information
