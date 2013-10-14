@@ -1,17 +1,17 @@
+@prefix oa: <http://www.w3.org/ns/oa#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix frbr: <http://purl.org/vocab/frbr/core#> .
-@prefix oa: <http://www.w3.org/ns/oa#> .
 @prefix pelagios: <http://pelagios.github.io/terms#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 {{#things}}
 <{{uri}}> a pelagios:AnnotatedThing ; 
-  dcterms:title "{{title}}"
+  dcterms:title "{{title}}" ;
   .
 
 {{#expressions}}
 <{{uri}}> a pelagios:AnnotatedThing ; 
-  dcterms:title "{{title}}
+  dcterms:title "{{title}}" ;
   .
 
 {{#annotations}}
@@ -32,25 +32,4 @@
 
 {{/annotations}}  
 {{/expressions}}
-
-{{#annotations}}
-<{{uri}}> a oa:Annotation ;
-  {{#place}}
-  oa:hasBody <{{.}}> ;
-  {{/place}}
-  
-  {{#transcription}}
-  oa:hasBody [ rdfs:label "{{name}}" ; a pelagios:{{nameType}} ] ;
-  {{/transcription}}
-  
-  oa:hasTarget <{{hasTarget}}> ;
-  {{#neighbour}}
-  pelagios:hasNext [
-    pelagios:neighbourURI <{{annotation}}> ;
-  ]
-  {{/neighbour}}
-  .
-  
-{{/annotations}}
-
 {{/things}}
