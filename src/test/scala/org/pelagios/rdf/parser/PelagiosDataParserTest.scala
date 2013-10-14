@@ -38,15 +38,15 @@ class PelagiosDataParserTest extends FunSuite {
     
     // Verify the annotations
     expression.annotations.foreach(annotation => {
-      // assert(annotation.transcription.isDefined, "missing: toponym")
-      // assert(annotation.transcription.get.nameType == Transcription.Toponym)
-      assert(annotation.place.size == 1, "invalid number of annotation bodies")
+      assert(annotation.place.size == 1, "invalid number of place bodies")
+      assert(annotation.transcription.isDefined, "missing: toponym")
+      assert(annotation.transcription.get.nameType == Transcription.Toponym)
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
     })
     
     // Verify annotation neighbourhood relations
     val annotationsWithNeighbours = expression.annotations.filter(_.hasNeighbour.size > 0)
-    assert(annotationsWithNeighbours.size == 96, "annotations don't specify neighbours")
+    assert(annotationsWithNeighbours.size == 106, "annotations don't specify neighbours") 
     annotationsWithNeighbours.foreach(annotation => {
       assert(annotation.hasNeighbour.size == 1, "annotations should have exactly one neighbour")
       assert(annotation.hasNeighbour(0).directional, "neighbourhood relation should be directional")

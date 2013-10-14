@@ -7,6 +7,7 @@ import org.openrdf.model.vocabulary.RDFS
 import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
+import org.openrdf.model.BNode
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -15,10 +16,22 @@ import org.openrdf.model.Literal
 class PelagiosDataParser extends ResourceCollector {   
   
   def data: Iterable[AnnotatedThing] = {
-    val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))    
-    val allNeighbours = resourcesOfType(Pelagios.Neighbour, Seq(_.hasPredicate(Pelagios.neighbourURI))).map(new NeighbourResource(_))
+    val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))  
+    
+    /** Resolve transcriptions **/
+    // TODO a bit hacky - clean up!
+    val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))
+    allAnnotations.foreach(annotation => {
+      val rdfTranscriptions = annotation.resource.get(OA.hasBody).filter(_.isInstanceOf[BNode])
+                             .map(bnode => allTranscriptions.find(_.uri.equals(bnode.stringValue)))
+                             .filter(_.isDefined).map(_.get)
+                             
+      if (rdfTranscriptions.size > 0)
+        annotation.transcription = Some(new Transcription(rdfTranscriptions(0).getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NONE]"), Transcription.Toponym))
+    })
     
     /** Converts neighbour resources to neighbours, filtering out invalid URIs **/
+    val allNeighbours = resourcesOfType(Pelagios.Neighbour, Seq(_.hasPredicate(Pelagios.neighbourURI))).map(new NeighbourResource(_))
     def toNeighbours(uris: Seq[String], directional: Boolean): Seq[NeighbourResource] = {
       uris.foldLeft(List.empty[NeighbourResource])((resultList, currentURI) => {
         val n = allNeighbours.find(_.resource.uri.equals(currentURI))
@@ -87,10 +100,9 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   val hasTarget = resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty") // '_:empty' should never happen!
   
-  val place = resource.get(OA.hasBody).map(_.stringValue)
+  val place = resource.get(OA.hasBody).filter(_.isInstanceOf[URI]).map(_.stringValue)
   
-  // TODO
-  val transcription: Option[Transcription] = None
+  var transcription: Option[Transcription] = None
   
   // TODO
   def relation: Option[Relation.Type] = None

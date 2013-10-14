@@ -15,6 +15,8 @@ object Pelagios extends BaseVocab("http://pelagios.github.io/terms#") {
   
   val Toponym = createURI("Toponym")
   
+  val Transcription = createURI("Transcription")
+  
   val distanceUnit = createURI("distanceUnit")
   
   val hasNeighbour = createURI("hasNeighbour")

@@ -44,6 +44,13 @@ private[parser] class Resource(val uri:String) {
     * @return true if the resource has the type
     */
   def hasType(typ: Value): Boolean = get(RDF.TYPE).contains(typ)
+  
+  /** Checks if the resource has any of the specified RDF types.
+    *  
+    * @param types the type to check for  
+    * @return true if the resource has any of the types
+    */
+  def hasAnyType(types: Seq[Value]): Boolean = get(RDF.TYPE).find(typ => types.contains(typ)).isDefined
 
   /** Checks if the resource has a specific RDF predicate.
     *  
