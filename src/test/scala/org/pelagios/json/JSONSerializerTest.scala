@@ -16,7 +16,7 @@ class JSONSerializerTest extends FunSuite {
     // Parse test data
     val places = Scalagios.parseGazetteer(new File(TEST_FILE))
     
-    val json = JSONSerializer.toJSON(places.toSeq, true)
+    val json = JSONSerializer.serializePlaces(places.toSeq, true)
     println(json)
   }
 
