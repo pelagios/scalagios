@@ -23,9 +23,7 @@ val data: Iterable[AnnotatedThing] = Scalagios.readFromFile(new File("data-file.
 
 data.foreach(thing => {
   thing.annotations.foreach(annotation => {
-  
     // Do something with annotations
-  
   })
 })
 ```
