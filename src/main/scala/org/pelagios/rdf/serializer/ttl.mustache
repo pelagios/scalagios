@@ -10,7 +10,11 @@
   .
 
 {{#expressions}}
-<{{uri}}> a pelagios:AnnotatedThing ; 
+<{{uri}}> a pelagios:AnnotatedThing ;
+  {{#realizationOf}} 
+  frbr:realizationOf <{{uri}}> ;
+  {{/realizationOf}}
+   
   dcterms:title "{{title}}" ;
   .
 
