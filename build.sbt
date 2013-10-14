@@ -15,6 +15,7 @@ libraryDependencies ++= Seq(
   "org.fusesource.scalate" % "scalate-core_2.10" % "1.6.1",           
   "com.vividsolutions" % "jts" % "1.13",
   "org.geotools" % "gt-geojson" % "10.0",
+  "net.liftweb" %% "lift-json" % "2.5",
   "com.tinkerpop.blueprints" % "blueprints-neo4j-graph" % "1.2",
   "com.tinkerpop.blueprints" % "blueprints-neo4jbatch-graph" % "1.2"
 )
