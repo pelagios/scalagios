@@ -5,7 +5,8 @@ the Java Virtual Machine. Scalagios provides:
 
 * a convenient programming API based on Pelagios' domain model primitives: _Annotations_, _AnnotatedThings_,
   _Places_, _Locations_, etc.
-* utilities to parse Pelagios data and gazetteer dump files into a domain model graph structure
+* utilities to read and write Pelagios annotation and gazetteer data to and from RDF
+* helpers to serialize Pelagios data to JSON
 * utilities to work with Pelagios "legacy data" (from Pelagios project phases 1 & 2)
 * graph database I/O utilities based on [Tinkerpop Blueprints](http://tinkerpop.com/)
 
