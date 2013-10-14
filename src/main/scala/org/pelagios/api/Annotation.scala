@@ -108,9 +108,9 @@ trait Annotation {
 }
 
 /** A default POJO-style implementation of Annotation. **/
-class DefaultAnnotation(val uri: String) extends Annotation {
+class DefaultAnnotation(val uri: String, target: AnnotatedThing) extends Annotation {
  
-  var hasTarget: String = ""
+  val hasTarget: String = target.uri
   
   var place: Seq[String] = Seq.empty[String]
   

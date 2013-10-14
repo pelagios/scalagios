@@ -30,6 +30,7 @@ import org.openrdf.rio.RDFWriterFactory
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.Writer
 import org.pelagios.rdf.serializer.RDFSerializer
+import org.pelagios.rdf.serializer.TTLTemplateSerializer
 
 /** A utility to parse & write Pelagios data.
   *
@@ -67,8 +68,12 @@ object Scalagios {
     * @param out the output stream
     * @param format the RDF serialization format
     */
-  def writeData(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) =
-    RDFSerializer.writeToStream(data, out, format)
+  def writeData(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) = {
+    if (format == RDFFormat.TURTLE)
+      TTLTemplateSerializer.writeToStream(data, out)
+    else
+      RDFSerializer.writeToStream(data, out, format)
+  }
 
   /** Writes Pelagios data to an RDF file.
     * 
@@ -76,8 +81,12 @@ object Scalagios {
     * @param out the output file
     * @param format the RDF serialization format
     */
-  def writeData(data: Iterable[AnnotatedThing], out: File, format: RDFFormat) =
-    RDFSerializer.writeToFile(data, out, format)
+  def writeData(data: Iterable[AnnotatedThing], out: File, format: RDFFormat) = {
+    if (format == RDFFormat.TURTLE)
+      TTLTemplateSerializer.writeToFile(data, out)
+    else
+      RDFSerializer.writeToFile(data, out, format)
+  }
     
   /** Parses a Pelagios-style gazetteer dump file.
     *
