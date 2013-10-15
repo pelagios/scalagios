@@ -2,6 +2,7 @@ package org.pelagios.api
 
 import java.util.Date
 import scala.collection.mutable.ListBuffer
+import org.pelagios.api.network.Edge
 
 /** 'Annotation' model entity.
   * 
@@ -97,15 +98,6 @@ trait Annotation {
     */
   def created: Option[Date]
   
-  /** pelagios:hasNeighbour and pelagios:hasNext
-    * 
-    * This Pelagios-specific property is used to record sequence (e.g. in 
-    * an itinerary or book) and topology (e.g. on a map) of annotations.
-    * See definition of the [[Neighbour]] model entity for additional 
-    * information
-    */
-  def hasNeighbour: Seq[Neighbour]
-  
 }
 
 /** A default POJO-style implementation of Annotation. **/
@@ -127,9 +119,7 @@ private[api] class DefaultAnnotation(
   
   val creator: Option[Agent] = None,
   
-  val created: Option[Date] = None,
-  
-  val hasNeighbour: Seq[Neighbour] = Seq.empty[Neighbour]
+  val created: Option[Date] = None
   
 ) extends Annotation {
   
@@ -161,12 +151,10 @@ object Annotation extends AbstractApiCompanion {
   
             creator: Agent = null,
   
-            created: Date = null,
-  
-            hasNeighbour: ObjOrSeq[Neighbour] = new ObjOrSeq(Seq.empty[Neighbour])): Annotation = {
+            created: Date = null): Annotation = {
     
     new DefaultAnnotation(uri, target, place.seq, transcription, relation, annotatedBy, annotatedAt,
-                          creator, created, hasNeighbour.seq)
+                          creator, created)
   }
  
 }

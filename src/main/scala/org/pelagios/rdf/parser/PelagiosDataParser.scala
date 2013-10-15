@@ -8,6 +8,7 @@ import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
+import org.pelagios.api.network.Edge
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -30,7 +31,7 @@ class PelagiosDataParser extends ResourceCollector {
         annotation.transcription = Some(new Transcription(rdfTranscriptions(0).getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NONE]"), Transcription.Toponym))
     })
     
-    /** Converts neighbour resources to neighbours, filtering out invalid URIs **/
+    /** Converts neighbour resources to neighbours, filtering out invalid URIa
     val allNeighbours = resourcesOfType(Pelagios.Neighbour, Seq(_.hasPredicate(Pelagios.neighbourURI))).map(new NeighbourResource(_))
     def toNeighbours(uris: Seq[String], directional: Boolean): Seq[NeighbourResource] = {
       uris.foldLeft(List.empty[NeighbourResource])((resultList, currentURI) => {
@@ -61,7 +62,7 @@ class PelagiosDataParser extends ResourceCollector {
       val nextURIs = annotation.resource.get(Pelagios.hasNext).map(_.stringValue)
       val neighbours = toNeighbours(neighbourURIs, false) ++ toNeighbours(nextURIs, true)
       annotation.hasNeighbour = neighbours
-    })
+    })*/
     
     /** Constructs Work/Expression hierarchy **/
     val allAnnotatedThings = resourcesOfType(Pelagios.AnnotatedThing).map(new AnnotatedThingResource(_))
@@ -119,8 +120,6 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   // TODO
   def created: Option[Date] = None
   
-  var hasNeighbour: Seq[Neighbour] = Seq.empty[NeighbourResource]
-  
 }
 
 /** Wraps an RDF resource representing a Neighbour node into the corresponding domain model primitive.
@@ -129,8 +128,8 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   * @param resource the RDF resource
   * @param annotation a reference to the annotation referenced by pelagios:neighbourURI
   * @param directional flag to distinguish between pelagios:hasNeighbour and pelagios:hasNext
-  */
-private[parser] class NeighbourResource(val resource: Resource) extends Neighbour {
+  *
+private[parser] class NeighbourResource(val resource: Resource) extends Edge {
     
   var annotation: AnnotationResource = null
   
@@ -141,6 +140,7 @@ private[parser] class NeighbourResource(val resource: Resource) extends Neighbou
   val unit: Option[String] = resource.getFirst(Pelagios.distanceUnit).map(_.stringValue)
     
 }
+*/
 
 /** Wraps a pelagios:AnnotatedThing RDF resource as an AnnotatedThing domain model primitive, with
  *  Annotations in-lined.

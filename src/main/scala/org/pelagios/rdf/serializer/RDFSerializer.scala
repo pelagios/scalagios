@@ -119,7 +119,7 @@ object RDFSerializer {
             
       // TODO pelagios:toponym
       
-      // pelagios:hasNext
+      /* pelagios:hasNext
       annotation.hasNeighbour.foreach(neighbour => {
         val relation = if (neighbour.directional) Pelagios.hasNext else Pelagios.hasNeighbour
         if (neighbour.hasMetadata) {
@@ -131,7 +131,7 @@ object RDFSerializer {
         } else {
           model.add(rdfAnnotation, relation, f.createURI(neighbour.annotation.uri))
         }
-      })
+      })*/
     })
   }
   
