@@ -10,10 +10,6 @@ the Java Virtual Machine. Scalagios provides:
 * utilities to work with Pelagios "legacy data" (from Pelagios project phases 1 & 2)
 * graph database I/O utilities based on [Tinkerpop Blueprints](http://tinkerpop.com/)
 
-## License
-
-Scalagios is licensed under the [GNU General Public License v3.0](http://www.gnu.org/licenses/gpl.html).
-
 ## Getting Started
 
 Reading Pelagios RDF data from a file:
@@ -50,3 +46,7 @@ Scalagios is written in [Scala](http://www.scala-lang.org) and built with [SBT](
 * To generate ScalaDoc, run `sbt doc`.  (Docs will be in `target/scala-2.10/api/`)
 
 __Note:__ dependency download may take a while the first time you build the project!
+
+## License
+
+Scalagios is licensed under the [GNU General Public License v3.0](http://www.gnu.org/licenses/gpl.html).
