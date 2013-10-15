@@ -8,7 +8,6 @@ import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
-import org.pelagios.api.network.Edge
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 

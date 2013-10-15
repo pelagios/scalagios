@@ -2,7 +2,6 @@ package org.pelagios.api
 
 import java.util.Date
 import scala.collection.mutable.ListBuffer
-import org.pelagios.api.network.Edge
 
 /** 'Annotation' model entity.
   * 

@@ -1,4 +1,4 @@
-package org.pelagios.api.network
+package org.pelagios.api.layout
 
 import org.pelagios.api.Annotation
 import org.pelagios.api.AbstractApiCompanion
@@ -7,27 +7,27 @@ import org.pelagios.api.AbstractApiCompanion
   *
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-trait Edge {
+trait Link {
   
-  /** The Annotation that is the start node of the edge **/
+  /** The Annotation that is the start of the link **/
   def from: Annotation
   
-  /** The Annotation that is the end node of the edge **/
+  /** The Annotation that is the end of the link **/
   def to: Annotation
 
-  /** If true, the direction of the edge is relevant **/
+  /** If true, the direction of the link is relevant **/
   def directional: Boolean
   
-  /** pelagios:neighbourDistance - the distance (if applicable) **/
+  /** layout:distance - the distance (if applicable) **/
   def distance: Option[Double]
   
-  /** pelagios:distanceUnit - the unit distance is measured in **/
+  /** layout:unit - the unit distance is measured in **/
   def unit: Option[String] 
   
 }
 
 /** A default POJO-style implementation of Neighbour. **/
-private[network] class DefaultEdge(
+private[layout] class DefaultLink(
     
     val from: Annotation,
     
@@ -39,10 +39,10 @@ private[network] class DefaultEdge(
     
     val unit: Option[String] = None
     
-) extends Edge
+) extends Link
   
-/** Companion object with a pimped apply method for generating DefaultEdge instances **/
-object Edge extends AbstractApiCompanion {
+/** Companion object with a pimped apply method for generating DefaultLink instances **/
+object Link extends AbstractApiCompanion {
  
   def apply(from: Annotation, to: Annotation,
             
@@ -50,9 +50,9 @@ object Edge extends AbstractApiCompanion {
             
             distance: Option[Double] = None,
             
-            unit: String = null): Edge = {
+            unit: String = null): Link = {
     
-    new DefaultEdge(from, to, directional, distance, unit)
+    new DefaultLink(from, to, directional, distance, unit)
   }
  
 }

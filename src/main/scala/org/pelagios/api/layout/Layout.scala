@@ -1,4 +1,4 @@
-package org.pelagios.api.network
+package org.pelagios.api.layout
 
 /** Represents the topological arrangements of annotations within a document.
   *
@@ -8,4 +8,4 @@ package org.pelagios.api.network
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at> 
   */
-case class Topology(val links: Seq[Edge])
+case class Layout(val links: Seq[Link])
