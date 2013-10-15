@@ -51,18 +51,42 @@ trait Place {
   
 }
 
-class DefaultPlace(val uri: String) extends Place {
+private[api] class DefaultPlace (
+    
+  val uri: String,
   
-  var title = "unknown"
+  val title: String,
   
-  var descriptions = Seq.empty[Label]
+  val descriptions: Seq[Label] = Seq.empty[Label],
   
-  var names = Seq.empty[Name]
+  val names: Seq[Name] = Seq.empty[Name],
   
-  var locations = Seq.empty[Location]
+  val locations: Seq[Location] = Seq.empty[Location],
   
-  var subjects = Seq.empty[String]
+  val subjects: Seq[String] = Seq.empty[String],
   
-  var closeMatches = Seq.empty[String]
+  val closeMatches: Seq[String] = Seq.empty[String]
+
+) extends Place
   
-} 
+
+object Place extends AbstractApiCompanion {
+  
+  def apply(uri: String,
+  
+            title: String,
+  
+            descriptions: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label]),
+  
+            names: ObjOrSeq[Name] = new ObjOrSeq(Seq.empty[Name]),
+  
+            locations: ObjOrSeq[Location] = new ObjOrSeq(Seq.empty[Location]),
+  
+            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
+  
+            closeMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
+    
+    new DefaultPlace(uri, title, descriptions.seq, names.seq, locations.seq, subjects.seq, closeMatches.seq)
+  }
+  
+}

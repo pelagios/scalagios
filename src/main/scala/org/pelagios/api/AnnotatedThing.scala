@@ -24,6 +24,22 @@ trait AnnotatedThing {
   /** dcterms:title **/
   def title: String
   
+  /** frbr:realizationOf
+    *  
+    * An annotated thing may be a "Work" (such as "The Vicarello Beakers") or
+    * an "Expression" (such as "the fourth Vicarello Beaker, discovered in 1863"). 
+    * To quote the FRBR definition, a Work is "an abstract notion of an 
+    * artistic or intellectual creation", whereas an Expression is "a realization
+    * of a single work usually in a physical form."
+    *  
+    * http://en.wikipedia.org/wiki/Functional_Requirements_for_Bibliographic_Records
+    * http://vocab.org/frbr/core.html
+    * 
+    * If the annotated thing represents a Expression, frbr:realizationOf links
+    * to the work it realizes.
+    */
+  def realizationOf: Option[AnnotatedThing]  
+  
   /** dcterms:identifier
     *  
     * An unambiguous reference for the annotated thing. We recommend
@@ -34,14 +50,32 @@ trait AnnotatedThing {
   /** dcterms:description **/
   def description: Option[String]
   
+  /** foaf:homepage 
+    *
+    * In Pelagios, we use this property exclusively to describe an official homepage
+    * for an annotated thing. E.g. if the thing is an archaeological artefact held in
+    * a museum, the homepage would be the item's page on the museum's online database.
+    * For related pages, such as pages about the item from other institutions, or 
+    * a Wikipedia page, use foaf:primaryTopicOf.  
+    */
+  def homepage: Option[String]
+  
   /** dcterms:source
     *
     * According to the DCMI definition: "a related resource from which the described 
-    * resource is derived". In the Pelagios context, use this field to provide
-    * references to URIs from where digital source material was obtained (e.g.
-    * a Web page with toponym lists, etc.)   
+    * resource is derived". In Pelagios, use this field to provide references to Web 
+    * URIs from where digital source material was obtained (e.g. a Web page with toponym 
+    * lists, etc.)   
     */
   def sources: Seq[String]
+  
+  /** foaf:primaryTopicOf
+    *  
+    * According to the FOAF definition: "a document that this thing is the primary topic of".
+    * In Pelagios, we use this property to provide references to Web URIs that are about
+    * this annotated thing.
+    */
+  def primaryTopicOf: Seq[String]
   
   /** dcterms:temporal
     * 
@@ -71,11 +105,16 @@ trait AnnotatedThing {
     */
   def languages: Seq[String]
   
-  /** foaf:homepage **/
-  def homepage: Option[String]
-  
   /** foaf:thumbnails **/
   def thumbnails: Seq[String]
+  
+  /** foaf:depiction
+    *
+    * TODO we may want to make this an object rather than a string in the future,
+    * in order to hold creator and license information along with the image URL
+    * as well.   
+    */
+  def depictions: Seq[String]
   
   /** dcterms:biblographicCitation
     *  
@@ -88,33 +127,6 @@ trait AnnotatedThing {
     * According to the DCMI definition: "the topic of the resource"
     */
   def subjects: Seq[String]  
-    
-  /** rdfs:seeAlso pointing to additional, related information.
-    *  
-    * According to the original definition, rdfs:seeAlso is "used to
-    * indicate a resource that might provide additional information
-    * about the subject resource". Although usually frowned upon as
-    * a "vague" relationship, I think it makes sense to use it to
-    * point to online content that is related, but not necessarily
-    * scholarly in nature (e.g. Wikipedia pages)   
-    */
-  def seeAlso: Seq[String]
-  
-  /** frbr:realizationOf
-    *  
-    * An annotated thing may be a "Work" (such as "The Vicarello Beakers") or
-    * an "Expression" (such as "the fourth Vicarello Beaker, discovered in 1863"). 
-    * To quote the FRBR definition, a Work is "an abstract notion of an 
-    * artistic or intellectual creation", whereas an Expression is "a realization
-    * of a single work usually in a physical form."
-    *  
-    * http://en.wikipedia.org/wiki/Functional_Requirements_for_Bibliographic_Records
-    * http://vocab.org/frbr/core.html
-    * 
-    * If the annotated thing represents a Expression, frbr:realizationOf links
-    * to the work it realizes.
-    */
-  def realizationOf: Option[AnnotatedThing]  
  
   /** Expressions (as defined by through frbr:realizationOf)
     *   
@@ -129,46 +141,92 @@ trait AnnotatedThing {
 }
 
 /** A default POJO-style implementation of AnnotatedThing. **/
-class DefaultAnnotatedThing(val uri: String, val title: String) extends AnnotatedThing {
+private[api] class DefaultAnnotatedThing(
+    
+  val uri: String, 
+    
+  val title: String,
   
-  var identifier: Option[String] = None
+  val realizationOf: Option[AnnotatedThing] = None,
+    
+  val identifier: Option[String] = None,
   
-  var description: Option[String] = None
+  val description: Option[String] = None,
   
-  var sources: Seq[String] = Seq.empty[String]
+  val homepage: Option[String] = None,
   
-  var temporal: Option[PeriodOfTime] = None
+  val sources: Seq[String] = Seq.empty[String],
+  
+  val primaryTopicOf: Seq[String] = Seq.empty[String],
+  
+  val temporal: Option[PeriodOfTime] = None,
 
-  var creator: Option[Agent] = None
+  val creator: Option[Agent] = None,
   
-  var contributors: Seq[Agent] = Seq.empty[Agent]
+  val contributors: Seq[Agent] = Seq.empty[Agent],
   
-  var languages: Seq[String] = Seq.empty[String]
+  val languages: Seq[String] = Seq.empty[String],
   
-  var homepage: Option[String] = None
+  val thumbnails: Seq[String] = Seq.empty[String],
   
-  var thumbnails: Seq[String] = Seq.empty[String]
+  val depictions: Seq[String] = Seq.empty[String],
   
-  var bibliographicCitations: Seq[String] = Seq.empty[String]
+  val bibliographicCitations: Seq[String] = Seq.empty[String],
   
-  var subjects: Seq[String] = Seq.empty[String]
-  
-  var seeAlso: Seq[String] = Seq.empty[String]
+  val subjects: Seq[String] = Seq.empty[String]
+      
+) extends AnnotatedThing {
 
-  var realizationOf: Option[AnnotatedThing] = None
+  // If this thing is an expression, create 'downwards' relation Work->Expression
+  if (realizationOf.isDefined) {
+    if (realizationOf.get.isInstanceOf[DefaultAnnotatedThing])
+      realizationOf.get.expressions.asInstanceOf[ListBuffer[AnnotatedThing]].append(this)
+    else
+      throw new RuntimeException("cannot mix different model impelementation types - requires instance of DefaultAnnotatedThing")
+  }
   
   val expressions: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
   
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
+
+}
+
+/** Companion object with a pimped apply method for generating DefaultAnnotatedThing instances **/
+object AnnotatedThing extends AbstractApiCompanion {
   
-  def addExpression(thing: DefaultAnnotatedThing) = {
-    thing.realizationOf = Some(this)
-    expressions.append(thing)
-  }
-  
-  def addAnnotation(annotation: DefaultAnnotation) = {
-    annotation.hasTarget = this.uri
-    annotations.append(annotation)
+  def apply(uri: String, title: String,
+      
+            realizationOf: AnnotatedThing = null,
+            
+            identifier: String = null,
+            
+            description: String = null,
+            
+            homepage: String = null,
+            
+            sources: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            primaryTopicOf: Seq[String] = Seq.empty[String],
+            
+            temporal: PeriodOfTime = null,
+            
+            creator: Agent = null,
+            
+            contributors: Seq[Agent] = Seq.empty[Agent],
+            
+            languages: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            thumbnails: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            depictions: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            bibliographicCitations: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
+    
+    new DefaultAnnotatedThing(uri, title, realizationOf, identifier, description, homepage, sources.seq, primaryTopicOf,
+                              temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
+                              bibliographicCitations.seq, subjects.seq)
   }
   
 }

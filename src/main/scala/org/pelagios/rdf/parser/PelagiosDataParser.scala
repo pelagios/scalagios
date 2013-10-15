@@ -154,11 +154,17 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
+  var realizationOf: Option[AnnotatedThing] = None
+  
   def identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
 
   def description = resource.getFirst(DCTerms.description).map(_.stringValue)
   
+  def homepage = resource.getFirst(FOAF.homepage).map(_.stringValue)
+  
   def sources = resource.get(DCTerms.source).map(_.stringValue)
+  
+  def primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
   
   // TODO
   def temporal: Option[PeriodOfTime] = None
@@ -171,17 +177,13 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def languages = resource.get(DCTerms.language).map(_.stringValue)
   
-  def homepage = resource.getFirst(FOAF.homepage).map(_.stringValue)
-  
   def thumbnails = resource.get(FOAF.thumbnail).map(_.stringValue)
+  
+  def depictions = resource.get(FOAF.depiction).map(_.stringValue)
   
   def bibliographicCitations = resource.get(DCTerms.bibliographicCitation).map(_.stringValue)
   
   def subjects = resource.get(DCTerms.subject).map(_.stringValue)
-  
-  def seeAlso = resource.get(RDFS.SEEALSO).map(_.stringValue)  
-  
-  var realizationOf: Option[AnnotatedThing] = None
   
   var annotations = Seq.empty[AnnotationResource]
   

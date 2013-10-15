@@ -13,4 +13,4 @@ package org.pelagios.api
   * @param name foaf:name
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class Agent(val name: String)
+case class Agent(val name: String)

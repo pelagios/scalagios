@@ -10,12 +10,11 @@ import org.pelagios.api._
 class TTLTemplateSerializerTest extends FunSuite {
   
   test("Test TTL template rendering") {
-    val thing = new DefaultAnnotatedThing("http://example.org/pelagios/annotated-things/1", "My EGD")
+    val thing: AnnotatedThing = AnnotatedThing("http://example.org/pelagios/annotated-things/1", "My EGD", sources = "foo")
     val annotations = Seq.range(0, 10).foreach(idx => {
-      val a = new DefaultAnnotation("http://example.org/pelagios/annotations/" + idx)
-      a.place = Seq("http://pleiades.stoa.org/places/1234567")
-      a.transcription = Some(new Transcription("Athens", Transcription.Toponym))
-      thing.addAnnotation(a)
+      val a = Annotation("http://example.org/pelagios/annotations/" + idx, thing,
+                         place = "http://pleiades.stoa.org/places/1234567",
+                         transcription = new Transcription("Athens", Transcription.Toponym))
     })
     
     val ttl = TTLTemplateSerializer.toString(Seq(thing))

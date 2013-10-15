@@ -82,9 +82,6 @@ object RDFSerializer {
     // dcterms:subject
     thing.subjects.foreach(subject => model.add(rdfThing, DCTerms.subject, f.createURI(subject)))
     
-    // rdfs:seeAlso
-    thing.seeAlso.foreach(seeAlso => model.add(rdfThing, RDFS.SEEALSO, f.createURI(seeAlso)))    
-    
     // frbr:realizationOf
     thing.realizationOf.map(work => model.add(rdfThing, FRBR.realizationOf, f.createURI(work.uri)))
     

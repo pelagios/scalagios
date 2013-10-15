@@ -8,7 +8,7 @@ package org.pelagios.api
   * @param lang the language the name is in (optional)
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class Transcription(val name: String, val nameType: Transcription.Type, val lang: Option[String] = None)
+case class Transcription(val name: String, val nameType: Transcription.Type, val lang: Option[String] = None)
 
 /** Name types **/
 object Transcription extends Enumeration {

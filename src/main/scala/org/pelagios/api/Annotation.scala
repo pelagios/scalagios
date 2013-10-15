@@ -1,6 +1,7 @@
 package org.pelagios.api
 
 import java.util.Date
+import scala.collection.mutable.ListBuffer
 
 /** 'Annotation' model entity.
   * 
@@ -108,24 +109,64 @@ trait Annotation {
 }
 
 /** A default POJO-style implementation of Annotation. **/
-class DefaultAnnotation(val uri: String) extends Annotation {
+private[api] class DefaultAnnotation(
+    
+  val uri: String,
    
-  var hasTarget: String = ""
+  target: AnnotatedThing,
   
-  var place: Seq[String] = Seq.empty[String]
+  val place: Seq[String] = Seq.empty[String],
   
-  var transcription: Option[Transcription] = None
+  val transcription: Option[Transcription] = None,
       
-  var relation: Option[Relation.Value] = None
+  val relation: Option[Relation.Value] = None,
   
-  var annotatedBy: Option[Agent] = None
+  val annotatedBy: Option[Agent] = None,
 
-  var annotatedAt: Option[Date] = None
+  val annotatedAt: Option[Date] = None,
   
-  var creator: Option[Agent] = None
+  val creator: Option[Agent] = None,
   
-  var created: Option[Date] = None
+  val created: Option[Date] = None,
   
-  var hasNeighbour: Seq[Neighbour] = Seq.empty[Neighbour]
+  val hasNeighbour: Seq[Neighbour] = Seq.empty[Neighbour]
   
+) extends Annotation {
+  
+  if (target.isInstanceOf[DefaultAnnotatedThing])
+      target.annotations.asInstanceOf[ListBuffer[Annotation]].append(this)
+    else
+      throw new RuntimeException("cannot mix different model impelementation types - requires instance of DefaultAnnotatedThing")
+  
+  val hasTarget = target.uri
+  
+}
+
+/** Companion object with a pimped apply method for generating DefaultAnnotation instances **/
+object Annotation extends AbstractApiCompanion {
+  
+  def apply(uri: String,
+   
+            target: AnnotatedThing,
+  
+            place: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
+  
+            transcription: Transcription = null,
+      
+            relation: Relation.Value = null,
+  
+            annotatedBy: Agent = null,
+
+            annotatedAt: Date = null,
+  
+            creator: Agent = null,
+  
+            created: Date = null,
+  
+            hasNeighbour: ObjOrSeq[Neighbour] = new ObjOrSeq(Seq.empty[Neighbour])): Annotation = {
+    
+    new DefaultAnnotation(uri, target, place.seq, transcription, relation, annotatedBy, annotatedAt,
+                          creator, created, hasNeighbour.seq)
+  }
+ 
 }

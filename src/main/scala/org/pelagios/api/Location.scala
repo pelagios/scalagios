@@ -1,10 +1,9 @@
 package org.pelagios.api
 
-import com.vividsolutions.jts.io.WKTReader
+import java.io.StringWriter
+import com.vividsolutions.jts.io.{ WKTReader, WKTWriter }
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry, GeometryFactory }
 import org.geotools.geojson.geom.GeometryJSON
-import com.vividsolutions.jts.io.WKTWriter
-import java.io.StringWriter
 
 /** Pelagios 'Location' model primitive.
   *  
@@ -39,22 +38,29 @@ trait Location {
 }
 
 /** A default POJO-style implementation of Location. **/
-class DefaultLocation(val geometry: Geometry, val descriptions: Seq[Label] = Seq.empty[Label]) extends Location {
-  
-  def this(lat: Double, lon: Double, descriptions: Seq[Label] = Seq.empty[Label]) =
-    this(Location.fromLatLon(lat, lon), descriptions)
-  
-}
+private[api] class DefaultLocation(val geometry: Geometry, val descriptions: Seq[Label]) extends Location
 
-/** Helper methods to convert to/from WKT, GeoJSON or LatLon. **/
-object Location {
-  
+/** Companion object with a pimped apply method for generating DefaultAnnotation instances.
+  *  
+  * Includes helper methods to convert to/from WKT, GeoJSON or LatLon.   
+  */
+object Location extends AbstractApiCompanion {
+
   private val wktReader = new WKTReader
   
   private val geoJson = new GeometryJSON 
   
   private val factory = new GeometryFactory
   
+  def apply(geometry: Geometry): Location =
+    new DefaultLocation(geometry, Seq.empty[Label])
+    
+  def apply(geometry: Geometry, descriptions: ObjOrSeq[Label]): Location =
+    new DefaultLocation(geometry, descriptions.seq)
+  
+  def apply(lat: Double, lon: Double, descriptions: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label])): Location = 
+    new DefaultLocation(Location.fromLatLon(lat, lon), descriptions.seq)
+    
   /** Constructs a location from a WKT string **/
   def parseWKT(wkt: String) = wktReader.read(wkt)
   

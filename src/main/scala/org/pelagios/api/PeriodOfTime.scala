@@ -13,4 +13,4 @@ import java.util.Date
   * @param name an optional name for the period
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class PeriodOfTime(val start: Date, val end: Option[Date] = None, val name: Option[String] = None)
+case class PeriodOfTime(val start: Date, val end: Option[Date] = None, val name: Option[String] = None)

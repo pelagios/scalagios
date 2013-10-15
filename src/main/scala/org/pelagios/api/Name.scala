@@ -13,10 +13,12 @@ trait Name {
 }
 
 /** A default POJO-style implementation of Name. **/
-class DefaultName extends Name {
+private[api] class DefaultName(val labels: Seq[Label], val altLabels: Seq[Label]) extends Name
+
+object Name extends AbstractApiCompanion {
   
-  var labels = Seq.empty[Label]
-  
-  var altLabels = Seq.empty[Label]
+  def apply(labels: ObjOrSeq[Label], altLabels: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label])) = {
+    new DefaultName(labels.seq, altLabels.seq)
+  }
   
 }
