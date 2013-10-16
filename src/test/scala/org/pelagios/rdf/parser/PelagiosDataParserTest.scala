@@ -50,6 +50,12 @@ class PelagiosDataParserTest extends FunSuite {
       assert(expression.layout.isDefined, "expression should have layout")
       assert(expression.layout.get.links.size > 0, "layout should not be empty")
     })
+    val annotationsWithNeighbours = expression.annotations.filter(_.links.size > 0)
+    assert(annotationsWithNeighbours.size == 106, "there should be 106 annotation with layout neighbours")
+    annotationsWithNeighbours.foreach(annotation => {
+      assert(annotation.links.size == 1, "annotation should have exactly one link")
+      assert(annotation.links(0).from.uri.equals(annotation.uri))
+    })
   }
   
 }
