@@ -2,6 +2,7 @@ package org.pelagios.api
 
 import java.util.Date
 import scala.collection.mutable.ListBuffer
+import org.pelagios.api.layout.Layout
 
 /** 'AnnotatedThing' model entity.
   * 
@@ -138,6 +139,9 @@ trait AnnotatedThing {
   /** The annotations on the annotated thing (if any). **/
   def annotations: Seq[Annotation]
   
+  /** Annotation layout (experimental) **/
+  def layout: Option[Layout]
+  
 }
 
 /** A default POJO-style implementation of AnnotatedThing. **/
@@ -173,7 +177,9 @@ private[api] class DefaultAnnotatedThing(
   
   val bibliographicCitations: Seq[String] = Seq.empty[String],
   
-  val subjects: Seq[String] = Seq.empty[String]
+  val subjects: Seq[String] = Seq.empty[String],
+  
+  val layout: Option[Layout] = None
       
 ) extends AnnotatedThing {
 
@@ -222,11 +228,13 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             bibliographicCitations: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
-            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
+            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            layout: Layout = null): AnnotatedThing = {
     
     new DefaultAnnotatedThing(uri, title, realizationOf, identifier, description, homepage, sources.seq, primaryTopicOf,
                               temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
-                              bibliographicCitations.seq, subjects.seq)
+                              bibliographicCitations.seq, subjects.seq, layout)
   }
   
 }

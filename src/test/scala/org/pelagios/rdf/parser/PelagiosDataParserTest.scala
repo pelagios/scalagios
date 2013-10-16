@@ -43,6 +43,13 @@ class PelagiosDataParserTest extends FunSuite {
       assert(annotation.transcription.get.nameType == Transcription.Toponym)
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
     })
+    
+    // Verify layout
+    things.foreach(work => assert(work.layout == None, "work should not have layout"))
+    expressions.foreach(expression => {
+      assert(expression.layout.isDefined, "expression should have layout")
+      assert(expression.layout.get.links.size > 0, "layout should not be empty")
+    })
   }
   
 }

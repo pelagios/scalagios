@@ -1,5 +1,7 @@
 package org.pelagios.api.layout
 
+import org.pelagios.api.AnnotatedThing
+
 /** Represents the topological arrangements of annotations within a document.
   *
   * Topology could be one-dimensional, e.g. representing the linear sequence of
@@ -8,4 +10,4 @@ package org.pelagios.api.layout
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at> 
   */
-case class Layout(val links: Seq[Link])
+case class Layout(val links: Seq[Link], val annotatedThing: AnnotatedThing)

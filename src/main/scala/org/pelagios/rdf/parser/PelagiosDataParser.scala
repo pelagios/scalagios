@@ -8,6 +8,7 @@ import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
+import org.pelagios.api.layout.{ Layout, Link }
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -30,40 +31,7 @@ class PelagiosDataParser extends ResourceCollector {
         annotation.transcription = Some(new Transcription(rdfTranscriptions(0).getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NONE]"), Transcription.Toponym))
     })
     
-    /** Converts neighbour resources to neighbours, filtering out invalid URIa
-    val allNeighbours = resourcesOfType(Pelagios.Neighbour, Seq(_.hasPredicate(Pelagios.neighbourURI))).map(new NeighbourResource(_))
-    def toNeighbours(uris: Seq[String], directional: Boolean): Seq[NeighbourResource] = {
-      uris.foldLeft(List.empty[NeighbourResource])((resultList, currentURI) => {
-        val n = allNeighbours.find(_.resource.uri.equals(currentURI))
-        if (n.isDefined) {
-          val neighbourAnnotationURI = n.get.resource.getFirst(Pelagios.neighbourURI)
-          if (neighbourAnnotationURI.isDefined) {
-            val neighbourAnnotation = allAnnotations.find(annotation => annotation.uri.equals(neighbourAnnotationURI.get.stringValue))
-            if (neighbourAnnotation.isDefined) {
-              n.get.annotation = neighbourAnnotation.get
-              n.get.directional = directional
-              n.get :: resultList
-            } else {
-              resultList
-            }
-          } else {
-            resultList
-          }
-        } else {
-          resultList
-        }
-      })
-    }
-    
-    /** Creates neighbourhood links **/
-    allAnnotations.foreach(annotation => {
-      val neighbourURIs = annotation.resource.get(Pelagios.hasNeighbour).map(_.stringValue)
-      val nextURIs = annotation.resource.get(Pelagios.hasNext).map(_.stringValue)
-      val neighbours = toNeighbours(neighbourURIs, false) ++ toNeighbours(nextURIs, true)
-      annotation.hasNeighbour = neighbours
-    })*/
-    
-    /** Constructs Work/Expression hierarchy **/
+    /** Construct Work/Expression hierarchy **/
     val allAnnotatedThings = resourcesOfType(Pelagios.AnnotatedThing).map(new AnnotatedThingResource(_))
     allAnnotatedThings.foreach(thing => {
       val realizationOf = thing.resource.getFirst(FRBR.realizationOf).map(_.stringValue)
@@ -81,6 +49,45 @@ class PelagiosDataParser extends ResourceCollector {
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
       thing.annotations = annotations.toSeq
+    })
+    
+    /** Convert link resources to Links, filtering out invalid URIs **/
+    val allLinks = resourcesOfType(PelagiosLayout.Link, Seq(_.hasPredicate(PelagiosLayout.next))).map(new LinkResource(_))
+    def toLinks(annotation: AnnotationResource, neighbourUris: Seq[String], directional: Boolean): Seq[LinkResource] = {
+      neighbourUris.foldLeft(List.empty[LinkResource])((resultList, currentURI) => {
+        val n = allLinks.find(_.resource.uri.equals(currentURI))
+        if (n.isDefined) {
+          val neighbourAnnotationURI = n.get.resource.getFirst(PelagiosLayout.next)
+          if (neighbourAnnotationURI.isDefined) {
+            val neighbourAnnotation = allAnnotations.find(annotation => annotation.uri.equals(neighbourAnnotationURI.get.stringValue))
+            if (neighbourAnnotation.isDefined) {
+              n.get.from = annotation
+              n.get.to = neighbourAnnotation.get
+              n.get.directional = directional
+              n.get :: resultList
+            } else {
+              resultList
+            }
+          } else {
+            resultList
+          }
+        } else {
+          resultList
+        }
+      })
+    }
+    
+    /** Create layout **/
+    val links = allAnnotations.map(annotation => {
+      val neighbourURIs = annotation.resource.get(PelagiosLayout.hasLink).map(_.stringValue)
+      val nextURIs = annotation.resource.get(PelagiosLayout.hasNext).map(_.stringValue)
+      toLinks(annotation, neighbourURIs, false) ++ toLinks(annotation, nextURIs, true)
+    }).flatten
+    
+    allAnnotatedThings.foreach(thing => {
+      val linksForThing = thing.annotations.map(annotation => links.filter(_.from.uri.equals(annotation.uri))).flatten
+      if (linksForThing.size > 0)
+        thing.layout = Some(Layout(linksForThing, thing))
     })
     
     /** Filters out top-level things, i.e. those that are not expressions of something else **/
@@ -127,19 +134,20 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   * @param resource the RDF resource
   * @param annotation a reference to the annotation referenced by pelagios:neighbourURI
   * @param directional flag to distinguish between pelagios:hasNeighbour and pelagios:hasNext
-  *
-private[parser] class NeighbourResource(val resource: Resource) extends Edge {
+  */
+private[parser] class LinkResource(val resource: Resource) extends Link {
     
-  var annotation: AnnotationResource = null
+  var from: AnnotationResource = null
+  
+  var to: AnnotationResource = null
   
   var directional: Boolean = false
   
-  val distance: Option[Double] = resource.getFirst(Pelagios.neighbourDistance).map(_.asInstanceOf[Literal].doubleValue)
+  val distance: Option[Double] = resource.getFirst(PelagiosLayout.distance).map(_.asInstanceOf[Literal].doubleValue)
    
-  val unit: Option[String] = resource.getFirst(Pelagios.distanceUnit).map(_.stringValue)
+  val unit: Option[String] = resource.getFirst(PelagiosLayout.unit).map(_.stringValue)
     
 }
-*/
 
 /** Wraps a pelagios:AnnotatedThing RDF resource as an AnnotatedThing domain model primitive, with
  *  Annotations in-lined.
@@ -187,6 +195,8 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   var annotations = Seq.empty[AnnotationResource]
   
   var expressions = Seq.empty[AnnotatedThingResource]
+  
+  var layout: Option[Layout] = None
   
 }
 
