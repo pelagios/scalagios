@@ -2,6 +2,7 @@ package org.pelagios.api
 
 import java.util.Date
 import scala.collection.mutable.ListBuffer
+import org.pelagios.api.layout.Link
 
 /** 'Annotation' model entity.
   * 
@@ -97,6 +98,9 @@ trait Annotation {
     */
   def created: Option[Date]
   
+  /** Layout relations (experimental) **/  
+  def links: Seq[Link]
+  
 }
 
 /** A default POJO-style implementation of Annotation. **/
@@ -129,6 +133,10 @@ private[api] class DefaultAnnotation(
   
   val hasTarget = target.uri
   
+  lazy val links: Seq[Link] = if (target.layout.isDefined) 
+                                         target.layout.get.links.filter(_.from.uri.equals(uri))
+                                       else
+                                         Seq.empty[Link]
 }
 
 /** Companion object with a pimped apply method for generating DefaultAnnotation instances **/

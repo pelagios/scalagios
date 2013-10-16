@@ -177,9 +177,7 @@ private[api] class DefaultAnnotatedThing(
   
   val bibliographicCitations: Seq[String] = Seq.empty[String],
   
-  val subjects: Seq[String] = Seq.empty[String],
-  
-  val layout: Option[Layout] = None
+  val subjects: Seq[String] = Seq.empty[String]
       
 ) extends AnnotatedThing {
 
@@ -195,6 +193,8 @@ private[api] class DefaultAnnotatedThing(
   
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
 
+  var layout: Option[Layout] = None
+  
 }
 
 /** Companion object with a pimped apply method for generating DefaultAnnotatedThing instances **/
@@ -228,13 +228,11 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             bibliographicCitations: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
-            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
-            
-            layout: Layout = null): AnnotatedThing = {
+            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
     
     new DefaultAnnotatedThing(uri, title, realizationOf, identifier, description, homepage, sources.seq, primaryTopicOf,
                               temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
-                              bibliographicCitations.seq, subjects.seq, layout)
+                              bibliographicCitations.seq, subjects.seq)
   }
   
 }

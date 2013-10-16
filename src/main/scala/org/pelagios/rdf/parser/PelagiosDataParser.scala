@@ -81,7 +81,8 @@ class PelagiosDataParser extends ResourceCollector {
     val links = allAnnotations.map(annotation => {
       val neighbourURIs = annotation.resource.get(PelagiosLayout.hasLink).map(_.stringValue)
       val nextURIs = annotation.resource.get(PelagiosLayout.hasNext).map(_.stringValue)
-      toLinks(annotation, neighbourURIs, false) ++ toLinks(annotation, nextURIs, true)
+      annotation.links = toLinks(annotation, neighbourURIs, false) ++ toLinks(annotation, nextURIs, true)
+      annotation.links
     }).flatten
     
     allAnnotatedThings.foreach(thing => {
@@ -125,6 +126,8 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   // TODO
   def created: Option[Date] = None
+  
+  var links: Seq[Link] = Seq.empty[Link]
   
 }
 

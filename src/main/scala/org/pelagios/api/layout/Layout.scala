@@ -1,6 +1,7 @@
 package org.pelagios.api.layout
 
 import org.pelagios.api.AnnotatedThing
+import org.pelagios.api.DefaultAnnotatedThing
 
 /** Represents the topological arrangements of annotations within a document.
   *
@@ -10,4 +11,10 @@ import org.pelagios.api.AnnotatedThing
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at> 
   */
-case class Layout(val links: Seq[Link], val annotatedThing: AnnotatedThing)
+case class Layout(val links: Seq[Link], val annotatedThing: AnnotatedThing) {
+  
+  // TODO ugly - figure out a better way to handle this!
+  if (annotatedThing.isInstanceOf[DefaultAnnotatedThing])
+    annotatedThing.asInstanceOf[DefaultAnnotatedThing].layout = Some(this)
+  
+}
