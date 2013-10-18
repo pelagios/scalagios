@@ -201,6 +201,9 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   var layout: Option[Layout] = None
   
+  // TODO
+  def getTags = Seq.empty[Tag]
+  
 }
 
 

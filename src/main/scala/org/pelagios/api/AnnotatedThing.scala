@@ -142,6 +142,9 @@ trait AnnotatedThing {
   /** Annotation layout (experimental) **/
   def layout: Option[Layout]
   
+  /** Convenience method to list tags used in annotations on this thing **/
+  def getTags: Seq[Tag]
+  
 }
 
 /** A default POJO-style implementation of AnnotatedThing. **/
@@ -194,6 +197,8 @@ private[api] class DefaultAnnotatedThing(
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
 
   var layout: Option[Layout] = None
+  
+  def getTags = Seq.empty[Tag]
   
 }
 
