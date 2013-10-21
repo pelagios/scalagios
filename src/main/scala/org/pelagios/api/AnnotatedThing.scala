@@ -2,7 +2,6 @@ package org.pelagios.api
 
 import java.util.Date
 import scala.collection.mutable.ListBuffer
-import org.pelagios.api.sequence.Layout
 
 /** 'AnnotatedThing' model entity.
   * 
@@ -139,9 +138,6 @@ trait AnnotatedThing {
   /** The annotations on the annotated thing (if any). **/
   def annotations: Seq[Annotation]
   
-  /** Annotation layout (experimental) **/
-  def layout: Option[Layout]
-  
   /** Convenience method to list tags used in annotations on this thing **/
   def getTags: Seq[Tag]
   
@@ -195,8 +191,6 @@ private[api] class DefaultAnnotatedThing(
   val expressions: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
   
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
-
-  var layout: Option[Layout] = None
   
   def getTags = Seq.empty[Tag]
   

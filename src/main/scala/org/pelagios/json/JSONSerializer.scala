@@ -2,7 +2,6 @@ package org.pelagios.json
 
 import org.pelagios.api._
 import net.liftweb.json._
-import org.pelagios.api.sequence.Link
 import com.vividsolutions.jts.geom.Coordinate
 
 object JSONSerializer {
@@ -43,7 +42,7 @@ object JSONSerializer {
       .map(tuple => (tuple._1, tuple._2.get)) // And get rid of the 'Option' wrapper
       
     val json = data.map { case (annotation, place) => {
-      ("transcription" -> annotation.transcription.map(_.name)) ~
+      ("transcription" -> annotation.transcription.map(_.chars)) ~
       ("place" -> placeToJSON(place))
     }}
       
@@ -65,6 +64,7 @@ object JSONSerializer {
     _serializeAnnotations(annotations, pretty, Some(geoResolutionFn))
     
 
+  /*
   def serializeLinks(links: Seq[Link], prettyPrint: Boolean, geoResolutionFn: String => Option[Place]): String = {
     val lines = links.foldLeft(Seq.empty[(Coordinate, Coordinate)])((result, current) => {
       if (current.from.place.size > 0 && current.to.place.size > 0) {
@@ -100,5 +100,6 @@ object JSONSerializer {
     
     if (prettyPrint) pretty(render(json)) else compact(render(json))
   }
+  */
 
 }

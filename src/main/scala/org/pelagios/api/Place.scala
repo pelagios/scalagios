@@ -51,6 +51,7 @@ trait Place {
   
 }
 
+/** A default POJO-style implementation of 'Place' **/
 private[api] class DefaultPlace (
     
   val uri: String,
@@ -69,7 +70,7 @@ private[api] class DefaultPlace (
 
 ) extends Place
   
-
+/** Companion object with a pimped apply method for generating DefaultPlace instances **/
 object Place extends AbstractApiCompanion {
   
   def apply(uri: String,

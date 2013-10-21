@@ -29,12 +29,12 @@ object RDFSerializer {
   private def serializeTranscription(transcription: Transcription, model: Model): BNode = {
     val f = model.getValueFactory()
     val bnode = f.createBNode()
-    model.add(bnode, RDFS.LABEL, f.createLiteral(transcription.name))
+    model.add(bnode, RDFS.LABEL, f.createLiteral(transcription.chars))
     
     val bodyType = transcription.nameType match {
-      case Transcription.Toponym => Pelagios.Toponym
-      case Transcription.Metonym => Pelagios.Metonym
-      case Transcription.Ethnonym => Pelagios.Ethnonym
+      case TranscriptionType.Toponym => Pelagios.Toponym
+      case TranscriptionType.Metonym => Pelagios.Metonym
+      case TranscriptionType.Ethnonym => Pelagios.Ethnonym
     }
     model.add(bnode, RDF.TYPE, bodyType)
     

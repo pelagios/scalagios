@@ -8,7 +8,6 @@ import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
-import org.pelagios.api.sequence.{ Layout, Link }
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -28,7 +27,7 @@ class PelagiosDataParser extends ResourceCollector {
                              .filter(_.isDefined).map(_.get)
                              
       if (rdfTranscriptions.size > 0)
-        annotation.transcription = Some(new Transcription(rdfTranscriptions(0).getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NONE]"), Transcription.Toponym))
+        annotation.transcription = Some(Transcription(rdfTranscriptions(0).getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NONE]"), TranscriptionType.Toponym))
     })
     
     /** Construct Work/Expression hierarchy **/
@@ -51,13 +50,13 @@ class PelagiosDataParser extends ResourceCollector {
       thing.annotations = annotations.toSeq
     })
     
-    /** Convert link resources to Links, filtering out invalid URIs **/
-    val allLinks = resourcesOfType(PelagiosLayout.Link, Seq(_.hasPredicate(PelagiosLayout.next))).map(new LinkResource(_))
+    /** Convert link resources to Links, filtering out invalid URIs 
+    val allLinks = resourcesOfType(PelagiosSequence.Link, Seq(_.hasPredicate(PelagiosSequence.next))).map(new LinkResource(_))
     def toLinks(annotation: AnnotationResource, neighbourUris: Seq[String], directional: Boolean): Seq[LinkResource] = {
       neighbourUris.foldLeft(List.empty[LinkResource])((resultList, currentURI) => {
         val n = allLinks.find(_.resource.uri.equals(currentURI))
         if (n.isDefined) {
-          val neighbourAnnotationURI = n.get.resource.getFirst(PelagiosLayout.next)
+          val neighbourAnnotationURI = n.get.resource.getFirst(PelagiosSequence.next)
           if (neighbourAnnotationURI.isDefined) {
             val neighbourAnnotation = allAnnotations.find(annotation => annotation.uri.equals(neighbourAnnotationURI.get.stringValue))
             if (neighbourAnnotation.isDefined) {
@@ -76,11 +75,12 @@ class PelagiosDataParser extends ResourceCollector {
         }
       })
     }
+    */
     
-    /** Create layout **/
+    /** Create layout 
     val links = allAnnotations.map(annotation => {
-      val neighbourURIs = annotation.resource.get(PelagiosLayout.hasLink).map(_.stringValue)
-      val nextURIs = annotation.resource.get(PelagiosLayout.hasNext).map(_.stringValue)
+      val neighbourURIs = annotation.resource.get(PelagiosSequence.hasLink).map(_.stringValue)
+      val nextURIs = annotation.resource.get(PelagiosSequence.hasNext).map(_.stringValue)
       annotation.links = toLinks(annotation, neighbourURIs, false) ++ toLinks(annotation, nextURIs, true)
       annotation.links
     }).flatten
@@ -90,6 +90,7 @@ class PelagiosDataParser extends ResourceCollector {
       if (linksForThing.size > 0)
         thing.layout = Some(Layout(linksForThing, thing))
     })
+    */
     
     /** Filters out top-level things, i.e. those that are not expressions of something else **/
     allAnnotatedThings.filter(thing => thing.realizationOf.isEmpty)
@@ -127,29 +128,6 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   // TODO
   def created: Option[Date] = None
   
-  var links: Seq[Link] = Seq.empty[Link]
-  
-}
-
-/** Wraps an RDF resource representing a Neighbour node into the corresponding domain model primitive.
-  * 
-  * @constructor
-  * @param resource the RDF resource
-  * @param annotation a reference to the annotation referenced by pelagios:neighbourURI
-  * @param directional flag to distinguish between pelagios:hasNeighbour and pelagios:hasNext
-  */
-private[parser] class LinkResource(val resource: Resource) extends Link {
-    
-  var from: AnnotationResource = null
-  
-  var to: AnnotationResource = null
-  
-  var directional: Boolean = false
-  
-  val distance: Option[Double] = resource.getFirst(PelagiosLayout.distance).map(_.asInstanceOf[Literal].doubleValue)
-   
-  val unit: Option[String] = resource.getFirst(PelagiosLayout.unit).map(_.stringValue)
-    
 }
 
 /** Wraps a pelagios:AnnotatedThing RDF resource as an AnnotatedThing domain model primitive, with
@@ -198,8 +176,6 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   var annotations = Seq.empty[AnnotationResource]
   
   var expressions = Seq.empty[AnnotatedThingResource]
-  
-  var layout: Option[Layout] = None
   
   // TODO
   def getTags = Seq.empty[Tag]

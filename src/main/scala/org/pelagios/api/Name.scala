@@ -15,6 +15,7 @@ trait Name {
 /** A default POJO-style implementation of Name. **/
 private[api] class DefaultName(val labels: Seq[Label], val altLabels: Seq[Label]) extends Name
 
+/** Companion object for generating DefaultName instances **/
 object Name extends AbstractApiCompanion {
   
   def apply(labels: ObjOrSeq[Label], altLabels: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label])) = {

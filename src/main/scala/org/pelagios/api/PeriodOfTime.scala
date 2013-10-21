@@ -13,4 +13,22 @@ import java.util.Date
   * @param name an optional name for the period
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-case class PeriodOfTime(val start: Date, val end: Option[Date] = None, val name: Option[String] = None)
+trait PeriodOfTime {
+  
+  def start: Date
+  
+  def end: Option[Date]
+  
+  def name: Option[String]
+  
+}
+
+/** Default POJO-style implementation of 'PeriodOfTime' **/
+private[api] class DefaultPeriodOfTime(val start: Date, val end: Option[Date], val name: Option[String]) extends PeriodOfTime
+
+/** Companion object with a pimped apply method for generating DefaultPeriodOfTime instances **/
+object PeriodOfTime extends AbstractApiCompanion {
+  
+  def apply(start: Date, end: Date = null, name: String = null) = new DefaultPeriodOfTime(start, end, name)
+  
+}

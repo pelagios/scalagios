@@ -8,17 +8,35 @@ package org.pelagios.api
   * @param lang the language the name is in (optional)
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-case class Transcription(val name: String, val nameType: Transcription.Type, val lang: Option[String] = None)
+trait Transcription{
+  
+  def chars: String
+  
+  def nameType: TranscriptionType.Value
+  
+  def lang: Option[String]
+  
+}
+
+/** A default POJO-style implementation of 'Transcription' **/
+private[api] class DefaultTranscription(val chars: String, val nameType: TranscriptionType.Value, val lang: Option[String]) 
+  extends Transcription
+
+/** Companion object with a pimped apply method for generating DefaultTranscription instances **/
+object Transcription extends AbstractApiCompanion {
+ 
+  def apply(chars: String, nameType: TranscriptionType.Value, lang: String = null) =
+    new DefaultTranscription(chars, nameType, lang)
+    
+}
 
 /** Name types **/
-object Transcription extends Enumeration {
-  
-  type Type = Value
+object TranscriptionType extends Enumeration {
     
   val Toponym = Value("Toponym")
   
   val Metonym = Value("Metonym")
   
   val Ethnonym = Value("Ethnonym")
-    
+  
 }

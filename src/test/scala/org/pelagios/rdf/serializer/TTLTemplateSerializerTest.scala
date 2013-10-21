@@ -14,7 +14,7 @@ class TTLTemplateSerializerTest extends FunSuite {
     val annotations = Seq.range(0, 10).foreach(idx => {
       val a = Annotation("http://example.org/pelagios/annotations/" + idx, thing,
                          place = "http://pleiades.stoa.org/places/1234567",
-                         transcription = new Transcription("Athens", Transcription.Toponym))
+                         transcription = Transcription("Athens", TranscriptionType.Toponym))
     })
     
     val ttl = TTLTemplateSerializer.toString(Seq(thing))
