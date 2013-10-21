@@ -1,4 +1,4 @@
-package org.pelagios.api.layout
+package org.pelagios.api.sequence
 
 import org.pelagios.api.Annotation
 import org.pelagios.api.AbstractApiCompanion
@@ -27,7 +27,7 @@ trait Link {
 }
 
 /** A default POJO-style implementation of Neighbour. **/
-private[layout] class DefaultLink(
+private[sequence] class DefaultLink(
     
     val from: Annotation,
     

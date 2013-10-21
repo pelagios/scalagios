@@ -2,7 +2,7 @@ package org.pelagios.json
 
 import org.pelagios.api._
 import net.liftweb.json._
-import org.pelagios.api.layout.Link
+import org.pelagios.api.sequence.Link
 import com.vividsolutions.jts.geom.Coordinate
 
 object JSONSerializer {

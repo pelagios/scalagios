@@ -2,7 +2,7 @@ package org.pelagios.api
 
 import java.util.Date
 import scala.collection.mutable.ListBuffer
-import org.pelagios.api.layout.Link
+import org.pelagios.api.sequence.Link
 
 /** 'Annotation' model entity.
   * 

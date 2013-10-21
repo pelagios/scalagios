@@ -8,7 +8,7 @@ import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
-import org.pelagios.api.layout.{ Layout, Link }
+import org.pelagios.api.sequence.{ Layout, Link }
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 

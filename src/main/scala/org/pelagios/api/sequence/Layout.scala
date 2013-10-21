@@ -1,4 +1,4 @@
-package org.pelagios.api.layout
+package org.pelagios.api.sequence
 
 import org.pelagios.api.AnnotatedThing
 import org.pelagios.api.DefaultAnnotatedThing
