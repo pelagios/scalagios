@@ -113,8 +113,10 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   var transcription: Option[Transcription] = None
   
-  // TODO
-  def relation: Option[Relation.Type] = None
+  var tags: Seq[Tag] = Seq.empty[Tag]
+  
+  val relation: Option[Relation.Type] = 
+    resource.getFirst(Pelagios.relation).map(uri => Relation.withName(uri.stringValue))
     
   // TODO 
   def annotatedBy: Option[Agent] = None

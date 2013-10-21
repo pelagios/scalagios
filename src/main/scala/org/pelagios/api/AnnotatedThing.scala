@@ -192,7 +192,7 @@ private[api] class DefaultAnnotatedThing(
   
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
   
-  def getTags = Seq.empty[Tag]
+  def getTags = annotations.toSeq.map(_.tags).flatten.toSet.toSeq
   
 }
 

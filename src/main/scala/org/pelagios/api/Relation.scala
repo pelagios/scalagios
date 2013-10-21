@@ -1,13 +1,15 @@
 package org.pelagios.api
 
+import org.pelagios.rdf.vocab.PelagiosRelations
+
 object Relation extends Enumeration {
   
   type Type = Value
   
-  val attestsTo = Value("attestsTo")
+  val attestsTo = Value(PelagiosRelations.attestsTo.stringValue)
   
-  val foundAt = Value("foundAt")
+  val foundAt = Value(PelagiosRelations.foundAt.stringValue)
   
-  val locatedAt = Value("locatedAt")
+  val locatedAt = Value(PelagiosRelations.locatedAt.stringValue)
 
 }

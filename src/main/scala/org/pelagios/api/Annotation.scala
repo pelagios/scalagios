@@ -35,13 +35,12 @@ trait Annotation {
     *
     * A Pelagios annotation relates (part of) an annotated item with a 
     * place. By convention, Pelagios requires that annotation bodies either
-    * point to a URI that represents this place in a gazetteer; or that 
-    * they are textual bodies containing the place name transcription (see 
-    * method 'transcription' below). The 'place' method exposes annotation
-    * bodies of the former type (place references).
+    * point to a URI that represents this place in a gazetteer; or that they
+    * are textual bodies containing either the place name transcription (see 
+    * method 'transcription'), or tags (see method 'tags'). The 'place' 
+    * method exposes annotation bodies representing gazetteer references.
     * 
-    * Note: there should be at most one body containing a transcription. It
-    * is, however, possible to add multiple bodies that point to gazetteer 
+    * Note: It is possible to add multiple bodies that point to gazetteer 
     * URIs - but only in order to refer to the same place in different
     * gazetteers.
     */
@@ -52,10 +51,20 @@ trait Annotation {
     * A Pelagios annotation relates (part of) an annotated item with a 
     * place. By convention, Pelagios requires that annotation bodies either
     * point to a URI that represents this place in a gazetteer; or that 
-    * they are textual bodies containing the place name transcription. This
-    * method exposes annotation bodies of the latter type (transcriptions).
+    * they are textual bodies containing a place name transcription or a tag.
+    * This method exposes annotation bodies representing the transcription.
     */
   def transcription: Option[Transcription]
+  
+  /** Tag expressed through oa:hasBody
+    *  
+    * A Pelagios annotation relates (part of) an annotated item with a 
+    * place. By convention, Pelagios requires that annotation bodies either
+    * point to a URI that represents this place in a gazetteer; or that
+    * they are textual bodies containing a place name transcription or a tag.
+    * This method exposes annotation bodies representing tags.
+    */
+  def tags: Seq[Tag]
     
   /** pelagios:relation
     * 
@@ -123,8 +132,10 @@ private[api] class DefaultAnnotation(
   val place: Seq[String] = Seq.empty[String],
   
   val transcription: Option[Transcription] = None,
+  
+  val tags: Seq[Tag] = Seq.empty[Tag],
       
-  val relation: Option[Relation.Value] = None,
+  val relation: Option[Relation.Type] = None,
   
   val annotatedBy: Option[Agent] = None,
 
@@ -159,8 +170,10 @@ object Annotation extends AbstractApiCompanion {
             place: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
   
             transcription: Transcription = null,
+            
+            tags: ObjOrSeq[Tag] = new ObjOrSeq(Seq.empty[Tag]),
       
-            relation: Relation.Value = null,
+            relation: Relation.Type = null,
   
             annotatedBy: Agent = null,
 
@@ -176,7 +189,7 @@ object Annotation extends AbstractApiCompanion {
     
     val idx: Option[Int] = if (index == null) None else index.toInt
       
-    new DefaultAnnotation(uri, target, place.seq, transcription, relation, annotatedBy, annotatedAt,
+    new DefaultAnnotation(uri, target, place.seq, transcription, tags.seq, relation, annotatedBy, annotatedAt,
                           creator, created, idx, distanceToNext)
   }
  
