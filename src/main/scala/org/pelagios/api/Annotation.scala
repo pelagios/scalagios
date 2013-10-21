@@ -97,6 +97,20 @@ trait Annotation {
     */
   def created: Option[Date]
   
+  /** sequence: index
+    *
+    * The sequence index number, in case the ordering of the annotations
+    * on the annotated thing is relevant.  
+    */
+  def index: Option[Int]
+  
+  /** sequence:distance
+    *
+    * Experimental feature  that records 'distance' information between
+    * this annotation and the next in the sequence.
+    */
+  def distanceToNext: Option[Distance]
+  
 }
 
 /** A default POJO-style implementation of Annotation. **/
@@ -118,7 +132,11 @@ private[api] class DefaultAnnotation(
   
   val creator: Option[Agent] = None,
   
-  val created: Option[Date] = None
+  val created: Option[Date] = None,
+  
+  val index: Option[Int] = None,
+  
+  val distanceToNext: Option[Distance] = None
   
 ) extends Annotation {
   
@@ -150,10 +168,16 @@ object Annotation extends AbstractApiCompanion {
   
             creator: Agent = null,
   
-            created: Date = null): Annotation = {
+            created: Date = null,
+            
+            index: Integer = null,
+            
+            distanceToNext: Distance = null): Annotation = {
     
+    val idx: Option[Int] = if (index == null) None else index.toInt
+      
     new DefaultAnnotation(uri, target, place.seq, transcription, relation, annotatedBy, annotatedAt,
-                          creator, created)
+                          creator, created, idx, distanceToNext)
   }
  
 }

@@ -128,6 +128,11 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   // TODO
   def created: Option[Date] = None
   
+  def index: Option[Int] = resource.getFirst(PelagiosSequence.index).map(_.stringValue.toInt)
+  
+  // TODO
+  def distanceToNext: Option[Distance] = None
+  
 }
 
 /** Wraps a pelagios:AnnotatedThing RDF resource as an AnnotatedThing domain model primitive, with

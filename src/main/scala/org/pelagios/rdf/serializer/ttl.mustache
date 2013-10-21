@@ -1,10 +1,11 @@
+@prefix cnt: <http://www.w3.org/2011/content#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix pelagios: <http://pelagios.github.io/terms#> .
-@prefix layout: <http://pelagios.github.io/layout#> .
-@prefix frbr: <http://purl.org/vocab/frbr/core#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix seq: <http://pelagios.github.io/vocab/sequence#> .
+@prefix pelagios: <http://pelagios.github.io/vocab/terms#> .
 @prefix oa: <http://www.w3.org/ns/oa#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix frbr: <http://purl.org/vocab/frbr/core#> .
 
 {{#things}}
 <{{uri}}> a pelagios:AnnotatedThing ; 
@@ -27,17 +28,17 @@
   {{/place}}
   
   {{#transcription}}
-  oa:hasBody [ rdfs:label "{{name}}" ; a pelagios:{{nameType}} ] ;
+  oa:hasBody [ cnt:chars "{{chars}}" ; a pelagios:{{nameType}} ] ;
   {{/transcription}}
   
   oa:hasTarget <{{hasTarget}}> ;
-  {{#links}}
-  layout:hasNext [ {{#to}}
-                   layout:next <{{uri}}> ;
-                   {{/to}} 
-                   layout:distance "{{distance}}" ;
-                   layout:unit "{{unit}}" ] ;
-  {{/links}}
+  {{#index}}
+  seq:index "{{.}}"^^xsd:integer ;
+  {{/index}}
+  
+  {{#distanceToNext}}
+  seq:distance [ {{#label}} rdfs:label  "{{label}}" ; {{/label}} {{#weight}} seq:weight "{{.}}"^^xsd:integer {{/weight}} ]
+  {{/distanceToNext}}
   .
 
 {{/annotations}}  
