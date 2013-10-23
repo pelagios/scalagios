@@ -44,7 +44,7 @@ object Scalagios {
     * @return the list of annotated things, with annotations in-lined
     */
   def parseData(file: File): Iterable[AnnotatedThing] =
-    parseData(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
+    parseData(new FileInputStream(file), new URI("file://" + file.getAbsolutePath()).toString, getParser(file.getName))
   
   /** Parses Pelagios annotations from an input stream.
     *

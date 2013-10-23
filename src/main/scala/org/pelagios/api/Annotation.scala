@@ -169,7 +169,7 @@ object Annotation extends AbstractApiCompanion {
   
             place: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
   
-            transcription: Transcription = null,
+            transcription: ObjOrOption[Transcription] = new ObjOrOption(None),
             
             tags: ObjOrSeq[Tag] = new ObjOrSeq(Seq.empty[Tag]),
       
@@ -189,7 +189,7 @@ object Annotation extends AbstractApiCompanion {
     
     val idx: Option[Int] = if (index == null) None else index.toInt
       
-    new DefaultAnnotation(uri, target, place.seq, transcription, tags.seq, relation, annotatedBy, annotatedAt,
+    new DefaultAnnotation(uri, target, place.seq, transcription.option, tags.seq, relation, annotatedBy, annotatedAt,
                           creator, created, idx, distanceToNext)
   }
  

@@ -12,6 +12,35 @@
 <{{uri}}> a pelagios:AnnotatedThing ; 
   dcterms:title "{{title}}" ;
   .
+  
+{{#annotations}}
+<{{uri}}> a oa:Annotation ;
+  {{#place}}
+  oa:hasBody <{{.}}> ;
+  {{/place}}
+  
+  {{#transcription}}
+  oa:hasBody [ cnt:chars "{{chars}}" ; a pelagios:{{nameType}} ] ;
+  {{/transcription}}
+  
+  {{#tags}}
+  oa:hasBody [ cnt:chars "{{chars}}" ; a oa:Tag ] ;
+  {{/tags}}
+  
+  oa:hasTarget <{{hasTarget}}> ;
+  {{#relation}}
+  pelagios:relation <{{.}}> ;
+  {{/relation}}
+  {{#index}}
+  seq:index "{{.}}"^^xsd:integer ;
+  {{/index}}
+  
+  {{#distanceToNext}}
+  seq:distance [ {{#label}} rdfs:label  "{{label}}" ; {{/label}} {{#weight}} seq:weight "{{.}}"^^xsd:integer {{/weight}} ] ;
+  {{/distanceToNext}}
+  .
+
+{{/annotations}}  
 
 {{#expressions}}
 <{{uri}}> a pelagios:AnnotatedThing ;

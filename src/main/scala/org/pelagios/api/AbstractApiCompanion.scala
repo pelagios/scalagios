@@ -12,6 +12,12 @@ private[api] abstract class AbstractApiCompanion {
   
   implicit def toStringOrSeq[T](t: Seq[T]): ObjOrSeq[T] = new ObjOrSeq(t)
   
+  implicit def toObjOrOption[T](t: T): ObjOrOption[T] = new ObjOrOption(Some(t))
+  
+  implicit def toObjOrOption[T](t: Option[T]): ObjOrOption[T] = new ObjOrOption(t)
+  
   class ObjOrSeq[T](val seq: Seq[T])
+  
+  class ObjOrOption[T](val option: Option[T])
 
 }
