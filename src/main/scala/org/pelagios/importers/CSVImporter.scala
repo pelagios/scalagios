@@ -1,9 +1,11 @@
-package org.pelagios.csv
+package org.pelagios.importers
 
 import scala.io.Source
 import org.pelagios.api._
+import org.pelagios.api.Annotation.toObjOrOption
+import org.pelagios.api.Annotation.toStringOrSeq
 
-/** A helper class to work with CSV data.
+/** A helper object to import CSV data.
   *  
   * Ordering of the columns is, in general, irrelevant. Data will be imported
   * based on the column names. The first row of the CSV file must hold the column
@@ -15,7 +17,7 @@ import org.pelagios.api._
   *   formats are 'pleiades:<id>', 'plplus:<id>', 'geonames:<id>'.
   * - "Tag": zero or more columns holding tags
   */
-object PelagiosCSV {
+object CSVImporter {
   
   def readFromFile(file: String, thing: AnnotatedThing) = {
     val lines = Source.fromFile(file).getLines
