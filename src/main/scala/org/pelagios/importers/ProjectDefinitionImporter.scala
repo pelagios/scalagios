@@ -16,8 +16,7 @@ object ProjectDefinitionImporter {
     val basepath = jsonFile.getParent
     
     parseJSONDefinition(Source.fromFile(jsonFile).getLines.mkString("\n")).map{ case (thing, files) => {
-      // TODO parse CSVs and attach annotations to things      
-      
+      files.foreach(file => CSVImporter.readFromFile(new File(basepath, file).getAbsolutePath, thing))
       thing
     }}
   }
