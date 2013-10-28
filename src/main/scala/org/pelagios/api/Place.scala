@@ -1,5 +1,9 @@
 package org.pelagios.api
 
+import com.vividsolutions.jts.geom.Coordinate
+import com.vividsolutions.jts.geom.GeometryCollection
+import com.vividsolutions.jts.geom.GeometryFactory
+
 /** Pelagios 'Place' model entity.
   *  
   * @author Rainer Simon <rainer.simon@ait.ac.at>
@@ -48,6 +52,18 @@ trait Place {
     * Mappings to places in other gazetteers.
     */
   def closeMatches: Seq[String]
+  
+  /** Utility method that computes the centroid of all locations for this place **/
+  def getCentroid: Option[Coordinate] = {
+    if (locations.size > 0) {
+      val f = new GeometryFactory()
+      val geometries = locations.map(_.geometry).toArray
+      val collection = f.createGeometryCollection(geometries)
+      Some(collection.getCentroid().getCoordinate)
+    } else {
+      None
+    }
+  }
   
 }
 

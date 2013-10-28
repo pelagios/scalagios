@@ -48,10 +48,7 @@ class PelagiosDataParser extends ResourceCollector {
           work.get.expressions = thing +: work.get.expressions
         }
       }
-    })
-    
-    /** Sort annotations by index (if any) **/
-    
+    })    
     
     /** Link annotations and annotated things **/
     val annotationsPerThing = allAnnotations.groupBy(_.hasTarget)
