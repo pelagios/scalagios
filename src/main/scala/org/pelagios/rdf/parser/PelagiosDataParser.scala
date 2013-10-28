@@ -50,54 +50,24 @@ class PelagiosDataParser extends ResourceCollector {
       }
     })
     
+    /** Sort annotations by index (if any) **/
+    
+    
     /** Link annotations and annotated things **/
     val annotationsPerThing = allAnnotations.groupBy(_.hasTarget)
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
-      thing.annotations = annotations.toSeq
-    })
-    
-    /** Convert link resources to Links, filtering out invalid URIs 
-    val allLinks = resourcesOfType(PelagiosSequence.Link, Seq(_.hasPredicate(PelagiosSequence.next))).map(new LinkResource(_))
-    def toLinks(annotation: AnnotationResource, neighbourUris: Seq[String], directional: Boolean): Seq[LinkResource] = {
-      neighbourUris.foldLeft(List.empty[LinkResource])((resultList, currentURI) => {
-        val n = allLinks.find(_.resource.uri.equals(currentURI))
-        if (n.isDefined) {
-          val neighbourAnnotationURI = n.get.resource.getFirst(PelagiosSequence.next)
-          if (neighbourAnnotationURI.isDefined) {
-            val neighbourAnnotation = allAnnotations.find(annotation => annotation.uri.equals(neighbourAnnotationURI.get.stringValue))
-            if (neighbourAnnotation.isDefined) {
-              n.get.from = annotation
-              n.get.to = neighbourAnnotation.get
-              n.get.directional = directional
-              n.get :: resultList
-            } else {
-              resultList
-            }
-          } else {
-            resultList
-          }
-        } else {
-          resultList
-        }
+      thing.annotations = annotations.toSeq.sortWith((a, b) => { 
+        if (a.index.isDefined && b.index.isDefined)
+          a.index.get < b.index.get
+        else if (a.index.isDefined)
+          true
+        else if (b.index.isDefined)
+          false
+        else
+          false
       })
-    }
-    */
-    
-    /** Create layout 
-    val links = allAnnotations.map(annotation => {
-      val neighbourURIs = annotation.resource.get(PelagiosSequence.hasLink).map(_.stringValue)
-      val nextURIs = annotation.resource.get(PelagiosSequence.hasNext).map(_.stringValue)
-      annotation.links = toLinks(annotation, neighbourURIs, false) ++ toLinks(annotation, nextURIs, true)
-      annotation.links
-    }).flatten
-    
-    allAnnotatedThings.foreach(thing => {
-      val linksForThing = thing.annotations.map(annotation => links.filter(_.from.uri.equals(annotation.uri))).flatten
-      if (linksForThing.size > 0)
-        thing.layout = Some(Layout(linksForThing, thing))
     })
-    */
     
     /** Filters out top-level things, i.e. those that are not expressions of something else **/
     allAnnotatedThings.filter(thing => thing.realizationOf.isEmpty)
