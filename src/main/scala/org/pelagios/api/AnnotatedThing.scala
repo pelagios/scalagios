@@ -199,9 +199,9 @@ object AnnotatedThing extends AbstractApiCompanion {
   
   def apply(uri: String, title: String,
       
-            realizationOf: AnnotatedThing = null,
+            realizationOf: ObjOrOption[AnnotatedThing] = new ObjOrOption(None),
             
-            identifier: String = null,
+            identifier: ObjOrOption[String] = new ObjOrOption(None),
             
             description: String = null,
             
@@ -227,7 +227,7 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
     
-    new DefaultAnnotatedThing(uri, title, realizationOf, identifier, description, homepage, sources.seq, primaryTopicOf,
+    new DefaultAnnotatedThing(uri, title, realizationOf.option, identifier.option, description, homepage, sources.seq, primaryTopicOf,
                               temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
                               bibliographicCitations.seq, subjects.seq)
   }
