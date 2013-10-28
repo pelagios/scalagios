@@ -139,7 +139,7 @@ trait AnnotatedThing {
   def annotations: Seq[Annotation]
   
   /** Convenience method to list tags used in annotations on this thing **/
-  def getTags: Seq[Tag]
+  def getTags: Seq[Tag] = annotations.map(_.tags).flatten.toSet.toSeq
   
 }
 
@@ -191,8 +191,6 @@ private[api] class DefaultAnnotatedThing(
   val expressions: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
   
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
-  
-  def getTags = annotations.toSeq.map(_.tags).flatten.toSet.toSeq
   
 }
 

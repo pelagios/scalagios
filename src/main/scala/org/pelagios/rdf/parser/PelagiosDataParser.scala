@@ -184,9 +184,6 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   var expressions = Seq.empty[AnnotatedThingResource]
   
-  // TODO
-  def getTags = Seq.empty[Tag]
-  
 }
 
 
