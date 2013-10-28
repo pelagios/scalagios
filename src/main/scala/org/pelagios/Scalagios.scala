@@ -45,7 +45,7 @@ object Scalagios {
     */
   def readFromFile(file: String): Iterable[AnnotatedThing] = {
     val f = new File(file)
-    readFromStream(new FileInputStream(file), new URI("file://" + f.getAbsolutePath).toString, getParser(f.getName))
+    readFromStream(new FileInputStream(f), new URI("file://" + f.getAbsolutePath).toString, getParser(f.getName))
   }
   
   /** Parses Pelagios annotations from an input stream.

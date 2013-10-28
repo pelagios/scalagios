@@ -16,7 +16,7 @@ class PelagiosDataParserTest extends FunSuite {
     val things = Scalagios.readFromFile(TEST_FILE)
     
     // Dump contains one work with one expression - verify there is only one top-level AnnotatedThing
-    assert(things.size == 1, "object graph contains too many AnnotatedThings (" + things.size + ")")
+    assert(things.size == 1, "object graph contains wrong number of AnnotatedThings (" + things.size + ")")
 
     // Verify the properties of the Work
     val work = things.toSeq(0)

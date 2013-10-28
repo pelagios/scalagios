@@ -1,5 +1,5 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix pelagios: <http://pelagios.github.io/terms#> .
+@prefix pelagios: <http://pelagios.github.io/vocab/terms#> .
 @prefix layout: <http://pelagios.github.io/layout#> .
 @prefix frbr: <http://purl.org/vocab/frbr/core#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
