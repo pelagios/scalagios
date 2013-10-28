@@ -203,9 +203,9 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             identifier: ObjOrOption[String] = new ObjOrOption(None),
             
-            description: String = null,
+            description: ObjOrOption[String] = new ObjOrOption(None),
             
-            homepage: String = null,
+            homepage: ObjOrOption[String] = new ObjOrOption(None),
             
             sources: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
@@ -227,7 +227,7 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
     
-    new DefaultAnnotatedThing(uri, title, realizationOf.option, identifier.option, description, homepage, sources.seq, primaryTopicOf,
+    new DefaultAnnotatedThing(uri, title, realizationOf.option, identifier.option, description.option, homepage.option, sources.seq, primaryTopicOf,
                               temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
                               bibliographicCitations.seq, subjects.seq)
   }
