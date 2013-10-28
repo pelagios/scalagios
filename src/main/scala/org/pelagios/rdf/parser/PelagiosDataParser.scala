@@ -19,15 +19,22 @@ class PelagiosDataParser extends ResourceCollector {
     val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))  
     
     /** Resolve transcriptions **/
-    // TODO a bit hacky - clean up!
     val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))
     allAnnotations.foreach(annotation => {
+      // Transcriptions per Annotation
       val rdfTranscriptions = annotation.resource.get(OA.hasBody).filter(_.isInstanceOf[BNode])
                              .map(bnode => allTranscriptions.find(_.uri.equals(bnode.stringValue)))
                              .filter(_.isDefined).map(_.get)
-                             
-      if (rdfTranscriptions.size > 0)
-        annotation.transcription = Some(Transcription(rdfTranscriptions(0).getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NONE]"), TranscriptionType.Toponym))
+        
+      
+      if (rdfTranscriptions.size > 0) {
+        // We only allow one transcription per annotation - so we'll discard additional ones, if any
+        val transcription = rdfTranscriptions(0)
+        val chars = transcription.getFirst(Content.chars).map(_.stringValue).getOrElse("[NONE]")
+        val transcriptionType = transcription.getFirst(RDF.TYPE).map(uri => TranscriptionType.withName(uri.stringValue))
+          .getOrElse(TranscriptionType.Toponym)
+        annotation.transcription = Some(Transcription(chars, transcriptionType))
+      }
     })
     
     /** Construct Work/Expression hierarchy **/

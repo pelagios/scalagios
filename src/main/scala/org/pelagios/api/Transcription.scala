@@ -1,5 +1,7 @@
 package org.pelagios.api
 
+import org.pelagios.rdf.vocab.Pelagios
+
 /** 'Transcription' model primitive.
   * 
   * @constructor create a new transcription
@@ -33,10 +35,10 @@ object Transcription extends AbstractApiCompanion {
 /** Name types **/
 object TranscriptionType extends Enumeration {
     
-  val Toponym = Value("Toponym")
+  val Toponym = Value(Pelagios.Toponym.stringValue)
   
-  val Metonym = Value("Metonym")
+  val Metonym = Value(Pelagios.Metonym.stringValue)
   
-  val Ethnonym = Value("Ethnonym")
+  val Ethnonym = Value(Pelagios.Ethnonym.stringValue)
   
 }
