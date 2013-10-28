@@ -85,7 +85,7 @@ private[parser] class LocationResource(val resource: Resource) extends Location 
     else if (lat.isDefined && lon.isDefined)
       Location.fromLatLon(lat.get, lon.get)
     else
-      // The spec prohibits Locations without geometry - purely for defensive purposes
+      // The spec prohibits Locations without geometry - purely for defensive reasons
       Location.fromLatLon(0, 0) 
   }
   

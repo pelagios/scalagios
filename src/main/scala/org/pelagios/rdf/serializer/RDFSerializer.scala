@@ -118,20 +118,6 @@ object RDFSerializer {
       annotation.created.map(date => model.add(rdfAnnotation, DCTerms.created, f.createLiteral(date)))
             
       // TODO pelagios:toponym
-      
-      /* pelagios:hasNext
-      annotation.hasNeighbour.foreach(neighbour => {
-        val relation = if (neighbour.directional) Pelagios.hasNext else Pelagios.hasNeighbour
-        if (neighbour.hasMetadata) {
-          val bnode = f.createBNode()
-          model.add(bnode, Pelagios.neighbourURI, f.createURI(neighbour.annotation.uri))
-          neighbour.distance.map(distance => model.add(bnode, Pelagios.neighbourDistance, f.createLiteral(neighbour.distance.get)))
-          neighbour.unit.map(unit => model.add(bnode, Pelagios.distanceUnit, f.createLiteral(unit)))
-          model.add(rdfAnnotation, relation, bnode)
-        } else {
-          model.add(rdfAnnotation, relation, f.createURI(neighbour.annotation.uri))
-        }
-      })*/
     })
   }
   

@@ -43,8 +43,10 @@ object Scalagios {
     * @param file the dump file to parse
     * @return the list of annotated things, with annotations in-lined
     */
-  def parseData(file: File): Iterable[AnnotatedThing] =
-    parseData(new FileInputStream(file), new URI("file://" + file.getAbsolutePath()).toString, getParser(file.getName))
+  def readFromFile(file: String): Iterable[AnnotatedThing] = {
+    val f = new File(file)
+    readFromStream(new FileInputStream(file), new URI("file://" + f.getAbsolutePath).toString, getParser(f.getName))
+  }
   
   /** Parses Pelagios annotations from an input stream.
     *
@@ -52,10 +54,10 @@ object Scalagios {
     * @param baseURI the base URI
     * @param format the RDF serialization format the data is in  
     */
-  def parseData(is: InputStream, baseURI: String, format: RDFFormat): Iterable[AnnotatedThing] =
-    parseData(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
+  def readFromStream(is: InputStream, baseURI: String, format: RDFFormat): Iterable[AnnotatedThing] =
+    readFromStream(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
   
-  private def parseData(is: InputStream, baseURI: String, parser: RDFParser): Iterable[AnnotatedThing] = {
+  private def readFromStream(is: InputStream, baseURI: String, parser: RDFParser): Iterable[AnnotatedThing] = {
     val handler = new PelagiosDataParser
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
@@ -68,7 +70,7 @@ object Scalagios {
     * @param out the output stream
     * @param format the RDF serialization format
     */
-  def writeData(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) = {
+  def writeToStream(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat = RDFFormat.TURTLE) = {
     if (format == RDFFormat.TURTLE)
       TTLTemplateSerializer.writeToStream(data, out)
     else
@@ -81,11 +83,11 @@ object Scalagios {
     * @param out the output file
     * @param format the RDF serialization format
     */
-  def writeData(data: Iterable[AnnotatedThing], out: File, format: RDFFormat) = {
+  def writeToFile(data: Iterable[AnnotatedThing], file: String, format: RDFFormat = RDFFormat.TURTLE) = {
     if (format == RDFFormat.TURTLE)
-      TTLTemplateSerializer.writeToFile(data, out)
+      TTLTemplateSerializer.writeToFile(data, new File(file))
     else
-      RDFSerializer.writeToFile(data, out, format)
+      RDFSerializer.writeToFile(data, new File(file), format)
   }
     
   /** Parses a Pelagios-style gazetteer dump file.

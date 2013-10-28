@@ -15,7 +15,7 @@ the Java Virtual Machine. Scalagios provides:
 Reading Pelagios RDF data from a file:
 
 ```scala
-val data: Iterable[AnnotatedThing] = Scalagios.readFromFile(new File("data-file.ttl"))
+val data: Iterable[AnnotatedThing] = Scalagios.readFromFile("data-file.ttl")
 
 data.foreach(thing => {
   thing.annotations.foreach(annotation => {
@@ -33,7 +33,7 @@ val annotation = Annotation("http://pelagios.org/egds/01/annotations/01", thing,
                             place = "http://pleiades.stoa.org/places/423025",
                             transcription = "ROMA")
 
-Scalagios.writeToFile(annotatedThing, new File("data-file.ttl")
+Scalagios.writeToFile(annotatedThing, "data-file.ttl")
 ```
 
 ## Developer Information

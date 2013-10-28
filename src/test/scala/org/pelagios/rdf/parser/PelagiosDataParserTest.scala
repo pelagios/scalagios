@@ -4,7 +4,6 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
-import java.io.File
 import org.pelagios.api._
 
 @RunWith(classOf[JUnitRunner])
@@ -14,7 +13,7 @@ class PelagiosDataParserTest extends FunSuite {
     
   test("Pelagios Data Dump Import") {
     // Parse test data
-    val things = Scalagios.parseData(new File(TEST_FILE))
+    val things = Scalagios.readFromFile(TEST_FILE)
     
     // Dump contains one work with one expression - verify there is only one top-level AnnotatedThing
     assert(things.size == 1, "object graph contains too many AnnotatedThings (" + things.size + ")")

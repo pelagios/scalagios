@@ -4,6 +4,10 @@ import org.pelagios.api._
 import net.liftweb.json._
 import com.vividsolutions.jts.geom.Coordinate
 
+/** GeoJSON-based serialization for places and annotations. 
+  * 
+  * @author Rainer Simon <rainer.simon@ait.ac.at>
+  */
 object JSONSerializer {
   
   import net.liftweb.json.JsonDSL._
@@ -62,44 +66,5 @@ object JSONSerializer {
   
   def serializeAnnotations(annotations: Seq[Annotation], pretty: Boolean, geoResolutionFn: String => Option[Place]): String = 
     _serializeAnnotations(annotations, pretty, Some(geoResolutionFn))
-    
-
-  /*
-  def serializeLinks(links: Seq[Link], prettyPrint: Boolean, geoResolutionFn: String => Option[Place]): String = {
-    val lines = links.foldLeft(Seq.empty[(Coordinate, Coordinate)])((result, current) => {
-      if (current.from.place.size > 0 && current.to.place.size > 0) {
-        val from = geoResolutionFn(current.from.place(0))
-        val to = geoResolutionFn(current.to.place(0))
-      
-        if (from.isDefined && to.isDefined) {
-          val fromLocations = from.get.locations
-          val toLocations = to.get.locations
-        
-          if (fromLocations.size > 0 && toLocations.size > 0) {
-            val fromCoord = fromLocations(0).geometry.getCentroid.getCoordinate
-            val toCoord = toLocations(0).geometry.getCentroid.getCoordinate
-            (fromCoord, toCoord) +: result
-          } else {
-            result  
-          }
-        } else {
-          result      
-        }
-      } else {
-        result
-      }
-    })
-    
-    val json = lines.map { case (from, to) => {
-      ("type" -> "Feature") ~ 
-      ("geometry" -> 
-          ("type" -> "LineString") ~ 
-          ("coordinates" -> Seq(Seq(from.x, from.y), Seq(to.x, to.y)))
-      )
-    }}
-    
-    if (prettyPrint) pretty(render(json)) else compact(render(json))
-  }
-  */
 
 }

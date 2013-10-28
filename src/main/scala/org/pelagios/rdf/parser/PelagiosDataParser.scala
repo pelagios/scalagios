@@ -54,7 +54,7 @@ class PelagiosDataParser extends ResourceCollector {
     val annotationsPerThing = allAnnotations.groupBy(_.hasTarget)
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
-      thing.annotations = annotations.toSeq.sortWith((a, b) => { 
+      thing.annotations = annotations.toSeq.sortWith((a, b) => { // Sort by index number if any
         if (a.index.isDefined && b.index.isDefined)
           a.index.get < b.index.get
         else if (a.index.isDefined)
