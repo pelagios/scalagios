@@ -183,14 +183,12 @@ object Annotation extends AbstractApiCompanion {
   
             created: Date = null,
             
-            index: Integer = null,
+            index: ObjOrOption[Int] = new ObjOrOption(None),
             
             distanceToNext: Distance = null): Annotation = {
-    
-    val idx: Option[Int] = if (index == null) None else index.toInt
       
     new DefaultAnnotation(uri, target, place.seq, transcription.option, tags.seq, relation, annotatedBy, annotatedAt,
-                          creator, created, idx, distanceToNext)
+                          creator, created, index.option, distanceToNext)
   }
  
 }
