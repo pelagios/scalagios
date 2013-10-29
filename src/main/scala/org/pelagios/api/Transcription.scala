@@ -35,10 +35,10 @@ object Transcription extends AbstractApiCompanion {
 /** Name types **/
 object TranscriptionType extends Enumeration {
     
-  val Toponym = Value(Pelagios.Toponym.stringValue)
+  val Toponym = Value("Toponym")
   
-  val Metonym = Value(Pelagios.Metonym.stringValue)
+  val Metonym = Value("Metonym")
   
-  val Ethnonym = Value(Pelagios.Ethnonym.stringValue)
+  val Ethnonym = Value("Ethnonym")
   
 }

@@ -31,8 +31,13 @@ class PelagiosDataParser extends ResourceCollector {
         // We only allow one transcription per annotation - so we'll discard additional ones, if any
         val transcription = rdfTranscriptions(0)
         val chars = transcription.getFirst(Content.chars).map(_.stringValue).getOrElse("[NONE]")
-        val transcriptionType = transcription.getFirst(RDF.TYPE).map(uri => TranscriptionType.withName(uri.stringValue))
-          .getOrElse(TranscriptionType.Toponym)
+        val transcriptionType = transcription.getFirst(RDF.TYPE).map(uri => { 
+            uri match {
+              case Pelagios.Metonym => TranscriptionType.Metonym
+              case Pelagios.Ethnonym => TranscriptionType.Ethnonym
+              case _ => TranscriptionType.Toponym
+            }
+          }).getOrElse(TranscriptionType.Toponym)
         annotation.transcription = Some(Transcription(chars, transcriptionType))
       }
     })
