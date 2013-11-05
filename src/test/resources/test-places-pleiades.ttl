@@ -1,6 +1,6 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .
-@prefix pelagios: <http://pelagios.github.io/terms#> .
+@prefix pelagios: <http://pelagios.github.io/vocab/terms#> .
 @prefix pleiades: <http://pleiades.stoa.org/places/vocab#> .
 
 <http://pleiades.stoa.org/places/641001#this> a pelagios:PlaceRecord ;
