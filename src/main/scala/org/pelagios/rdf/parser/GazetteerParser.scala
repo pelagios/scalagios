@@ -16,14 +16,15 @@ class GazetteerParser extends ResourceCollector {
     * @return the list of Places
     */
   def places: Iterable[Place] = {
-    val allNames = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(SKOS.label)))
-      .map(new NameResource(_))
-    val allLocations = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
-      .map(new LocationResource(_))
+    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(SKOS.label)))
+      .map(resource => (resource.uri -> new NameResource(resource))).toMap
       
+    val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
+      .map(resource => (resource.uri -> new LocationResource(resource))).toMap
+           
     resourcesOfType(Pelagios.PlaceRecord).map(resource => {
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => allNames.filter(_.resource.uri.equals(uri.stringValue))).flatten
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => allLocations.filter(_.resource.uri.equals(uri.stringValue))).flatten
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
       new PlaceResource(resource, names, locations)
     })
   }  

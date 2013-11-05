@@ -1,10 +1,10 @@
 package org.pelagios.rdf.parser
 
-import org.scalatest.FunSuite
+import java.io.File
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
-import java.io.File
 
 @RunWith(classOf[JUnitRunner])
 class GazetteerParserTest extends FunSuite {
