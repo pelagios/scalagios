@@ -18,17 +18,20 @@ trait Transcription{
   
   def lang: Option[String]
   
+  // TODO temporary hack! Offset needs to go into the target!
+  def offset: Option[Int]
+  
 }
 
 /** A default POJO-style implementation of 'Transcription' **/
-private[api] class DefaultTranscription(val chars: String, val nameType: TranscriptionType.Value, val lang: Option[String]) 
+private[api] class DefaultTranscription(val chars: String, val nameType: TranscriptionType.Value, val lang: Option[String], val offset: Option[Int]) 
   extends Transcription
 
 /** Companion object with a pimped apply method for generating DefaultTranscription instances **/
 object Transcription extends AbstractApiCompanion {
  
-  def apply(chars: String, nameType: TranscriptionType.Value, lang: String = null) =
-    new DefaultTranscription(chars, nameType, lang)
+  def apply(chars: String, nameType: TranscriptionType.Value, lang: String = null, offset: Option[Int] = None) =
+    new DefaultTranscription(chars, nameType, lang, offset)
     
 }
 
