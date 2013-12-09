@@ -76,8 +76,8 @@ private[parser] class LocationResource(val resource: Resource) extends Location 
   val geometry = {
     val wkt = resource.getFirst(OSGeo.asWKT).map(_.stringValue)
     val geoJSON = resource.getFirst(OSGeo.asGeoJSON).map(_.stringValue)
-    val (lon, lat) = (resource.getFirst(W3CGeo.long).map(_.asInstanceOf[Double]), 
-                      resource.getFirst(W3CGeo.lat).map(_.asInstanceOf[Double]))
+    val (lon, lat) = (resource.getFirst(W3CGeo.long).map(_.stringValue.toDouble), 
+                      resource.getFirst(W3CGeo.lat).map(_.stringValue.toDouble))
 
     if (wkt.isDefined)
       Location.parseWKT(wkt.get)
