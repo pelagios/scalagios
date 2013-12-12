@@ -1,9 +1,10 @@
 package org.pelagios.gazetteer
 
-import org.apache.lucene.document.Document
+import org.apache.lucene.document.{ Document, Field, StringField, TextField }
+import org.apache.lucene.index.IndexableField
 import org.pelagios.api.{ Label, Location, Name, Place }
 import scala.collection.JavaConversions._
-import org.apache.lucene.index.IndexableField
+import com.vividsolutions.jts.io.WKTWriter
 
 /** An implementation of the [[Place]] API primitive backed by a Lucene Document.
   *  
@@ -37,6 +38,7 @@ class PlaceDocument private (doc: Document) extends Place {
   
 }
 
+/** Constants and helper to create PlaceDocuments from a Places **/
 object PlaceDocument {
   
   val FIELD_URI = "uri"
@@ -44,6 +46,8 @@ object PlaceDocument {
   val FIELD_TITLE = "title"
   
   val FIELD_DESCRIPTION = "description"
+    
+  val FIELD_NAME = "name"
     
   val FIELD_GEOMETRY = "wkt"
     
@@ -53,25 +57,28 @@ object PlaceDocument {
   
   val FIELD_SEED_URI = "group_uri"
   
-  def apply(place: Place) = {
-    /*
+  def apply(place: Place, seedURI: Option[String]) = {
+    val wktWriter = new WKTWriter()
+    
     val doc = new Document()
-    doc.add(new StringField(FIELD_URI, normalizeURI(place.uri), Field.Store.YES))
-    doc.add(new StringField(FIELD_GROUP_ID, groupId, Field.Store.YES))
+    doc.add(new StringField(FIELD_URI, PlaceIndex.normalizeURI(place.uri), Field.Store.YES))
     doc.add(new TextField(FIELD_TITLE, place.title, Field.Store.YES))
-    place.descriptions.foreach(description => doc.add(new TextField(FIELD_DESCRIPTION, description.label, Field.Store.YES)))
+    place.descriptions.foreach(description => {
+      val fieldName = description.lang.map(FIELD_DESCRIPTION + "_" + _).getOrElse(FIELD_DESCRIPTION)
+      doc.add(new TextField(fieldName, description.label, Field.Store.YES))
+    })
     place.names.foreach(name => {
       name.labels.foreach(label => {
-        doc.add(new TextField(FIELD_NAME_LABEL, label.label, Field.Store.YES)) 
+        val fieldName = label.lang.map(FIELD_NAME + "_" + _).getOrElse(FIELD_NAME) 
+        doc.add(new TextField(fieldName, label.label, Field.Store.YES)) 
       })
-      name.altLabels.foreach(altLabel => doc.add(new TextField(FIELD_NAME_ALTLABEL, altLabel.label, Field.Store.YES)))
     })
-      
     place.locations.foreach(location => doc.add(new StringField(FIELD_GEOMETRY, wktWriter.write(location.geometry), Field.Store.YES)))
+    place.subjects.foreach(subject => doc.add(new StringField(FIELD_SUBJECT, subject, Field.Store.YES)))
+    place.closeMatches.foreach(closeMatch => doc.add(new StringField(FIELD_CLOSE_MATCH, closeMatch, Field.Store.YES)))
+    doc.add(new StringField(FIELD_SEED_URI, seedURI.getOrElse(place.uri), Field.Store.YES))
+    
     doc
-    */
-  }  
-  
+  }
 
-  
 }
