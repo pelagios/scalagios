@@ -3,7 +3,7 @@ package org.pelagios.gazetteer
 import org.apache.lucene.document.Document
 import org.pelagios.api.{ Label, Location, Name, Place }
 import scala.collection.JavaConversions._
-import org.apache.lucene.document.Fieldable
+import org.apache.lucene.index.IndexableField
 
 /** An implementation of the [[Place]] API primitive backed by a Lucene Document.
   *  
@@ -30,7 +30,7 @@ class PlaceDocument private (doc: Document) extends Place {
   lazy val closeMatches: Seq[String] = doc.getValues(FIELD_CLOSE_MATCH).toSeq
   
   // TODO move into abstract super-class once we do doc wrappers for other API primitives!
-  private def toLabel(field: Fieldable): Label = {
+  private def toLabel(field: IndexableField): Label = {
     val language = if (field.name.indexOf('_') > -1) Some(field.name.substring(field.name.indexOf('_') + 1)) else None
     Label(field.stringValue(), language)    
   }

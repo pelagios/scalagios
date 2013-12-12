@@ -1,4 +1,2 @@
-/.cache
-/.classpath
-/.project
-/target
+.classpath
+.project
