@@ -61,7 +61,7 @@ object PlaceDocument {
     val wktWriter = new WKTWriter()
     
     val doc = new Document()
-    doc.add(new StringField(FIELD_URI, PlaceIndex.normalizeURI(place.uri), Field.Store.YES))
+    doc.add(new StringField(FIELD_URI, GazetteerUtils.normalizeURI(place.uri), Field.Store.YES))
     doc.add(new TextField(FIELD_TITLE, place.title, Field.Store.YES))
     place.descriptions.foreach(description => {
       val fieldName = description.lang.map(FIELD_DESCRIPTION + "_" + _).getOrElse(FIELD_DESCRIPTION)
