@@ -11,7 +11,12 @@ object GazetteerUtils {
   }
   
   def getID(uri: String) = {
+    // TODO resolve URIs to ID shortcodes e.g. "pleiades:123456"
     uri
+  }
+  
+  def getURI(id: String) = {
+    // TODO resolve shortcodes to URIs, e.g. "pleiades:123456" -> "http://pleiades.stoa.org/places/123456"
   }
 
 }
