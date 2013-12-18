@@ -8,9 +8,14 @@ import org.apache.lucene.util.Version
 
 trait PlaceIndexReader extends PlaceIndexBase {
   
-  /** Retrieves a name by its URI
-    * @param uri the URI  
-    */
+  def isEmpty: Boolean = {
+    // TODO creating a new reader of every access has some overhead - could be improved
+    val reader = DirectoryReader.open(index)
+    val isEmpty = reader.numDocs() == 0
+    reader.close()
+    isEmpty
+  }
+  
   def findByURI(uri: String): Option[PlaceDocument] = {
     val q = new BooleanQuery()
     q.add(new TermQuery(new Term(PlaceIndex.FIELD_URI, GazetteerUtils.normalizeURI(uri))), BooleanClause.Occur.MUST)
