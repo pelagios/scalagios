@@ -8,7 +8,6 @@ import org.openrdf.rio.RDFFormat
 import java.io.File
 import org.pelagios.tools.geoparser.GeoParser
 import scala.io.Source
-import org.pelagios.tools.geoparser.CSVSerializer
 import org.pelagios.tools.georesolver.GeoResolver
 
 /**
@@ -40,7 +39,7 @@ object TextToCSV extends App {
 
   println("\n#######################################")
   println("### GeoParsing")
-  println("File: " + inputFile.getAbsolutePath)
+  println("File: " + inputFile.getAbsolutePath + "\n")
   val namedEntities = GeoParser.parse(Source.fromFile(inputFile).getLines().mkString("\n"))
   val toponyms = namedEntities.filter(_.category == "LOCATION")
 
