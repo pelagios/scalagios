@@ -18,7 +18,7 @@ import java.io.PrintWriter
  */
 object TextToCSV extends App {
   
-  val inputFile = new File("/home/simonr/Downloads/Isidore")
+  val inputFile = new File("/home/simonr/Workspaces/pelagios/scalagios/Isidore")
     
   private val INDEX_DIR = "index"
   private val GAZETTEER_DATA_PATH = "test-data/pleiades-20120826-migrated.ttl.gz"
