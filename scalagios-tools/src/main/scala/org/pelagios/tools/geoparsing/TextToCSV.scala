@@ -1,15 +1,12 @@
-package org.pelagios.tools
+package org.pelagios.tools.geoparsing
 
-import org.pelagios.gazetteer.PlaceIndex
-import org.pelagios.Scalagios
+import java.io.{ File, FileInputStream, PrintWriter }
 import java.util.zip.GZIPInputStream
-import java.io.FileInputStream
 import org.openrdf.rio.RDFFormat
-import java.io.File
-import org.pelagios.tools.geoparser.GeoParser
+import org.pelagios.Scalagios
+import org.pelagios.gazetteer.PlaceIndex
+import org.pelagios.tools.georesolution.GeoResolver
 import scala.io.Source
-import org.pelagios.tools.georesolver.GeoResolver
-import java.io.PrintWriter
 
 /**
  * Converts a plaintext file to CSV.
@@ -18,7 +15,7 @@ import java.io.PrintWriter
  */
 object TextToCSV extends App {
   
-  val inputFile = new File("/home/simonr/Arbeitsfläche/Notitia Dignitatum/Notitia Dignitatum.txt")
+  val inputFile = new File("/home/simonr/Arbeitsfläche/Ammianus/texts/")
     
   private val INDEX_DIR = "index"
   private val GAZETTEER_DATA_PATH = "test-data/pleiades-20120826-migrated.ttl.gz"

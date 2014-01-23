@@ -1,4 +1,4 @@
-package org.pelagios.tools.georesolver
+package org.pelagios.tools.georesolution
 
 import org.pelagios.api.Place
 import org.pelagios.gazetteer.PlaceIndex

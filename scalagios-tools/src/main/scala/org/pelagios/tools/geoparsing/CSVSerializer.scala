@@ -1,9 +1,7 @@
-package org.pelagios.tools
+package org.pelagios.tools.geoparsing
 
-import java.io.File
-import java.io.PrintWriter
+import java.io.{ File, PrintWriter }
 import org.pelagios.api.Place
-import org.pelagios.tools.geoparser.NamedEntity
 
 object CSVSerializer {
   

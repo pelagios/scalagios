@@ -1,4 +1,4 @@
-package org.pelagios.tools.geoparser
+package org.pelagios.tools.geoparsing
 
 import edu.stanford.nlp.pipeline.{ Annotation, StanfordCoreNLP }
 import edu.stanford.nlp.ling.CoreAnnotations
@@ -28,3 +28,5 @@ object GeoParser {
   }
   
 }
+
+case class NamedEntity(term: String, category: String, offset: Int)
