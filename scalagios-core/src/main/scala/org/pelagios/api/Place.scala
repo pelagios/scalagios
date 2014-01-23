@@ -39,6 +39,12 @@ trait Place {
     */
   def locations: Seq[Location]
   
+  /** dcterms:type
+    *
+    * Place type according to the minimalistic Pleagios feature-type vocabulary 
+    */
+  def placeType: PlaceType.Type
+  
   /** dcterms:subject 
     *  
     * Subject terms for this place (free text or URIs). We recommend using this 

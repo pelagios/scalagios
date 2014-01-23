@@ -8,7 +8,7 @@ import scala.collection.JavaConverters._
 object GeoParser {
 
   val props = new Properties
-  props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref")
+  props.put("annotators", "tokenize, ssplit, pos, lemma, ner") // , parse, dcoref")
   val pipeline = new StanfordCoreNLP(props)
   
   def parse(text: String): Seq[NamedEntity] = {

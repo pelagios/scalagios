@@ -18,7 +18,7 @@ import java.io.PrintWriter
  */
 object TextToCSV extends App {
   
-  val inputFile = new File("/home/simonr/Workspaces/pelagios/scalagios/Isidore")
+  val inputFile = new File("/home/simonr/Arbeitsfläche/Notitia Dignitatum/Notitia Dignitatum.txt")
     
   private val INDEX_DIR = "index"
   private val GAZETTEER_DATA_PATH = "test-data/pleiades-20120826-migrated.ttl.gz"
@@ -42,11 +42,8 @@ object TextToCSV extends App {
       (inputFile.listFiles().toSeq, inputFile.getAbsolutePath + ".csv")
     else
       (Seq(inputFile), inputFile.getAbsolutePath.substring(0, inputFile.getAbsolutePath.lastIndexOf(".")) + ".csv")       
-
-  val printWriter = new PrintWriter(outputFile)
-  printWriter.write(CSVSerializer.header)
   
-  files.foreach(f => {
+  val csv = files.par.map(f => {
     println("\n#######################################")
     println("### GeoParsing: " + f.getAbsolutePath + "\n")      
   
@@ -69,10 +66,13 @@ object TextToCSV extends App {
         Some(f.getName.substring(0, f.getName.lastIndexOf(".")))
       else
         None
-    printWriter.write(CSVSerializer.serialize(toponyms.zip(gazetteerMatches), gdocPart))
-
+        
+    CSVSerializer.serialize(toponyms.zip(gazetteerMatches), gdocPart)
   })
   
+  val printWriter = new PrintWriter(outputFile)
+  printWriter.write(CSVSerializer.header)
+  csv.seq.foreach(lines => printWriter.write(lines))
   printWriter.flush()
   printWriter.close()
   
