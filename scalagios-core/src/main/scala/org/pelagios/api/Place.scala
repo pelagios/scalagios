@@ -43,7 +43,7 @@ trait Place {
     *
     * Place type according to the minimalistic Pleagios feature-type vocabulary 
     */
-  def placeType: PlaceType.Type
+  def placeType: Option[PlaceType.Type]
   
   /** dcterms:subject 
     *  
@@ -86,6 +86,8 @@ private[api] class DefaultPlace (
   
   val locations: Seq[Location] = Seq.empty[Location],
   
+  val placeType: Option[PlaceType.Type] = None,
+  
   val subjects: Seq[String] = Seq.empty[String],
   
   val closeMatches: Seq[String] = Seq.empty[String]
@@ -104,12 +106,14 @@ object Place extends AbstractApiCompanion {
             names: ObjOrSeq[Name] = new ObjOrSeq(Seq.empty[Name]),
   
             locations: ObjOrSeq[Location] = new ObjOrSeq(Seq.empty[Location]),
-  
+            
+            placeType: ObjOrOption[PlaceType.Type] = new ObjOrOption(None),
+
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
-  
+   
             closeMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
     
-    new DefaultPlace(uri, title, descriptions.seq, names.seq, locations.seq, subjects.seq, closeMatches.seq)
+    new DefaultPlace(uri, title, descriptions.seq, names.seq, locations.seq, placeType.option, subjects.seq, closeMatches.seq)
   }
   
 }

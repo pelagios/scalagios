@@ -46,6 +46,8 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[NameR
   
   def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toLabel(_))
   
+  def placeType = None
+  
   // TODO
   def subjects = Seq.empty[String]
   

@@ -53,12 +53,13 @@ class PelagiosDataParser extends ResourceCollector {
           work.get.expressions = thing +: work.get.expressions
         }
       }
-    })    
+    })  
     
     /** Link annotations and annotated things **/
-    val annotationsPerThing = allAnnotations.groupBy(_.hasTarget)
+    val annotationsPerThing = allAnnotations.groupBy(_.resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty"))
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
+      annotations.foreach(_.hasTarget = thing)
       thing.annotations = annotations.toSeq.sortWith((a, b) => { // Sort by index number if any
         if (a.index.isDefined && b.index.isDefined)
           a.index.get < b.index.get
@@ -86,7 +87,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   val uri = resource.uri
   
-  val hasTarget = resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty") // '_:empty' should never happen!
+  var hasTarget: AnnotationTarget = null // resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty")
   
   val place = resource.get(OA.hasBody).filter(_.isInstanceOf[URI]).map(_.stringValue)
   

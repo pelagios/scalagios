@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-trait AnnotatedThing {
+trait AnnotatedThing extends AnnotationTarget {
   
   /** A URI for the annotated thing.
     *  

@@ -94,7 +94,7 @@ object RDFSerializer {
       model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
 
       // oa:hasTarget
-      model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget))
+      model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget.uri))
       
       // oa:hasBody (place)
       annotation.place.foreach(uri => model.add(rdfAnnotation, OA.hasBody, f.createURI(uri)))

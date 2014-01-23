@@ -23,13 +23,9 @@ trait Annotation {
   
   /** oa:hasTarget 
     *
-    * Note: we currently restrict to exactly one target, and require that it
-    * points to an [[AnnotatedItem]].
-    * 
-    * TODO parts of [[AnnotatedItem]]s
-    * TODO type shouldn't be String, but 'Target' (?)
+    * Note: we currently restrict to exactly one target.
     */
-  def hasTarget: String
+  def hasTarget: AnnotationTarget
 
   /** Place reference expressed through oa:hasBody
     *
@@ -127,7 +123,7 @@ private[api] class DefaultAnnotation(
     
   val uri: String,
    
-  target: AnnotatedThing,
+  val hasTarget: AnnotationTarget,
   
   val place: Seq[String] = Seq.empty[String],
   
@@ -151,12 +147,10 @@ private[api] class DefaultAnnotation(
   
 ) extends Annotation {
   
-  if (target.isInstanceOf[DefaultAnnotatedThing])
-      target.annotations.asInstanceOf[ListBuffer[Annotation]].append(this)
+  if (hasTarget.isInstanceOf[DefaultAnnotatedThing])
+      hasTarget.asInstanceOf[DefaultAnnotatedThing].annotations.asInstanceOf[ListBuffer[Annotation]].append(this)
     else
       throw new RuntimeException("cannot mix different model impelementation types - requires instance of DefaultAnnotatedThing")
-  
-  val hasTarget = target.uri
 
 }
 

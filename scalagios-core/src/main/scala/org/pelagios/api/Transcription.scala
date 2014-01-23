@@ -18,9 +18,6 @@ trait Transcription{
   
   def lang: Option[String]
   
-  // TODO temporary hack! Offset needs to go into the target!
-  def offset: Option[Int]
-  
 }
 
 /** A default POJO-style implementation of 'Transcription' **/
