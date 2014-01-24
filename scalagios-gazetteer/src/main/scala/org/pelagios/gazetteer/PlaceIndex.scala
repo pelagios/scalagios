@@ -31,6 +31,8 @@ object PlaceIndex {
     
   val FIELD_GEOMETRY = "wkt"
     
+  val FIELD_CATEGORY = "category"
+    
   val FIELD_SUBJECT = "subject"
     
   val FIELD_CLOSE_MATCH = "close_match"

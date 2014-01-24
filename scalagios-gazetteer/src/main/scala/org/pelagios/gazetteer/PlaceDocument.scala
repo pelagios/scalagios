@@ -24,13 +24,16 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   lazy val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
   
-  lazy val placeCategory: Option[PlaceCategory.Category] = None
+  lazy val placeCategory: Option[PlaceCategory.Category] = toOption(doc.get(PlaceIndex.FIELD_CATEGORY)).map(PlaceCategory.withName(_))
   
   lazy val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   
   lazy val closeMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_CLOSE_MATCH).toSeq
   
   lazy val seedURI: String = doc.get(PlaceIndex.FIELD_SEED_URI)
+  
+  private def toOption(string: String): Option[String] =
+    if (string == null) None else Option(string)
   
   // TODO move into abstract super-class once we do doc wrappers for other API primitives!
   private def toLabel(field: IndexableField): Label = {
@@ -60,6 +63,8 @@ object PlaceDocument {
       })
     })
     place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, wktWriter.write(location.geometry), Field.Store.YES)))
+    if (place.placeCategory.isDefined)
+      doc.add(new StringField(PlaceIndex.FIELD_CATEGORY, place.placeCategory.get.toString, Field.Store.YES))
     place.subjects.foreach(subject => doc.add(new StringField(PlaceIndex.FIELD_SUBJECT, subject, Field.Store.YES)))
     place.closeMatches.foreach(closeMatch => doc.add(new StringField(PlaceIndex.FIELD_CLOSE_MATCH, closeMatch, Field.Store.YES)))
     doc.add(new StringField(PlaceIndex.FIELD_SEED_URI, seedURI.getOrElse(place.uri), Field.Store.YES))
