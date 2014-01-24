@@ -24,13 +24,19 @@ object PelagiosPlaceCategories extends BaseVocab("http://pelagios.github.io/voca
     case PlaceCategory.MAN_MADE_STRUCTURE => manMadeStructure
   }  
   
-  def toCategory(uri: Value): Option[PlaceCategory.Category] = uri match {
-    case settlement => Some(PlaceCategory.SETTLEMENT)
-    case region => Some(PlaceCategory.REGION)
-    case naturalFeature => Some(PlaceCategory.NATURAL_FEATURE)
-    case ethos => Some(PlaceCategory.ETHNOS)
-    case manMadeStructure => Some(PlaceCategory.MAN_MADE_STRUCTURE)
-    case _ => None
+  def toCategory(uri: Value): Option[PlaceCategory.Category] = {
+    if (uri == settlement)
+      Some(PlaceCategory.SETTLEMENT)
+    else if (uri == region)
+      Some(PlaceCategory.REGION)
+    else if (uri == naturalFeature)
+      Some(PlaceCategory.NATURAL_FEATURE)
+    else if (uri == ethnos)
+      Some(PlaceCategory.ETHNOS)
+    else if (uri == manMadeStructure)
+      Some(PlaceCategory.MAN_MADE_STRUCTURE)
+    else
+      None
   }
   
 }
