@@ -2,7 +2,7 @@ package org.pelagios.gazetteer
 
 import org.apache.lucene.document.{ Document, Field, StringField, TextField }
 import org.apache.lucene.index.IndexableField
-import org.pelagios.api.{ Label, Location, Name, Place, PlaceType }
+import org.pelagios.api.{ Label, Location, Name, Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 
@@ -24,7 +24,7 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   lazy val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
   
-  lazy val placeType: Option[PlaceType.Value] = None
+  lazy val placeType: Option[PlaceCategory.Category] = None
   
   lazy val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   

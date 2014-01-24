@@ -36,14 +36,16 @@ object GazetteerSerializer {
         writer.println("  dcterms:description \"" + d.label.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
      
       if (place.placeType.isDefined)
-        writer.println("  dcterms:type <" + PelagiosPlaceTypes.fromType(place.placeType.get) + "> ;")
+        writer.println("  dcterms:type <" + PelagiosPlaceTypes.fromCategory(place.placeType.get) + "> ;")
 
       place.subjects.foreach(s => 
         writer.println("  dcterms:subject <" + s + "> ;"))
 
       place.names.foreach(n => {
         (n.labels ++ n.altLabels).foreach(l => {
-          writer.println("  pleiades:hasName [ rdfs:label \"" + l.label + l.lang.map("@" + _).getOrElse("") + "\" ] ;")
+          val label = l.label.trim
+          if (!label.isEmpty)
+            writer.println("  pleiades:hasName [ rdfs:label \"" + label + l.lang.map("@" + _).getOrElse("") + "\" ] ;")
         })
       })
       

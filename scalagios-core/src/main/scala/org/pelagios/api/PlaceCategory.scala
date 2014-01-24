@@ -1,8 +1,8 @@
 package org.pelagios.api
 
-object PlaceType extends Enumeration {
+object PlaceCategory extends Enumeration {
 
-  type Type = Value
+  type Category = Value
   
   val SETTLEMENT = Value("SETTLEMENT")
   

@@ -4,7 +4,7 @@ import java.io.FileInputStream
 import java.util.zip.GZIPInputStream
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
-import org.pelagios.api.{ Label, Location, Name, Place, PlaceType }
+import org.pelagios.api.{ Label, Location, Name, Place, PlaceCategory }
 import org.pelagios.legacy.LegacyInterop
 
 object ConvertPleiadesDump extends App {
@@ -35,11 +35,11 @@ object ConvertPleiadesDump extends App {
     .map(_.stringValue)
  
   private val typeMappings = Seq(
-      (SETTLEMENT -> PlaceType.SETTLEMENT),
-      (NATURAL_FEATURE -> PlaceType.NATURAL_FEATURE),
-      (REGION -> PlaceType.REGION),
-      (ETHNOS -> PlaceType.ETHNOS),
-      (MAN_MADE_STRUCTURE -> PlaceType.MAN_MADE_STRUCTURE))
+      (SETTLEMENT -> PlaceCategory.SETTLEMENT),
+      (NATURAL_FEATURE -> PlaceCategory.NATURAL_FEATURE),
+      (REGION -> PlaceCategory.REGION),
+      (ETHNOS -> PlaceCategory.ETHNOS),
+      (MAN_MADE_STRUCTURE -> PlaceCategory.MAN_MADE_STRUCTURE))
 
   val importedPlaces = LegacyInterop.parsePleiadesRDF(is, "http://pleiades.stoa.org/", RDFFormat.TURTLE).map(legacy => {
     val descriptions = legacy.comment.map(comment => Seq(Label(comment))).getOrElse(Seq.empty[Label])
@@ -63,7 +63,7 @@ object ConvertPleiadesDump extends App {
   
   println("Migrated " + importedPlaces.size + " places")
   
-  private def getPlaceType(pleiadesType: String): Option[PlaceType.Type] = {
+  private def getPlaceType(pleiadesType: String): Option[PlaceCategory.Category] = {
     val mapping = typeMappings.find { case (pleiadesTypes, pelagiosType) =>
       pleiadesTypes.contains(pleiadesType)
     }    

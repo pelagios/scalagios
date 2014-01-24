@@ -1,6 +1,6 @@
 package org.pelagios.rdf.vocab
 
-import org.pelagios.api.PlaceType
+import org.pelagios.api.PlaceCategory
 import org.openrdf.model.URI
 
 object PelagiosPlaceTypes extends BaseVocab("http://pelagios.github.io/vocab/placeTypes#"){
@@ -15,12 +15,12 @@ object PelagiosPlaceTypes extends BaseVocab("http://pelagios.github.io/vocab/pla
 
   val manMadeStructure = createURI("manMadeStructure")
   
-  def fromType(placeType: PlaceType.Type): URI = placeType match {
-    case PlaceType.SETTLEMENT => settlement
-    case PlaceType.REGION => region
-    case PlaceType.NATURAL_FEATURE => naturalFeature
-    case PlaceType.ETHNOS => ethnos
-    case PlaceType.MAN_MADE_STRUCTURE => manMadeStructure
+  def fromCategory(placeType: PlaceCategory.Category): URI = placeType match {
+    case PlaceCategory.SETTLEMENT => settlement
+    case PlaceCategory.REGION => region
+    case PlaceCategory.NATURAL_FEATURE => naturalFeature
+    case PlaceCategory.ETHNOS => ethnos
+    case PlaceCategory.MAN_MADE_STRUCTURE => manMadeStructure
   }  
   
 }
