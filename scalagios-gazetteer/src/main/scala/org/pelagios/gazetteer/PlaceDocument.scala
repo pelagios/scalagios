@@ -24,7 +24,7 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   lazy val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
   
-  lazy val placeType: Option[PlaceCategory.Category] = None
+  lazy val placeCategory: Option[PlaceCategory.Category] = None
   
   lazy val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   

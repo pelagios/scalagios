@@ -46,7 +46,7 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[NameR
   
   def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toLabel(_))
   
-  def placeType = None
+  def placeCategory = resource.getFirst(DCTerms.typ).map(uri => PelagiosPlaceCategories.toCategory(uri)).flatten
   
   // TODO
   def subjects = Seq.empty[String]

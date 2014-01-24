@@ -52,11 +52,11 @@ object ConvertPleiadesDump extends App {
     val locations = 
       legacy.location.map(location => Seq(Location(location))).getOrElse(Seq.empty[Location])
       
-    val placeType = legacy.featureType.map(getPlaceType(_)).flatten
+    val placeCategory = legacy.featureType.map(getPlaceType(_)).flatten
     
     Place(uri = legacy.uri, title = legacy.label.getOrElse("[unnamed]"),
       descriptions = descriptions, names = names, locations = locations,
-      placeType = placeType)
+      placeCategory = placeCategory)
   })
   
   Scalagios.writePlaces(importedPlaces, "/home/simonr/Arbeitsfläche/migrated.ttl", RDFFormat.TURTLE)
