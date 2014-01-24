@@ -62,7 +62,7 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[NameR
   */
 private[parser] class NameResource(val resource: Resource) extends Name {
   
-  def labels: Seq[Label] = resource.get(SKOS.label).map(ResourceCollector.toLabel(_))
+  def labels: Seq[Label] = resource.get(RDFS.LABEL).map(ResourceCollector.toLabel(_))
   
   def altLabels: Seq[Label] = resource.get(SKOS.altLabel).map(ResourceCollector.toLabel(_))
     
