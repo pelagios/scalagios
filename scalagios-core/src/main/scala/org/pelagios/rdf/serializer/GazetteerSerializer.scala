@@ -22,13 +22,12 @@ object GazetteerSerializer {
     // Write header
     writer.println("@prefix dcterms: <http://purl.org/dc/terms/> .")   
     writer.println("@prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .")   
-    writer.println("@prefix pelagios: <http://pelagios.github.io/terms#> .")
+    writer.println("@prefix pelagios: <http://pelagios.github.io/vocab/terms#> .")
     writer.println("@prefix pleiades: <http://pleiades.stoa.org/places/vocab#> .\n")
     
     val wktWriter = new WKTWriter()
     
     places.foreach(place => {
-      // 
       writer.println("<" + place.uri + "> a pelagios:PlaceRecord ;")
       writer.println("  dcterms:title \"" + place.title.replaceAll("\\\"", "\\\\\"") + "\" ;")
       place.descriptions.foreach(d => 
