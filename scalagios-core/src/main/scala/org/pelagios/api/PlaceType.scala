@@ -12,4 +12,6 @@ object PlaceType extends Enumeration {
   
   val NATURAL_FEATURE = Value("NATURAL_FEATURE")
   
+  val MAN_MADE_STRUCTURE = Value("MAN_MADE_STRUCTURE")
+  
 }

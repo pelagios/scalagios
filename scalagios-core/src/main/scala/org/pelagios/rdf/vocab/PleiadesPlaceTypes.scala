@@ -51,7 +51,7 @@ object PleiadesPlaceTypes extends BaseVocab("http://pleiades.stoa.org/vocabulari
   
   val cemetery = createURI("cemetery")
 
-  val production = createURI("production")
+  val productionCenter = createURI("production")
   
   val hill = createURI("hill")
   
@@ -109,7 +109,7 @@ object PleiadesPlaceTypes extends BaseVocab("http://pleiades.stoa.org/vocabulari
   
   val province = createURI("province")
   
-  val urban = createURI("urban")
+  val urbanArea = createURI("urban")
   
   val rapid = createURI("rapid")
   

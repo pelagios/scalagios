@@ -4,6 +4,10 @@ import java.io.{ File, FileInputStream }
 import org.pelagios.Scalagios
 import org.pelagios.legacy.api.{ GeoAnnotation, Place }
 import org.pelagios.legacy.rdf.parser.{ AnnotationCollector, PlaceCollector}
+import java.io.InputStream
+import org.openrdf.rio.RDFFormat
+import org.openrdf.rio.RDFParserRegistry
+import org.openrdf.rio.RDFParser
 
 /** Legacy import utilities. **/
 object LegacyInterop {
@@ -21,14 +25,20 @@ object LegacyInterop {
     annotationCollector.getAnnotations
   }
   
-  def parsePleiadesDumps(files: Seq[File]): Seq[Place] = files.map(file => {
-    println("Parsing file " + file.getName)
-    
+  def parsePleiadesRDF(files: Seq[File]): Seq[Place] = files.map(file => {
     val parser = Scalagios.getParser(file.getName)
     val placeCollector = new PlaceCollector      
     parser.setRDFHandler(placeCollector)
     parser.parse(new FileInputStream(file), "http://pelagios.github.io/")
     placeCollector.getPlaces     
   }).flatten
+  
+  def parsePleiadesRDF(is: InputStream, base: String, format: RDFFormat): Iterable[Place] = {
+    val parser = RDFParserRegistry.getInstance.get(format).getParser
+    val placeCollector = new PlaceCollector()      
+    parser.setRDFHandler(placeCollector)
+    parser.parse(is, base)
+    placeCollector.getPlaces    
+  }
   
 }
