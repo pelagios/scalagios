@@ -39,9 +39,9 @@ object Scalagios {
     * @param file the dump file to parse
     * @return the list of annotated things, with annotations in-lined
     */
-  def readFromFile(file: String): Iterable[AnnotatedThing] = {
+  def readAnnotations(file: String): Iterable[AnnotatedThing] = {
     val f = new File(file)
-    readFromStream(new FileInputStream(f), new URI("file://" + f.getAbsolutePath).toString, getParser(f.getName))
+    readAnnotations(new FileInputStream(f), new URI("file://" + f.getAbsolutePath).toString, getParser(f.getName))
   }
   
   /** Parses Pelagios annotations from an input stream.
@@ -50,10 +50,10 @@ object Scalagios {
     * @param baseURI the base URI
     * @param format the RDF serialization format the data is in  
     */
-  def readFromStream(is: InputStream, baseURI: String, format: RDFFormat): Iterable[AnnotatedThing] =
-    readFromStream(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
+  def readAnnotations(is: InputStream, baseURI: String, format: RDFFormat): Iterable[AnnotatedThing] =
+    readAnnotations(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
   
-  private def readFromStream(is: InputStream, baseURI: String, parser: RDFParser): Iterable[AnnotatedThing] = {
+  private def readAnnotations(is: InputStream, baseURI: String, parser: RDFParser): Iterable[AnnotatedThing] = {
     val handler = new PelagiosDataParser
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
@@ -66,7 +66,7 @@ object Scalagios {
     * @param out the output stream
     * @param format the RDF serialization format
     */
-  def writeToStream(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat = RDFFormat.TURTLE) = {
+  def writeAnnotations(data: Iterable[AnnotatedThing], out: OutputStream, format: RDFFormat) = {
     if (format == RDFFormat.TURTLE)
       TTLTemplateSerializer.writeToStream(data, out)
     else
@@ -79,7 +79,7 @@ object Scalagios {
     * @param out the output file
     * @param format the RDF serialization format
     */
-  def writeToFile(data: Iterable[AnnotatedThing], file: String, format: RDFFormat = RDFFormat.TURTLE) = {
+  def writeAnnotations(data: Iterable[AnnotatedThing], file: String, format: RDFFormat) = {
     if (format == RDFFormat.TURTLE)
       TTLTemplateSerializer.writeToFile(data, new File(file))
     else
@@ -91,8 +91,8 @@ object Scalagios {
     *  @param file the gazetteer dump file to parse
     *  @return the places, with names and locations in-lined  
     */
-  def parseGazetteer(file: File): Iterable[Place] =
-    parseGazetteer(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
+  def readPlaces(file: File): Iterable[Place] =
+    readPlaces(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
   
   /** Parses Pelagios-style gazetteer data from an input stream.
     * 
@@ -100,10 +100,10 @@ object Scalagios {
     * @param baseURI the base URI
     * @param format the RDF serialization format the data is in
     */
-  def parseGazetteer(is: InputStream, baseURI: String, format: RDFFormat): Iterable[Place] =
-    parseGazetteer(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
+  def readPlaces(is: InputStream, baseURI: String, format: RDFFormat): Iterable[Place] =
+    readPlaces(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
   
-  private def parseGazetteer(is: InputStream, baseURI:String, parser: RDFParser): Iterable[Place] = {
+  private def readPlaces(is: InputStream, baseURI:String, parser: RDFParser): Iterable[Place] = {
     val handler = new GazetteerParser
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)

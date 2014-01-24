@@ -12,7 +12,7 @@ class GazetteerParserTest extends FunSuite {
   val TEST_FILE = "src/test/resources/test-places-pleiades.ttl"
 
   test("Gazetteer Dump Import") {
-    val places = Scalagios.parseGazetteer(new File(TEST_FILE))
+    val places = Scalagios.readPlaces(new File(TEST_FILE))
     assert(places.size == 483, "invalid number of places")
     places.foreach(place => {
       assert(place.title != null, "title is null")

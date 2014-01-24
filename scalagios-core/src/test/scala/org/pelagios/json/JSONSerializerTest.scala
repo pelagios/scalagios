@@ -14,7 +14,7 @@ class JSONSerializerTest extends FunSuite {
   
   test("Testing Annotation-to-GeoJSON serialization") {
     // Parse test data
-    val places = Scalagios.parseGazetteer(new File(TEST_FILE))
+    val places = Scalagios.readPlaces(new File(TEST_FILE))
     
     val json = JSONSerializer.serializePlaces(places.toSeq, true)
     println(json)

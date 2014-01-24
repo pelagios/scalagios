@@ -13,7 +13,7 @@ class PelagiosDataParserTest extends FunSuite {
     
   test("Pelagios Data Dump Import") {
     // Parse test data
-    val things = Scalagios.readFromFile(TEST_FILE)
+    val things = Scalagios.readAnnotations(TEST_FILE)
     
     // Dump contains one work with one expression - verify there is only one top-level AnnotatedThing
     assert(things.size == 1, "object graph contains wrong number of AnnotatedThings (" + things.size + ")")
