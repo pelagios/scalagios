@@ -1,4 +1,4 @@
-package org.pelagios.api.text
+package org.pelagios.api.targets
 
 import org.pelagios.api.{AnnotatedThing, AnnotationTarget }
 

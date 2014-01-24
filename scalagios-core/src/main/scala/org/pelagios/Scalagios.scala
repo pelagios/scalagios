@@ -25,8 +25,9 @@ import java.io.FileOutputStream
 import org.openrdf.rio.RDFWriterFactory
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.Writer
-import org.pelagios.rdf.serializer.RDFSerializer
+import org.pelagios.rdf.serializer.PelagiosDataSerializer
 import org.pelagios.rdf.serializer.TTLTemplateSerializer
+import org.pelagios.rdf.serializer.GazetteerSerializer
 
 /** A utility to parse & write Pelagios data.
   *
@@ -70,7 +71,7 @@ object Scalagios {
     if (format == RDFFormat.TURTLE)
       TTLTemplateSerializer.writeToStream(data, out)
     else
-      RDFSerializer.writeToStream(data, out, format)
+      PelagiosDataSerializer.writeToStream(data, out, format)
   }
 
   /** Writes Pelagios data to an RDF file.
@@ -83,7 +84,7 @@ object Scalagios {
     if (format == RDFFormat.TURTLE)
       TTLTemplateSerializer.writeToFile(data, new File(file))
     else
-      RDFSerializer.writeToFile(data, new File(file), format)
+      PelagiosDataSerializer.writeToFile(data, new File(file), format)
   }
     
   /** Parses a Pelagios-style gazetteer dump file.
@@ -109,6 +110,9 @@ object Scalagios {
     parser.parse(is, baseURI)
     handler.places    
   }
+  
+  def writePlaces(data: Iterable[Place], file: String, format: RDFFormat) =
+    GazetteerSerializer.writeToFile(data, file, format)
   
   private[pelagios] def getParser(file: String): RDFParser = file match {
     case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()

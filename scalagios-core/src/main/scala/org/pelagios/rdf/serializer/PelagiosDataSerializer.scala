@@ -17,7 +17,7 @@ import java.io.FileOutputStream
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-object RDFSerializer {
+object PelagiosDataSerializer {
   
   private def serializeAgent(agent: Agent, model: Model): BNode = {
     val f = model.getValueFactory()
