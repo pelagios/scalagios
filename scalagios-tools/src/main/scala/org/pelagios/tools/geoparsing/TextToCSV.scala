@@ -29,7 +29,7 @@ object TextToCSV extends App {
   if (idx.isEmpty) {
     println("There is no gazetter index yet - just a second...")     
     println("Loading Pleiades data")
-    val pleiades = Scalagios.parseGazetteer(new GZIPInputStream(new FileInputStream(GAZETTEER_DATA_PATH)), "http://pleiades.stoa.org/", RDFFormat.TURTLE)
+    val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(GAZETTEER_DATA_PATH)), "http://pleiades.stoa.org/", RDFFormat.TURTLE)
     println("Building index")
     idx.addPlaces(pleiades)      
     println("Index complete")          

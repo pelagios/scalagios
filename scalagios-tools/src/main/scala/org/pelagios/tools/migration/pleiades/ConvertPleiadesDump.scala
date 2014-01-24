@@ -59,7 +59,9 @@ object ConvertPleiadesDump extends App {
       placeType = placeType)
   })
   
-  val grouped = importedPlaces.groupBy(_.placeType).toSeq.foreach(tuple => println(tuple._1 + " - " + tuple._2.size))
+  Scalagios.writePlaces(importedPlaces, "/home/simonr/Arbeitsfläche/migrated.ttl", RDFFormat.TURTLE)
+  
+  println("Migrated " + importedPlaces.size + " places")
   
   private def getPlaceType(pleiadesType: String): Option[PlaceType.Type] = {
     val mapping = typeMappings.find { case (pleiadesTypes, pelagiosType) =>

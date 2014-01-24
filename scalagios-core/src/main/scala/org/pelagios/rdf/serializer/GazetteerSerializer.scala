@@ -4,6 +4,8 @@ import com.vividsolutions.jts.io.WKTWriter
 import java.io.{ File, PrintWriter }
 import org.pelagios.api.Place
 import org.openrdf.rio.RDFFormat
+import org.pelagios.rdf.vocab.PleiadesPlaceTypes
+import org.pelagios.rdf.vocab.PelagiosPlaceTypes
 
 object GazetteerSerializer {
 
@@ -34,7 +36,7 @@ object GazetteerSerializer {
         writer.println("  dcterms:description \"" + d.label.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
      
       if (place.placeType.isDefined)
-        writer.println("  dcterms:type <" + place.placeType.get + "> ;")
+        writer.println("  dcterms:type <" + PelagiosPlaceTypes.fromType(place.placeType.get) + "> ;")
 
       place.subjects.foreach(s => 
         writer.println("  dcterms:subject <" + s + "> ;"))
