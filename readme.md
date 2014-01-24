@@ -22,7 +22,7 @@ _Locations_, etc., and provides utilities to read and write Pelagios annotation 
 Reading Pelagios RDF data from a file:
 
 ```scala
-val data: Iterable[AnnotatedThing] = Scalagios.readFromFile("data-file.ttl")
+val data: Iterable[AnnotatedThing] = Scalagios.readAnnotations("data-file.ttl")
 
 data.foreach(thing => {
   thing.annotations.foreach(annotation => {
@@ -40,7 +40,7 @@ val annotation = Annotation("http://pelagios.org/egds/01/annotations/01", thing,
                             place = "http://pleiades.stoa.org/places/423025",
                             transcription = "ROMA")
 
-Scalagios.writeToFile(annotatedThing, "data-file.ttl")
+Scalagios.writeAnnotations(annotatedThing, "data-file.ttl")
 ```
 
 ## scalagios-gazetteer
