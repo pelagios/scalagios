@@ -7,7 +7,7 @@ scalaVersion := "2.10.0"
 /** Runtime dependencies **/
 libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.5",
-  "edu.stanford.nlp" % "stanford-corenlp" % "3.2.0"
+  "edu.stanford.nlp" % "stanford-corenlp" % "3.3.1"
 )
 
 /** Test dependencies **/
