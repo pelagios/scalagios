@@ -43,7 +43,7 @@ trait Place {
     *
     * Place type according to the minimalistic Pleagios feature-type vocabulary 
     */
-  def placeCategory: Option[PlaceCategory.Category]
+  def category: Option[PlaceCategory.Category]
   
   /** dcterms:subject 
     *  
@@ -86,7 +86,7 @@ private[api] class DefaultPlace (
   
   val locations: Seq[Location] = Seq.empty[Location],
   
-  val placeCategory: Option[PlaceCategory.Category] = None,
+  val category: Option[PlaceCategory.Category] = None,
   
   val subjects: Seq[String] = Seq.empty[String],
   

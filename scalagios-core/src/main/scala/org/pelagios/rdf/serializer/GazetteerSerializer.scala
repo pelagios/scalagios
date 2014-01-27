@@ -33,8 +33,8 @@ object GazetteerSerializer {
       place.descriptions.foreach(d => 
         writer.println("  dcterms:description \"" + d.label.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
      
-      if (place.placeCategory.isDefined)
-        writer.println("  dcterms:type <" + PelagiosPlaceCategories.fromCategory(place.placeCategory.get) + "> ;")
+      if (place.category.isDefined)
+        writer.println("  dcterms:type <" + PelagiosPlaceCategories.fromCategory(place.category.get) + "> ;")
 
       place.subjects.foreach(s => 
         writer.println("  dcterms:subject <" + s + "> ;"))
