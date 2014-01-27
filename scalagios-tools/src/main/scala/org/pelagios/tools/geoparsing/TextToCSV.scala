@@ -2,15 +2,12 @@ package org.pelagios.tools.geoparsing
 
 import java.io.{ File, FileInputStream, PrintWriter }
 import java.util.zip.GZIPInputStream
+import javax.swing.JFileChooser
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
 import org.pelagios.gazetteer.PlaceIndex
 import org.pelagios.tools.georesolution.GeoResolver
 import scala.io.Source
-import java.awt.Frame
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
-import java.awt.FileDialog
 
 /**
  * Converts a plaintext file to CSV.
@@ -24,7 +21,6 @@ object TextToCSV extends App {
   
   val fileChooser = new FileChooser()
   val inputFile = fileChooser.getFile()
-  fileChooser.dispose()
   
   if (inputFile.isEmpty) {
     println("Operation canceled by user.")
@@ -92,18 +88,18 @@ object TextToCSV extends App {
 
 }
 
-class FileChooser extends Frame {
+class FileChooser {
   
-  val fd = new FileDialog(this, "Open File or Directory", FileDialog.LOAD)
-  fd.setVisible(true)
-  
+  val chooser = new JFileChooser()
+  chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES)
+ 
   def getFile(): Option[File] = {
-    val f = fd.getFile()
-    val dir = fd.getDirectory()
-    if (f == null)
+    val result = chooser.showOpenDialog(null)
+    if (result == JFileChooser.CANCEL_OPTION) {
       None
-    else
-      Some(new File(dir, f))
+    } else {
+      Some(chooser.getSelectedFile())
+    }
   }
   
 }
