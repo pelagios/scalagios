@@ -4,6 +4,10 @@ version := "0.1.0"
 
 scalaVersion := "2.10.0"
 
+packSettings
+
+packMain := Map("geoparser" -> "org.pelagios.tools.geoparsing.TextToCSV")
+
 /** Runtime dependencies **/
 libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.5",
