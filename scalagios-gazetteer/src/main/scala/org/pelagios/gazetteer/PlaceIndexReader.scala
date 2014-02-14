@@ -67,7 +67,13 @@ trait PlaceIndexReader extends PlaceIndexBase {
     reader.close()
     
     // TODO temporary hack - for now we only return the list of places (and no links)
-    Network(places, Seq.empty[(Int, Int)])
+    Network(places, buildGraph(places))
+  }
+  
+  private def buildGraph(places: Seq[PlaceDocument]): Seq[(Int, Int)] = {
+    val edges = places.map(from => from.closeMatches.map(to => (from.uri, to))).flatten
+    def idx(uri: String): Int = places.indexWhere(_.uri == uri)
+    edges.map(tuple => (idx(tuple._1), idx(tuple._2)))
   }
 
 }
