@@ -17,20 +17,19 @@ object GeoParser {
 
     val sentences = document.get(classOf[CoreAnnotations.SentencesAnnotation])
     sentences.asScala.toSeq.map(sentence => {
-	  val tokens = sentence.get(classOf[CoreAnnotations.TokensAnnotation]).asScala.toSeq
-	  tokens.foldLeft(Seq.empty[NamedEntity])((result, nextToken) => {
-		val previousNE = if (result.size > 0) Some(result.head) else None		
+      val tokens = sentence.get(classOf[CoreAnnotations.TokensAnnotation]).asScala.toSeq
+      tokens.foldLeft(Seq.empty[NamedEntity])((result, nextToken) => {
+        val previousNE = if (result.size > 0) Some(result.head) else None		
         val term = nextToken.get(classOf[CoreAnnotations.TextAnnotation])
         val category = nextToken.get(classOf[CoreAnnotations.NamedEntityTagAnnotation])
         val offset = nextToken.beginPosition  
 
-        if (previousNE.isDefined && previousNE.get.category == category) {
-		  NamedEntity(previousNE.get.term + " " + term, category, previousNE.get.offset) +: result.tail
-	    } else {
-		  NamedEntity(term, category, offset) +: result
-	    }        
+        if (previousNE.isDefined && previousNE.get.category == category)
+          NamedEntity(previousNE.get.term + " " + term, category, previousNE.get.offset) +: result.tail
+        else
+          NamedEntity(term, category, offset) +: result     
       })
-	}).flatten    
+    }).flatten    
   }
   
 }
