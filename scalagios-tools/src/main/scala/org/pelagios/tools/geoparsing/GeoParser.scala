@@ -15,16 +15,22 @@ object GeoParser {
     val document = new Annotation(text)
     pipeline.annotate(document)
 
-    val sentences = document.get(classOf[CoreAnnotations.SentencesAnnotation]).asScala
-    sentences.toSeq.map(sentence => {
-      sentence.get(classOf[CoreAnnotations.TokensAnnotation]).asScala.toSeq.map(token => {
-        val ne = token.get(classOf[CoreAnnotations.TextAnnotation])
-        val category = token.get(classOf[CoreAnnotations.NamedEntityTagAnnotation])
-        val offset = token.beginPosition  
-        
-        NamedEntity(ne, category, offset)
+    val sentences = document.get(classOf[CoreAnnotations.SentencesAnnotation])
+    sentences.asScala.toSeq.map(sentence => {
+	  val tokens = sentence.get(classOf[CoreAnnotations.TokensAnnotation]).asScala.toSeq
+	  tokens.foldLeft(Seq.empty[NamedEntity])((result, nextToken) => {
+		val previousNE = if (result.size > 0) Some(result.head) else None		
+        val term = nextToken.get(classOf[CoreAnnotations.TextAnnotation])
+        val category = nextToken.get(classOf[CoreAnnotations.NamedEntityTagAnnotation])
+        val offset = nextToken.beginPosition  
+
+        if (previousNE.isDefined && previousNE.get.category == category) {
+		  NamedEntity(previousNE.get.term + " " + term, category, previousNE.get.offset) +: result.tail
+	    } else {
+		  NamedEntity(term, category, offset) +: result
+	    }        
       })
-    }).flatten    
+	}).flatten    
   }
   
 }
