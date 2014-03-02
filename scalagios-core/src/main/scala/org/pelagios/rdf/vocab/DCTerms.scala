@@ -25,6 +25,8 @@ object DCTerms extends BaseVocab("http://purl.org/dc/terms/") {
   
   val subject = createURI("subject")
   
+  val temporal = createURI("temporal")
+  
   val title = createURI("title")
   
   val typ = createURI("type")

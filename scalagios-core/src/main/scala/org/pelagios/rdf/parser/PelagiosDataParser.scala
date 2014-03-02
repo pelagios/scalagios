@@ -8,6 +8,7 @@ import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
+import java.text.SimpleDateFormat
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -85,6 +86,8 @@ class PelagiosDataParser extends ResourceCollector {
   */
 private[parser] class AnnotationResource(val resource: Resource) extends Annotation {
   
+  private val DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd")
+  
   val uri = resource.uri
   
   var hasTarget: AnnotationTarget = null // resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty")
@@ -101,8 +104,8 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   // TODO 
   def annotatedBy: Option[Agent] = None
 
-  // TODO
-  def annotatedAt: Option[Date] = None
+  def annotatedAt: Option[Date] = resource.getFirst(OA.annotatedAt)
+    .map(literal => DATE_FORMAT.parse(literal.stringValue))
   
   // TODO
   def creator: Option[Agent] = None
@@ -141,8 +144,7 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
   
-  // TODO
-  def temporal: Option[PeriodOfTime] = None
+  def temporal: Option[PeriodOfTime] = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
 
   // TODO 
   def creator: Option[Agent] = None

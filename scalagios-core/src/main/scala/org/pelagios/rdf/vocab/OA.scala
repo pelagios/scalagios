@@ -7,7 +7,7 @@ object OA extends BaseVocab("http://www.w3.org/ns/oa#") {
   
   val annotatedBy = createURI("annotatedBy")
   
-  val annotatedAt = createURI("annoatedAt")
+  val annotatedAt = createURI("annotatedAt")
   
   val hasBody = createURI("hasBody")
   
