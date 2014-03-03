@@ -51,9 +51,12 @@ Scalagios.writeAnnotations(annotatedThing, "data-file.ttl")
 
 [TODO...]
 
-...to convert text to Recogito-compliant CSV run
+Quick intro:
 
-``sbt tools/run`` 
+* you need to have the Java 1.6 or 1.7 JDK (not just JRE!) installed on your machine
+* install [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup.html) - it should be sufficient to download and unzip (optionally, add the SBT folder to your system path to make the ``sbt`` command globally accessible.
+* to convert text to Recogito-compliant CSV run ``sbt tools/run`` and pick the 'TextToCSV' tool
+* note that the build will take a while when you run it the first time
 
 ## scalagios-legacy
 
