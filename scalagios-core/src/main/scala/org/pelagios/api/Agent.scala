@@ -11,17 +11,20 @@ package org.pelagios.api
   */
 trait Agent {
   
+  /** The Agent's URI **/
+  def uri: String
+  
   /** foaf:name **/
-  def name: String
+  def name: Option[String]
    
 }
 
 /** A default POJO-style implementation of Agent **/
-private[api] class DefaultAgent(val name: String) extends Agent
+private[api] class DefaultAgent(val uri: String, val name: Option[String]) extends Agent
 
 /** Companion object for generating DefaultAgent instances **/
 object Agent {
   
-  def apply(name: String) = new DefaultAgent(name)
+  def apply(uri: String, name: Option[String] = None) = new DefaultAgent(uri, name)
   
 } 

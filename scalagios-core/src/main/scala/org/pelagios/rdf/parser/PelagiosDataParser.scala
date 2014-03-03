@@ -19,7 +19,11 @@ class PelagiosDataParser extends ResourceCollector {
   def data: Iterable[AnnotatedThing] = {
     val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))  
     
-    /** Resolve transcriptions **/
+    // Resolve foaf:Agents
+    val agents = resourcesOfType(FOAF.Organization).map(new AgentResource(_)).map(agent => (agent.uri, agent)).toMap
+    println(agents)
+    
+    // Resolve transcriptions
     val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))
     allAnnotations.foreach(annotation => {
       // Transcriptions per Annotation
@@ -43,7 +47,7 @@ class PelagiosDataParser extends ResourceCollector {
       }
     })
     
-    /** Construct Work/Expression hierarchy **/
+    // Construct Work/Expression hierarchy
     val allAnnotatedThings = resourcesOfType(Pelagios.AnnotatedThing).map(new AnnotatedThingResource(_))
     allAnnotatedThings.foreach(thing => {
       val realizationOf = thing.resource.getFirst(FRBR.realizationOf).map(_.stringValue)
@@ -56,7 +60,7 @@ class PelagiosDataParser extends ResourceCollector {
       }
     })  
     
-    /** Link annotations and annotated things **/
+    // Link annotations and annotated things
     val annotationsPerThing = allAnnotations.groupBy(_.resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty"))
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
@@ -73,10 +77,27 @@ class PelagiosDataParser extends ResourceCollector {
       })
     })
     
-    /** Filters out top-level things, i.e. those that are not expressions of something else **/
+    // Link annotations and authors
+    allAnnotatedThings.foreach(thing => {
+      thing.annotations.foreach(annotation => {
+        val agentURI = annotation.resource.getFirst(OA.annotatedBy)
+        println(" ### " + agentURI)
+        annotation.creator = agentURI.map(uri => agents.get(uri.stringValue)).flatten
+      })
+    })
+    
+    // Filter out top-level things, i.e. those that are not expressions of something else
     allAnnotatedThings.filter(thing => thing.realizationOf.isEmpty)
   }
       
+}
+
+private[parser] class AgentResource(val resource: Resource) extends Agent {
+  
+  val uri = resource.uri
+  
+  val name: Option[String] = resource.getFirst(FOAF.name).map(_.stringValue)
+  
 }
 
 /** Wraps an oa:Annotation RDF resource as an Annotation domain model primitive.
@@ -107,8 +128,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   def annotatedAt: Option[Date] = resource.getFirst(OA.annotatedAt)
     .map(literal => DATE_FORMAT.parse(literal.stringValue))
   
-  // TODO
-  def creator: Option[Agent] = None
+  var creator: Option[Agent] = None
   
   // TODO
   def created: Option[Date] = None
@@ -128,15 +148,15 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   */
 private[parser] class AnnotatedThingResource(val resource: Resource) extends AnnotatedThing {
     
-  def uri = resource.uri
+  val uri = resource.uri
   
-  def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
+  lazy val title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
   var realizationOf: Option[AnnotatedThing] = None
   
-  def identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
+  lazy val identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
 
-  def description = resource.getFirst(DCTerms.description).map(_.stringValue)
+  lazy val description = resource.getFirst(DCTerms.description).map(_.stringValue)
   
   def homepage = resource.getFirst(FOAF.homepage).map(_.stringValue)
   
@@ -146,8 +166,7 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def temporal: Option[PeriodOfTime] = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
 
-  // TODO 
-  def creator: Option[Agent] = None
+  var creator: Option[Agent] = None
 
   // TODO    
   def contributors: Seq[Agent] = Seq.empty[Agent]

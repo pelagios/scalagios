@@ -22,7 +22,7 @@ object PelagiosDataSerializer {
   private def serializeAgent(agent: Agent, model: Model): BNode = {
     val f = model.getValueFactory()
     val bnode = f.createBNode()
-    model.add(bnode, FOAF.name, f.createLiteral(agent.name))
+    model.add(bnode, FOAF.name, f.createLiteral(agent.name.get))
     bnode
   }
   
