@@ -164,7 +164,7 @@ object Annotation extends AbstractApiCompanion {
   
   def apply(uri: String,
    
-            target: AnnotatedThing,
+            target: AnnotationTarget,
   
             place: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
   
