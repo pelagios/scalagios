@@ -152,10 +152,15 @@ private[api] class DefaultAnnotation(
   
 ) extends Annotation {
   
-  if (hasTarget.isInstanceOf[DefaultAnnotatedThing])
-      hasTarget.asInstanceOf[DefaultAnnotatedThing].annotations.asInstanceOf[ListBuffer[Annotation]].append(this)
+  val thing = if (hasTarget.isInstanceOf[SpecificResource]) 
+      hasTarget.asInstanceOf[SpecificResource].hasSource.get
     else
-      throw new RuntimeException("cannot mix different model impelementation types - requires instance of DefaultAnnotatedThing")
+      hasTarget.asInstanceOf[AnnotatedThing]
+       
+  if (thing.isInstanceOf[DefaultAnnotatedThing])
+    thing.asInstanceOf[DefaultAnnotatedThing].annotations.asInstanceOf[ListBuffer[Annotation]].append(this)
+  else
+    throw new RuntimeException("cannot mix different model impelementation types - requires instance of DefaultAnnotatedThing")
 
 }
 

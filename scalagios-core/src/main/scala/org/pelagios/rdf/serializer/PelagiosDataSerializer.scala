@@ -10,6 +10,7 @@ import org.openrdf.rio.{Rio, RDFFormat}
 import org.openrdf.model.vocabulary.RDFS
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.FileOutputStream
+import org.pelagios.api.selectors.TextOffsetSelector
 
 /** Utility object to serialize Pelagios data to RDF.
   *  
@@ -91,12 +92,25 @@ object PelagiosDataSerializer {
     // Annotations
     thing.annotations.foreach(annotation => {
       val rdfAnnotation = f.createURI(annotation.uri)
-      model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
 
       // oa:hasTarget
       if (annotation.hasTarget.hasSelector.isDefined) {
-        // TODO serialize SpecificResource
+        val selector = annotation.hasTarget.hasSelector.get.asInstanceOf[TextOffsetSelector]        
+        val selectorNode = f.createBNode()
+        model.add(selectorNode, RDF.TYPE, OAX.TextOffsetSelector)
+        model.add(selectorNode, OAX.offset, f.createLiteral(selector.offset))
+        model.add(selectorNode, OAX.range, f.createLiteral(selector.range))
+
+        val specificResource = annotation.hasTarget.asInstanceOf[SpecificResource]
+        val specificResourceNode = f.createBNode()
+        model.add(specificResourceNode, RDF.TYPE, OA.SpecificResource)
+        model.add(specificResourceNode, OA.hasSource, f.createLiteral(specificResource.hasSource.get.uri))
+        model.add(specificResourceNode, OA.hasSelector, selectorNode)
+        
+        model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
+        model.add(rdfAnnotation, OA.hasTarget, specificResourceNode)
       } else {
+        model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
         model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget.asInstanceOf[AnnotatedThing].uri))
       }
       
@@ -133,6 +147,8 @@ object PelagiosDataSerializer {
   def toRDF(annotatedThings: Iterable[AnnotatedThing]): Model = {
     val model = new LinkedHashModel()
     model.setNamespace("oa", OA.NAMESPACE)
+    model.setNamespace("oax", OAX.NAMESPACE)
+    model.setNamespace("xs", "http://www.w3.org/2001/XMLSchema#")
     model.setNamespace("frbr", FRBR.NAMESPACE)
     model.setNamespace("dcterms", DCTerms.NAMESPACE)
     model.setNamespace("pelagios", Pelagios.NAMESPACE)
