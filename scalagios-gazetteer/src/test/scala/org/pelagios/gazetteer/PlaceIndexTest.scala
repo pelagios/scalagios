@@ -25,7 +25,7 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
   test("Basic Index Operation") {
     println("Initializing inded")
     val index = PlaceIndex.open(INDEX_DIR)
-    
+
     println("Loading Pleiades data")
     val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_PLEIADES)), "http://pleiades.stoa.org/", RDFFormat.TURTLE)
     println("Inserting Pleiades into index")

@@ -84,6 +84,9 @@ trait Annotation {
     * the source document were created (cf. oa:annotatedBy)
     */
   def annotatedAt: Option[Date]
+  
+  /** oa:serializedBy **/
+  def serializedBy: Option[Agent]
 
   /** dcterms:creator
     *  
@@ -101,7 +104,7 @@ trait Annotation {
     * The time when the digital annotations were produced.
     */
   def created: Option[Date]
-  
+    
   /** sequence: index
     *
     * The sequence index number, in case the ordering of the annotations
@@ -136,6 +139,8 @@ private[api] class DefaultAnnotation(
   val annotatedBy: Option[Agent] = None,
 
   val annotatedAt: Option[Date] = None,
+  
+  val serializedBy: Option[Agent] = None,
   
   val creator: Option[Agent] = None,
   
@@ -172,6 +177,8 @@ object Annotation extends AbstractApiCompanion {
             annotatedBy: Agent = null,
 
             annotatedAt: Date = null,
+            
+            serializedBy: Agent = null,
   
             creator: Agent = null,
   
@@ -182,7 +189,7 @@ object Annotation extends AbstractApiCompanion {
             distanceToNext: Distance = null): Annotation = {
       
     new DefaultAnnotation(uri, target, place.seq, transcription.option, tags.seq, relation, annotatedBy, annotatedAt,
-                          creator, created, index.option, distanceToNext)
+                          serializedBy, creator, created, index.option, distanceToNext)
   }
  
 }

@@ -94,7 +94,11 @@ object PelagiosDataSerializer {
       model.add(rdfAnnotation, RDF.TYPE, OA.Annotation)
 
       // oa:hasTarget
-      model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget.uri))
+      if (annotation.hasTarget.hasSelector.isDefined) {
+        // TODO serialize SpecificResource
+      } else {
+        model.add(rdfAnnotation, OA.hasTarget, f.createURI(annotation.hasTarget.asInstanceOf[AnnotatedThing].uri))
+      }
       
       // oa:hasBody (place)
       annotation.place.foreach(uri => model.add(rdfAnnotation, OA.hasBody, f.createURI(uri)))

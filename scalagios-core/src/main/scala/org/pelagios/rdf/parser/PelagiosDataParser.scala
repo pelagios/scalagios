@@ -127,6 +127,8 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
 
   def annotatedAt: Option[Date] = resource.getFirst(OA.annotatedAt)
     .map(literal => DATE_FORMAT.parse(literal.stringValue))
+    
+  def serializedBy: Option[Agent] = None
   
   var creator: Option[Agent] = None
   
