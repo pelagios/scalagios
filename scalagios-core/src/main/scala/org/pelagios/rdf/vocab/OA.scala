@@ -21,4 +21,6 @@ object OA extends BaseVocab("http://www.w3.org/ns/openannotation/core/") {
     
   val motivatedBy = createURI("motivatedBy")
   
+  val serializedBy = createURI("serializedBy")
+  
 }

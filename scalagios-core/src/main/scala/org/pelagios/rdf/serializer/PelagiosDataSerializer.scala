@@ -129,6 +129,9 @@ object PelagiosDataSerializer {
       // oa:annotatedAt
       annotation.annotatedAt.map(date => model.add(rdfAnnotation, OA.annotatedAt, f.createLiteral(date)))
       
+      // oa:serializedBy
+      annotation.serializedBy.map(serializer => model.add(rdfAnnotation, OA.serializedBy, serializeAgent(serializer, model)))
+      
       // dcterms:creator
       annotation.creator.map(creator => model.add(rdfAnnotation, DCTerms.creator, serializeAgent(creator, model)))
       
