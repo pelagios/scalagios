@@ -11,6 +11,7 @@ import org.openrdf.model.vocabulary.RDFS
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.FileOutputStream
 import org.pelagios.api.selectors.TextOffsetSelector
+import org.openrdf.model.URI
 
 /** Utility object to serialize Pelagios data to RDF.
   *  
@@ -20,11 +21,12 @@ import org.pelagios.api.selectors.TextOffsetSelector
   */
 object PelagiosDataSerializer {
   
-  private def serializeAgent(agent: Agent, model: Model): BNode = {
+  private def serializeAgent(agent: Agent, model: Model): URI = {
     val f = model.getValueFactory()
-    val bnode = f.createBNode()
-    model.add(bnode, FOAF.name, f.createLiteral(agent.name.get))
-    bnode
+    val agentNode = f.createURI(agent.uri)
+    model.add(agentNode, RDF.TYPE, FOAF.Agent)
+    agent.name.map(n => model.add(agentNode, FOAF.name, f.createLiteral(n)))
+    agentNode
   }
   
   private def serializeTranscription(transcription: Transcription, model: Model): BNode = {
@@ -155,6 +157,8 @@ object PelagiosDataSerializer {
     model.setNamespace("frbr", FRBR.NAMESPACE)
     model.setNamespace("dcterms", DCTerms.NAMESPACE)
     model.setNamespace("pelagios", Pelagios.NAMESPACE)
+    model.setNamespace("foaf", FOAF.NAMESPACE)
+    
     annotatedThings.foreach(thing => serializeAnnotatedThing(thing, model))
     model
   }
