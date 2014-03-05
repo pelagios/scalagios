@@ -16,7 +16,7 @@ class GazetteerParser extends ResourceCollector {
     * @return the list of Places
     */
   def places: Iterable[Place] = {
-    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(SKOS.label)))
+    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
       .map(resource => (resource.uri -> new NameResource(resource))).toMap
       
     val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
