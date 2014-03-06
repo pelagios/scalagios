@@ -20,7 +20,7 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
   
   lazy val names: Seq[Name] = 
-    doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(field => Name(toLabel(field)))
+    doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_NAME)).map(field => Name(toLabel(field)))
   
   lazy val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
   

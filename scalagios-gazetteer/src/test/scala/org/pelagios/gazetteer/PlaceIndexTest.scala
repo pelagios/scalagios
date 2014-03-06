@@ -35,9 +35,9 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     val dare = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_DARE)), "http://imperium.ahlfeldt.se/", RDFFormat.TURTLE)
     println("Inserting DARE into index") 
     index.addPlaces(dare)
-    
+
     println("Test query...")
-    val results = index.query("vienna").toSeq
+    val results = index.query("baghdad").toSeq
     results.foreach(place => println(place.title))
 
     val topHit = results(0)
