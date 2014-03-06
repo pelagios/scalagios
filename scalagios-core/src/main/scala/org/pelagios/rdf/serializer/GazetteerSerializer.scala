@@ -40,7 +40,7 @@ object GazetteerSerializer {
         writer.println("  dcterms:subject <" + s + "> ;"))
 
       place.names.foreach(n => {
-        (n.labels ++ n.altLabels).foreach(l => {
+        n.labels.foreach(l => {
           val label = l.label.trim
           if (!label.isEmpty)
             writer.println("  pleiades:hasName [ rdfs:label \"" + label + l.lang.map("@" + _).getOrElse("") + "\" ] ;")

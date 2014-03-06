@@ -13,7 +13,7 @@ object JSONSerializer {
   import net.liftweb.json.JsonDSL._
       
   private def placeToJSON(place: Place): JObject = {
-    val names = place.names.map(name => name.labels ++ name.altLabels).flatten.map(_.label)
+    val names = place.names.flatMap(_.labels).map(_.label)
     
     val locations = if (place.locations.size > 0) {
       val features = place.locations.map(location => {  
