@@ -39,11 +39,11 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     println("Test query...")
     println("Results for 'Athína'")
     val resultsTitle = index.query("Athína").toSeq
-    resultsTitle.foreach(place => println(place.title + " - " + place.uri))
+    resultsTitle.foreach(place => println(place.title + " - " + place.uri + " (" + place.names.map(_.label).mkString(", ")))
 
     println("Results for 'Αθήνα'")
     val resultsNames = index.query("Αθήνα").toSeq
-    resultsNames.foreach(place => println(place.title + " - " + place.uri + "(" + place.names.map(_.label).mkString(", ")))
+    resultsNames.foreach(place => println(place.title + " - " + place.uri + " (" + place.names.map(_.label).mkString(", ")))
     
     val topHit = resultsTitle(0)
     println("Network for " + topHit.title + " (" + topHit.uri + ")")

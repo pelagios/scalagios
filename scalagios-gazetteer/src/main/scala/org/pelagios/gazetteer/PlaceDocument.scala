@@ -56,9 +56,8 @@ object PlaceDocument {
       val fieldName = description.lang.map(PlaceIndex.FIELD_DESCRIPTION + "_" + _).getOrElse(PlaceIndex.FIELD_DESCRIPTION)
       doc.add(new TextField(fieldName, description.label, Field.Store.YES))
     })
-    place.names.foreach(label => {
-      val fieldName = label.lang.map(PlaceIndex.FIELD_NAME + "_" + _).getOrElse(PlaceIndex.FIELD_NAME) 
-      doc.add(new TextField(fieldName, label.label, Field.Store.YES)) 
+    place.names.foreach(name => {
+      doc.add(new TextField(PlaceIndex.FIELD_NAME, name.label, Field.Store.YES)) 
     })
     place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, wktWriter.write(location.geometry), Field.Store.YES)))
     if (place.category.isDefined)
