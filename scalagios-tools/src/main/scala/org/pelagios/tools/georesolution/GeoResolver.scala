@@ -100,7 +100,7 @@ class GeoResolver(index: PlaceIndex) {
   }
   
   def isExactMatch(toponym: String, place: Place): Boolean = {
-    val labels = place.title +: place.names.flatMap(_.labels).map(_.label)
+    val labels = place.title +: place.names.map(_.label)
     labels.exists(_.equalsIgnoreCase(toponym))
   } 
   
@@ -110,7 +110,7 @@ class GeoResolver(index: PlaceIndex) {
                  else
                    toponym.toLowerCase
                    
-    val labels = place.title +: place.names.flatMap(_.labels).map(_.label)
+    val labels = place.title +: place.names.map(_.label)
     labels.exists(_.toLowerCase.startsWith(prefix))
   }
   

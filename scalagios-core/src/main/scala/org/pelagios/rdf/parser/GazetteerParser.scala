@@ -15,17 +15,13 @@ class GazetteerParser extends ResourceCollector {
    *  
     * @return the list of Places
     */
-  def places: Iterable[Place] = {
-    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
-      .map(resource => (resource.uri -> new NameResource(resource))).toMap
-      
+  def places: Iterable[Place] = {      	
     val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
       .map(resource => (resource.uri -> new LocationResource(resource))).toMap
            
     resourcesOfType(Pelagios.PlaceRecord).map(resource => {
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
-      new PlaceResource(resource, names, locations)
+      new PlaceResource(resource, locations)
     })
   }  
 
@@ -38,11 +34,13 @@ class GazetteerParser extends ResourceCollector {
  *  @param names the names connected to the resource
  *  @param locations the locations connected to the resource
  */
-private[parser] class PlaceResource(val resource: Resource, val names: Seq[NameResource], val locations: Seq[Location]) extends Place {
+private[parser] class PlaceResource(val resource: Resource, val locations: Seq[Location]) extends Place {
 
   def uri = resource.uri
   
   def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
+  
+  def names = resource.get(PleiadesPlaces.hasName).map(ResourceCollector.toLabel(_))
   
   def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toLabel(_))
   
@@ -53,19 +51,6 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[NameR
   
   def closeMatches = resource.get(SKOS.closeMatch).map(_.stringValue)
 
-}
-
-/** Wraps a pleiades:Name RDF resource as a Name domain model primitive.
-  *
-  * @constructor create a new NameResource
-  * @param resource the RDF resource to wrap   
-  */
-private[parser] class NameResource(val resource: Resource) extends Name {
-  
-  def labels: Seq[Label] = resource.get(RDFS.LABEL).map(ResourceCollector.toLabel(_))
-  
-  def altLabels: Seq[Label] = resource.get(SKOS.altLabel).map(ResourceCollector.toLabel(_))
-    
 }
 
 /** Wraps a pleiades:Location RDF resource as a Location domain model primitive.

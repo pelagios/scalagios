@@ -4,7 +4,7 @@ import java.io.FileInputStream
 import java.util.zip.GZIPInputStream
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
-import org.pelagios.api.{ Label, Location, Name, Place, PlaceCategory }
+import org.pelagios.api.{ Label, Location, Place, PlaceCategory }
 import org.pelagios.legacy.LegacyInterop
 
 object ConvertPleiadesDump extends App {
@@ -52,7 +52,7 @@ object ConvertPleiadesDump extends App {
     val names = 
       (legacy.altLabels.map(_.split(",").toSeq).getOrElse(Seq.empty[String]) ++
        legacy.coverage.map(_.split(",").toSeq).getOrElse(Seq.empty[String]))
-      .map(name => Name(Label(name)))
+      .map(name => Label(name))
     
     val locations = 
       legacy.location.map(location => Seq(Location(location))).getOrElse(Seq.empty[Location])

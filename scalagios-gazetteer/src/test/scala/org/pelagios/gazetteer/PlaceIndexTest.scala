@@ -23,24 +23,29 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
   }
     
   test("Basic Index Operation") {
-    println("Initializing inded")
+    println("Initializing index")
     val index = PlaceIndex.open(INDEX_DIR)
 
     println("Loading Pleiades data")
     val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_PLEIADES)), "http://pleiades.stoa.org/", RDFFormat.TURTLE)
-    println("Inserting Pleiades into index")
+    println("Inserting " + pleiades.size + " places (" + pleiades.flatMap(_.names).size + " names) into index")
     index.addPlaces(pleiades)
     
     println("Loading DARE data")
     val dare = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_DARE)), "http://imperium.ahlfeldt.se/", RDFFormat.TURTLE)
-    println("Inserting DARE into index") 
+    println("Inserting " + dare.size + " places (" + dare.flatMap(_.names).size + " names) into index")
     index.addPlaces(dare)
 
     println("Test query...")
-    val results = index.query("baghdad").toSeq
-    results.foreach(place => println(place.title))
+    println("Results for 'Athína'")
+    val resultsTitle = index.query("Athína").toSeq
+    resultsTitle.foreach(place => println(place.title + " - " + place.uri))
 
-    val topHit = results(0)
+    println("Results for 'Αθήνα'")
+    val resultsNames = index.query("Αθήνα").toSeq
+    resultsNames.foreach(place => println(place.title + " - " + place.uri + "(" + place.names.map(_.label).mkString(", ")))
+    
+    val topHit = resultsTitle(0)
     println("Network for " + topHit.title + " (" + topHit.uri + ")")
     val network = index.getNetwork(topHit)
     network.places.foreach(place => println(place.uri))

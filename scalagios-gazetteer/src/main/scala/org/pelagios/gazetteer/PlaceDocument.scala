@@ -2,7 +2,7 @@ package org.pelagios.gazetteer
 
 import org.apache.lucene.document.{ Document, Field, StringField, TextField }
 import org.apache.lucene.index.IndexableField
-import org.pelagios.api.{ Label, Location, Name, Place, PlaceCategory }
+import org.pelagios.api.{ Label, Location, Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 
@@ -19,8 +19,8 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   lazy val descriptions: Seq[Label] =
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
   
-  lazy val names: Seq[Name] = 
-    doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_NAME)).map(field => Name(toLabel(field)))
+  lazy val names: Seq[Label] = 
+    doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_NAME)).map(field => toLabel(field))
   
   lazy val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
   
@@ -56,11 +56,9 @@ object PlaceDocument {
       val fieldName = description.lang.map(PlaceIndex.FIELD_DESCRIPTION + "_" + _).getOrElse(PlaceIndex.FIELD_DESCRIPTION)
       doc.add(new TextField(fieldName, description.label, Field.Store.YES))
     })
-    place.names.foreach(name => {
-      name.labels.foreach(label => {
-        val fieldName = label.lang.map(PlaceIndex.FIELD_NAME + "_" + _).getOrElse(PlaceIndex.FIELD_NAME) 
-        doc.add(new TextField(fieldName, label.label, Field.Store.YES)) 
-      })
+    place.names.foreach(label => {
+      val fieldName = label.lang.map(PlaceIndex.FIELD_NAME + "_" + _).getOrElse(PlaceIndex.FIELD_NAME) 
+      doc.add(new TextField(fieldName, label.label, Field.Store.YES)) 
     })
     place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, wktWriter.write(location.geometry), Field.Store.YES)))
     if (place.category.isDefined)

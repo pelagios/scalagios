@@ -39,12 +39,10 @@ object GazetteerSerializer {
       place.subjects.foreach(s => 
         writer.println("  dcterms:subject <" + s + "> ;"))
 
-      place.names.foreach(n => {
-        n.labels.foreach(l => {
-          val label = l.label.trim
-          if (!label.isEmpty)
-            writer.println("  pleiades:hasName [ rdfs:label \"" + label + l.lang.map("@" + _).getOrElse("") + "\" ] ;")
-        })
+      place.names.foreach(name => {
+        val label = name.label.trim
+        if (!label.isEmpty)
+          writer.println("  pleiades:hasName [ rdfs:label \"" + label + name.lang.map("@" + _).getOrElse("") + "\" ] ;")
       })
       
       place.locations.foreach(l => {
