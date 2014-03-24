@@ -78,4 +78,3 @@ trait PlaceIndexReader extends PlaceIndexBase {
 
 }
 
-case class Network(places: Seq[Place], links: Seq[(Int, Int)])
