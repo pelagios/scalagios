@@ -15,7 +15,7 @@ import java.io.File
 class PlaceIndexTest extends FunSuite with BeforeAndAfter {
   
   private val DATA_PLEIADES = "../test-data/pleiades-20120826-migrated.ttl.gz"
-  private val DATA_DARE = "../test-data/dare-20131210.ttl.gz"
+  private val DATA_DARE = "../test-data/dare-20140324.ttl.gz"
   private val INDEX_DIR = "tmp-index"
     
   before {
