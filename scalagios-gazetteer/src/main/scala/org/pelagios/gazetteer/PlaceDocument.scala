@@ -63,7 +63,7 @@ object PlaceDocument {
     if (place.category.isDefined)
       doc.add(new StringField(PlaceIndex.FIELD_CATEGORY, place.category.get.toString, Field.Store.YES))
     place.subjects.foreach(subject => doc.add(new StringField(PlaceIndex.FIELD_SUBJECT, subject, Field.Store.YES)))
-    place.closeMatches.foreach(closeMatch => doc.add(new StringField(PlaceIndex.FIELD_CLOSE_MATCH, closeMatch, Field.Store.YES)))
+    place.closeMatches.foreach(closeMatch => doc.add(new StringField(PlaceIndex.FIELD_CLOSE_MATCH, GazetteerUtils.normalizeURI(closeMatch), Field.Store.YES)))
     doc.add(new StringField(PlaceIndex.FIELD_SEED_URI, seedURI.getOrElse(place.uri), Field.Store.YES))
     
     doc

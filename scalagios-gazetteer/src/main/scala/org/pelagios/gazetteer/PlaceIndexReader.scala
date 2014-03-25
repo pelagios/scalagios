@@ -27,12 +27,27 @@ trait PlaceIndexReader extends PlaceIndexBase {
     val collector = TopScoreDocCollector.create(1, true)
     searcher.search(q, collector)
     
-    val places = collector.topDocs.scoreDocs.map(scoreDoc => new PlaceDocument(searcher.doc(scoreDoc.doc)) )
+    val places = collector.topDocs.scoreDocs.map(scoreDoc => new PlaceDocument(searcher.doc(scoreDoc.doc)))
     reader.close()
     if (places.size > 0)
       return Some(places(0))
     else
       None
+  }
+  
+  def findByByCloseMatch(uri: String): Seq[PlaceDocument] = {
+    val q = new BooleanQuery()
+    q.add(new TermQuery(new Term(PlaceIndex.FIELD_CLOSE_MATCH, GazetteerUtils.normalizeURI(uri))), BooleanClause.Occur.MUST)
+    
+    val reader = DirectoryReader.open(index)
+    val searcher = new IndexSearcher(reader)
+    
+    val collector = TopScoreDocCollector.create(1, true)
+    searcher.search(q, collector)
+    
+    val places = collector.topDocs.scoreDocs.map(scoreDoc => new PlaceDocument(searcher.doc(scoreDoc.doc)))
+    reader.close()
+    places
   }
   
   def query(query: String, fuzzy: Boolean = false): Iterable[PlaceDocument] = {
