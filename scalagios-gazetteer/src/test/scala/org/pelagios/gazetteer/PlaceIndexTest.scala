@@ -39,46 +39,55 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
 
     println()
     println("### Testing retrieval by URI ###")
-    println("Athens in DARE (expecting 1)")
+    print("Athenae in DARE (expecting 1)")
     val athensDARE = index.findByURI("http://www.imperium.ahlfeldt.se/places/10975")
     assert(athensDARE.isDefined)
     assert(athensDARE.get.uri.startsWith("http://www.imperium.ahlfeldt"))
-    println(athensDARE.get.title + " (" + athensDARE.get.names.map(_.label).mkString(", ") + ")")
+    println(" - ok")
+    // println(athensDARE.get.title + " (" + athensDARE.get.names.map(_.label).mkString(", ") + ")")
 
-    println("Athens in Pleiades (expecting 1)")
+    print("Athenae in Pleiades (expecting 1)")
     val athensPleiades = index.findByURI("http://pleiades.stoa.org/places/579885")
     assert(athensPleiades.isDefined)
     assert(athensPleiades.get.uri.startsWith("http://pleiades.stoa.org"))
-    println(athensPleiades.get.title + " (" + athensPleiades.get.names.map(_.label).mkString(", ") + ")")
+    println(" - ok")
+    // println(athensPleiades.get.title + " (" + athensPleiades.get.names.map(_.label).mkString(", ") + ")")
     
-    println("Expecting both Athens records to be in the same network")
+    print("Expecting both Athenae records to be in the same network")
     assert(athensDARE.get.seedURI.equals(athensPleiades.get.seedURI))
+    println(" - ok")
     
     println()
-    println("### Testing simple query ###")
-    println("Results for 'Athenae' (expecting 1 result from DARE)")
+    println("### Testing exact name match query ###")
+    print("Results for 'Athenae' (expecting 2 result from DARE and 2 from Pleiades)")
     val resultsAthens = index.query("Athenae").toSeq
-    resultsAthens.foreach(place => println(place.title + " - " + place.uri + " (" + place.names.map(_.label).mkString(", ") + ")"))
-    // assert(resultsAthens.size == 1, "Got wrong number of search results")
-    // assert(resultsAthens(0).uri.startsWith("http://www.imperium.ahlfeldt.se"), "Result is not from DARE")
-    
-    // Athens: http://pleiades.stoa.org/places/579885
-    // DARE Athens: http://www.imperium.ahlfeldt.se/places/10975
+    assert(resultsAthens.size == 4, "Got wrong number of search results")
+    assert(resultsAthens.filter(_.uri.startsWith("http://www.imperium.ahlfeldt.se")).size == 2, "Wrong number of result from DARE")
+    assert(resultsAthens.filter(_.uri.startsWith("http://pleiades.stoa.org")).size == 2, "Wrong number of result from Pleiades")
+    println(" - ok")    
+    // resultsAthens.foreach(place => println(place.title + " - " + place.uri + " (" + place.names.map(_.label).mkString(", ") + ")"))
     
     println()
-    println("### Testing network retrieval ###")
     val topHit = resultsAthens(0)
-    println("Network for " + topHit.title + " (expecting 2 places)")
+    println("### Testing network retrieval ###")
+    print("Network for " + topHit.title + " (expecting 2 places)")
     val network = index.getNetwork(topHit)
-    network.places.foreach(place => println(place.uri))
+    assert(network.places.size == 2, "Wrong number of places in network")
+    assert(network.places.filter(_.uri.startsWith("http://www.imperium.ahlfeldt.se")).size == 1, "Wrong number of result from DARE")
+    assert(network.places.filter(_.uri.startsWith("http://pleiades.stoa.org")).size == 1, "Wrong number of result from Pleiades")
+    println(" - ok")
+    // network.places.foreach(place => println(place.uri))
     
-    println("Testing network conflation")
-    println("Results for 'Roma'")
-    val resultsRoma = index.query("roma").map(index.getNetwork(_)).toSeq
+    println()
+    println("### Testing network conflation ###")
+    print("Getting network for 'Roma' (expecting 1 network with 2 places)")
+    val resultsRoma = index.findByURI("http://www.imperium.ahlfeldt.se/places/1438").map(index.getNetwork(_)).toSeq
+    assert(resultsRoma.size == 1)
+    assert(resultsRoma(0).places.size == 2)
     val conflated = Network.conflateNetworks(resultsRoma)
-    conflated.foreach(place=> {
-      println(place.title + " (" + place.names.map(_.label).mkString(", ") + ")")
-    })
+    assert(conflated.size == 1)
+    println(" - ok")
+    
     
     println("Done.")
   }

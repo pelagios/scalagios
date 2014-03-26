@@ -58,10 +58,11 @@ class ConflatedPlace(network: Network,
         }
       } 
 
+      val names =  { head.names ++ tail.flatMap(_.names) }.toSet // Merge names and de-duplicate
       val closeMatches = head.closeMatches ++ tail.flatMap(_.closeMatches)
       
       Place(uri, head.title, descriptions, 
-          head.names ++ tail.flatMap(_.names), // Merge all names
+          names.toSeq,
           locations, 
           head.category, // TODO not sure how to handle different category definitions...
           head.subjects ++ tail.flatMap(_.subjects), // Merge all subjects,
