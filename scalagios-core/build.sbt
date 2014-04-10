@@ -8,11 +8,11 @@ resolvers += "Open Source Geospatial Foundation Repository" at "http://download.
 
 /** Runtime dependencies **/
 libraryDependencies ++= Seq(
-  "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
-  "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",   
+  "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.11",
+  "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.11",   
   "org.fusesource.scalate" % "scalate-core_2.10" % "1.6.1",           
   "com.vividsolutions" % "jts" % "1.13",
-  "org.geotools" % "gt-geojson" % "10.0",
+  "org.geotools" % "gt-geojson" % "10.5",
   "net.liftweb" %% "lift-json" % "2.5"
 )
 

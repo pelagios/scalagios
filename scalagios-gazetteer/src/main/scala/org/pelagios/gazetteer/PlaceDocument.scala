@@ -12,25 +12,25 @@ import com.vividsolutions.jts.io.WKTWriter
   */
 class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
-  lazy val uri: String = doc.get(PlaceIndex.FIELD_URI)
+  val uri: String = doc.get(PlaceIndex.FIELD_URI)
   
-  lazy val title: String = doc.get(PlaceIndex.FIELD_TITLE)
+  val title: String = doc.get(PlaceIndex.FIELD_TITLE)
   
-  lazy val descriptions: Seq[Label] =
+  val descriptions: Seq[Label] =
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
   
-  lazy val names: Seq[Label] = 
+  val names: Seq[Label] = 
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_NAME)).map(field => toLabel(field))
   
-  lazy val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
+  val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(wkt => Location(Location.parseWKT(wkt))).toSeq
   
-  lazy val category: Option[PlaceCategory.Category] = toOption(doc.get(PlaceIndex.FIELD_CATEGORY)).map(PlaceCategory.withName(_))
+  val category: Option[PlaceCategory.Category] = toOption(doc.get(PlaceIndex.FIELD_CATEGORY)).map(PlaceCategory.withName(_))
   
-  lazy val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
+  val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   
-  lazy val closeMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_CLOSE_MATCH).toSeq
+  val closeMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_CLOSE_MATCH).toSeq
   
-  lazy val seedURI: String = doc.get(PlaceIndex.FIELD_SEED_URI)
+  val seedURI: String = doc.get(PlaceIndex.FIELD_SEED_URI)
   
   private def toOption(string: String): Option[String] =
     if (string == null) None else Option(string)
