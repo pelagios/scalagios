@@ -4,7 +4,7 @@ import java.io.FileInputStream
 import java.util.zip.GZIPInputStream
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
-import org.pelagios.api.{ Label, Location, Place, PlaceCategory }
+import org.pelagios.api.{ PlainLiteral, Location, Place, PlaceCategory }
 import org.pelagios.legacy.LegacyInterop
 
 object ConvertPleiadesDump extends App {
@@ -47,12 +47,12 @@ object ConvertPleiadesDump extends App {
       (MAN_MADE_STRUCTURE -> PlaceCategory.MAN_MADE_STRUCTURE))
 
   val importedPlaces = LegacyInterop.parsePleiadesRDF(is, "http://pleiades.stoa.org/", RDFFormat.TURTLE).map(legacy => {
-    val descriptions = legacy.comment.map(comment => Seq(Label(comment))).getOrElse(Seq.empty[Label])
+    val descriptions = legacy.comment.map(comment => Seq(PlainLiteral(comment))).getOrElse(Seq.empty[PlainLiteral])
   
     val names = 
       (legacy.altLabels.map(_.split(",").toSeq).getOrElse(Seq.empty[String]) ++
        legacy.coverage.map(_.split(",").toSeq).getOrElse(Seq.empty[String]))
-      .map(name => Label(name))
+      .map(name => PlainLiteral(name))
     
     val locations = 
       legacy.location.map(location => Seq(Location(location))).getOrElse(Seq.empty[Location])

@@ -9,7 +9,7 @@ import org.pelagios.api._
 @RunWith(classOf[JUnitRunner])
 class PelagiosDataParserTest extends FunSuite {
 
-  val TEST_FILE = "src/test/resources/test-annotations-vicarello.ttl"
+  val TEST_FILE = "test-data/test-annotations-vicarello.ttl"
     
   test("Pelagios Data Dump Import") {
     // Parse test data
@@ -42,20 +42,6 @@ class PelagiosDataParserTest extends FunSuite {
       assert(annotation.transcription.get.nameType == TranscriptionType.Toponym)
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
     })
-    
-    /* Verify layout
-    things.foreach(work => assert(work.layout == None, "work should not have layout"))
-    expressions.foreach(expression => {
-      assert(expression.layout.isDefined, "expression should have layout")
-      assert(expression.layout.get.links.size > 0, "layout should not be empty")
-    })
-    val annotationsWithNeighbours = expression.annotations.filter(_.links.size > 0)
-    assert(annotationsWithNeighbours.size == 106, "there should be 106 annotation with layout neighbours")
-    annotationsWithNeighbours.foreach(annotation => {
-      assert(annotation.links.size == 1, "annotation should have exactly one link")
-      assert(annotation.links(0).from.uri.equals(annotation.uri))
-    })
-    */
   }
   
 }

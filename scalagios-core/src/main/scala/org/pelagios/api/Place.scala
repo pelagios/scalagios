@@ -25,13 +25,13 @@ trait Place {
     *   
     * A description for the place; optionally multiple in different languages.
     */
-  def descriptions: Seq[Label]
+  def descriptions: Seq[PlainLiteral]
   
   /** pleiades:hasName
     *
     * The list of names for this place.
     */      
-  def names: Seq[Label]
+  def names: Seq[PlainLiteral]
 
   /** pleiades:hasLocation
     * 
@@ -80,9 +80,9 @@ private[api] class DefaultPlace (
   
   val title: String,
   
-  val descriptions: Seq[Label] = Seq.empty[Label],
+  val descriptions: Seq[PlainLiteral] = Seq.empty[PlainLiteral],
   
-  val names: Seq[Label] = Seq.empty[Label],
+  val names: Seq[PlainLiteral] = Seq.empty[PlainLiteral],
   
   val locations: Seq[Location] = Seq.empty[Location],
   
@@ -101,9 +101,9 @@ object Place extends AbstractApiCompanion {
   
             title: String,
   
-            descriptions: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label]),
+            descriptions: ObjOrSeq[PlainLiteral] = new ObjOrSeq(Seq.empty[PlainLiteral]),
   
-            names: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label]),
+            names: ObjOrSeq[PlainLiteral] = new ObjOrSeq(Seq.empty[PlainLiteral]),
   
             locations: ObjOrSeq[Location] = new ObjOrSeq(Seq.empty[Location]),
             

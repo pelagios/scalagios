@@ -21,7 +21,6 @@ class PelagiosDataParser extends ResourceCollector {
     
     // Resolve foaf:Agents
     val agents = resourcesOfType(FOAF.Organization).map(new AgentResource(_)).map(agent => (agent.uri, agent)).toMap
-    println(agents)
     
     // Resolve transcriptions
     val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))
@@ -81,7 +80,6 @@ class PelagiosDataParser extends ResourceCollector {
     allAnnotatedThings.foreach(thing => {
       thing.annotations.foreach(annotation => {
         val agentURI = annotation.resource.getFirst(OA.annotatedBy)
-        println(" ### " + agentURI)
         annotation.creator = agentURI.map(uri => agents.get(uri.stringValue)).flatten
       })
     })
@@ -136,9 +134,6 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   def created: Option[Date] = None
   
   def index: Option[Int] = resource.getFirst(PelagiosSequence.index).map(_.stringValue.toInt)
-  
-  // TODO
-  def distanceToNext: Option[Distance] = None
   
 }
 

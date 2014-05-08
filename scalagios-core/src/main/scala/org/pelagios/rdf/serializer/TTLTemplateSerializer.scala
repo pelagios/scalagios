@@ -21,7 +21,7 @@ object TTLTemplateSerializer {
 
   val engine = new TemplateEngine
   
-  val template = TemplateSource.fromSource("ttl.mustache", Source.fromInputStream(getClass.getResourceAsStream("ttl.mustache")))
+  val template = TemplateSource.fromSource("ttl.mustache", Source.fromInputStream(getClass.getResourceAsStream("ttl.mustache"), "UTF-8"))
 
   def toString(data: Iterable[AnnotatedThing]): String =
     engine.layout(template, Map("things" -> data))

@@ -4,7 +4,7 @@ package org.pelagios.api
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-trait Label {
+trait PlainLiteral {
   
   /** String label **/
   def label: String
@@ -15,10 +15,10 @@ trait Label {
 }
 
 /** A default POJO-style implementation of 'Label' **/
-private[api] class DefaultLabel(val label: String, val lang: Option[String]) extends Label
+private[api] class DefaultLabel(val label: String, val lang: Option[String]) extends PlainLiteral
 
 /** Companion object for generating DefaultLabel instances **/
-object Label {
+object PlainLiteral {
   
   def apply(label: String, lang: Option[String] = None) = new DefaultLabel(label, lang)
   

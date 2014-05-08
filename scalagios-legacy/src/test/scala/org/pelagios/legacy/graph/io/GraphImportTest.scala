@@ -28,7 +28,8 @@ import com.tinkerpop.blueprints.pgm.Graph
 
 @RunWith(classOf[JUnitRunner])
 class GraphImportTest extends FunSuite with BeforeAndAfterAll {
-
+  
+  /*
   private val NEO4J_DIR = "neo4j-test"
   private val PLEIADES_DUMP = "src/test/resources/legacy/test-places-pleiades.2012.07.ttl.gz"
    
@@ -38,7 +39,7 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
   
   override def beforeAll(configMap: Map[String, Any]) = deleteNeo4j
   override def afterAll(configMap: Map[String, Any]) = deleteNeo4j
-  
+
   test("Place import with Neo4j") {
     println("Importing Pleiades Gazetteer")
     
@@ -160,7 +161,6 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val graph = new Neo4jGraph(NEO4J_DIR)
     val reader = new PelagiosNeo4jReader(graph)
     
-    /*
     reader.queryPlaces("leptis magna").foreach(place => println("    " + place.label.get))
     reader.queryDatasets("herodot").foreach(dataset => println("    " + dataset.title))
     
@@ -168,7 +168,6 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
     val viennaRegion = reader.queryPlaces(16.3, 48.2, 16.4, 48.3)
     assert(viennaRegion.size > 0)
     assert(viennaRegion.mapConserve(_.label).contains(Some("Vindobona")))
-    */
     graph.shutdown()
   }
   
@@ -223,5 +222,6 @@ class GraphImportTest extends FunSuite with BeforeAndAfterAll {
       }
     }
   }
+  */
   
 }

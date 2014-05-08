@@ -11,7 +11,7 @@ import org.pelagios.legacy.api.Dataset
 @RunWith(classOf[JUnitRunner])
 class VoIDParserTest extends FunSuite { 
 
-  val SAMPLE_RDF = "src/test/resources/legacy/test-void-gap.ttl"
+  val SAMPLE_RDF = "test-data/legacy/test-void-gap.ttl"
   val ANNOTATION_BASEURI = "http://gap.alexandriaarchive.org/bookdata/GAPtriples/"
     
   test("Pelagios VoID Import") {    
@@ -27,9 +27,6 @@ class VoIDParserTest extends FunSuite {
     println(datasetBuilder.triplesTotal + " triples total in file")
     println(datasetBuilder.triplesProcessed + " triples processed during import")
     println(datasetBuilder.datasetsTotal + " datasets in VoID description")
-    
-    // TODO test should verify with asserts, not just print to screen
-    datasetBuilder.getRootDatasets.foreach(dataset => printToScreen(dataset, ""))
   }
   
   private def printToScreen(dataset: Dataset, indent: String): Unit = {

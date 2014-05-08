@@ -4,7 +4,7 @@ import scala.collection.mutable.{ArrayBuffer, HashMap}
 import org.openrdf.model.{ Literal, Statement, URI, Value }
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
-import org.pelagios.api.Label
+import org.pelagios.api.PlainLiteral
 import org.pelagios.rdf.vocab.PleiadesPlaces
 import org.pelagios.rdf.vocab.Pelagios
 
@@ -72,18 +72,18 @@ private[parser] object ResourceCollector {
     * @param value the RDF value
     * @return the label
     */
-  def toLabel(value: Value): Label = {
+  def toLabel(value: Value): PlainLiteral = {
     value match {
       case v if v.isInstanceOf[Literal] => { 
         val literal = v.asInstanceOf[Literal]
         val lang = literal.getLanguage
         if (lang != null)
-          Label(literal.stringValue, Some(lang))
+          PlainLiteral(literal.stringValue, Some(lang))
         else
-          Label(literal.stringValue)
+          PlainLiteral(literal.stringValue)
       }
       
-      case v => Label(v.stringValue)
+      case v => PlainLiteral(v.stringValue)
     }
   }
 
@@ -92,6 +92,6 @@ private[parser] object ResourceCollector {
     * @param values the sequence of RDF values
     * @return the labels
     */
-  def toLabel(values: Seq[Value]): Seq[Label] = values.map(toLabel(_))
+  def toLabel(values: Seq[Value]): Seq[PlainLiteral] = values.map(toLabel(_))
   
 }

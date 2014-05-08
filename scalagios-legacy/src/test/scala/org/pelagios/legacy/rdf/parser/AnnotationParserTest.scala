@@ -12,7 +12,7 @@ import java.util.zip.GZIPInputStream
 @RunWith(classOf[JUnitRunner])
 class AnnotationParserTest extends FunSuite {
   
-  val SAMPLE_RDF = "src/test/resources/legacy/test-annotations-gap.n3.gz";
+  val SAMPLE_RDF = "test-data/legacy/test-annotations-gap.n3.gz";
   
   test("Pelagios OAC Annotation Import") {
     println("Starting OAC Annotation import")

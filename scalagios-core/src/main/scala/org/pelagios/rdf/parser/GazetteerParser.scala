@@ -38,7 +38,7 @@ class GazetteerParser extends ResourceCollector {
  *  @param names the names connected to the resource
  *  @param locations the locations connected to the resource
  */
-private[parser] class PlaceResource(val resource: Resource, val names: Seq[Label], val locations: Seq[Location]) extends Place {
+private[parser] class PlaceResource(val resource: Resource, val names: Seq[PlainLiteral], val locations: Seq[Location]) extends Place {
 
   def uri = resource.uri
   
@@ -79,7 +79,7 @@ private[parser] class LocationResource(val resource: Resource) extends Location 
       Location.fromLatLon(0, 0) 
   }
   
-  def descriptions: Seq[Label] =
+  def descriptions: Seq[PlainLiteral] =
     (resource.get(DCTerms.description) ++ resource.get(RDFS.LABEL)).map(ResourceCollector.toLabel(_))
 
 }

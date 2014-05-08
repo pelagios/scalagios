@@ -2,7 +2,7 @@ package org.pelagios.gazetteer
 
 import org.apache.lucene.document.{ Document, Field, StringField, TextField }
 import org.apache.lucene.index.IndexableField
-import org.pelagios.api.{ Label, Location, Place, PlaceCategory }
+import org.pelagios.api.{ PlainLiteral, Location, Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON
@@ -17,10 +17,10 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   val title: String = doc.get(PlaceIndex.FIELD_TITLE)
   
-  val descriptions: Seq[Label] =
+  val descriptions: Seq[PlainLiteral] =
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
   
-  val names: Seq[Label] = 
+  val names: Seq[PlainLiteral] = 
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_NAME)).map(field => toLabel(field))
   
   val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(json => Location(Location.parseGeoJSON(json))).toSeq
@@ -37,9 +37,9 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
     if (string == null) None else Option(string)
   
   // TODO move into abstract super-class once we do doc wrappers for other API primitives!
-  private def toLabel(field: IndexableField): Label = {
+  private def toLabel(field: IndexableField): PlainLiteral = {
     val language = if (field.name.indexOf('_') > -1) Some(field.name.substring(field.name.indexOf('_') + 1)) else None
-    Label(field.stringValue(), language)    
+    PlainLiteral(field.stringValue(), language)    
   }
   
 }

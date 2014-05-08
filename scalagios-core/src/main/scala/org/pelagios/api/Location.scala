@@ -13,7 +13,7 @@ trait Location {
   
   def geometry: Geometry
 
-  def descriptions: Seq[Label]
+  def descriptions: Seq[PlainLiteral]
   
   /** The geometry as Well-Known-Text **/
   lazy val wkt: String =
@@ -38,7 +38,7 @@ trait Location {
 }
 
 /** A default POJO-style implementation of Location. **/
-private[api] class DefaultLocation(val geometry: Geometry, val descriptions: Seq[Label]) extends Location
+private[api] class DefaultLocation(val geometry: Geometry, val descriptions: Seq[PlainLiteral]) extends Location
 
 /** Companion object with a pimped apply method for generating DefaultAnnotation instances.
   *  
@@ -53,12 +53,12 @@ object Location extends AbstractApiCompanion {
   private val factory = new GeometryFactory
   
   def apply(geometry: Geometry): Location =
-    new DefaultLocation(geometry, Seq.empty[Label])
+    new DefaultLocation(geometry, Seq.empty[PlainLiteral])
     
-  def apply(geometry: Geometry, descriptions: ObjOrSeq[Label]): Location =
+  def apply(geometry: Geometry, descriptions: ObjOrSeq[PlainLiteral]): Location =
     new DefaultLocation(geometry, descriptions.seq)
   
-  def apply(lat: Double, lon: Double, descriptions: ObjOrSeq[Label] = new ObjOrSeq(Seq.empty[Label])): Location = 
+  def apply(lat: Double, lon: Double, descriptions: ObjOrSeq[PlainLiteral] = new ObjOrSeq(Seq.empty[PlainLiteral])): Location = 
     new DefaultLocation(Location.fromLatLon(lat, lon), descriptions.seq)
     
   /** Constructs a location from a WKT string **/
