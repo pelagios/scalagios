@@ -24,21 +24,12 @@ trait AnnotatedThing extends AnnotationTarget {
   /** dcterms:title **/
   def title: String
   
-  /** frbr:realizationOf
+  /** dcterms:isPartOf
     *  
-    * An annotated thing may be a "Work" (such as "The Vicarello Beakers") or
-    * an "Expression" (such as "the fourth Vicarello Beaker, discovered in 1863"). 
-    * To quote the FRBR definition, a Work is "an abstract notion of an 
-    * artistic or intellectual creation", whereas an Expression is "a realization
-    * of a single work usually in a physical form."
-    *  
-    * http://en.wikipedia.org/wiki/Functional_Requirements_for_Bibliographic_Records
-    * http://vocab.org/frbr/core.html
-    * 
-    * If the annotated thing represents a Expression, frbr:realizationOf links
-    * to the work it realizes.
+    * An annotated thing may be a part of another ("parent") annotated thing.
+    * This is our generic mechanism for encoding internal document hierarchies.
     */
-  def realizationOf: Option[AnnotatedThing]  
+  def isPartOf: Option[AnnotatedThing]  
   
   /** dcterms:identifier
     *  
@@ -128,12 +119,12 @@ trait AnnotatedThing extends AnnotationTarget {
     */
   def subjects: Seq[String]  
  
-  /** Expressions (as defined by through frbr:realizationOf)
+  /** Parts (as defined through dcterms:isPartOf)
     *   
-    * If the annotated thing represents a Work, this method returns the expressions
-    * linked to it.
+    * If the annotated thing has parts, this method returns the parts
+    * that belong to it.
     */ 
-  def expressions: Seq[AnnotatedThing]
+  def parts: Seq[AnnotatedThing]
   
   /** The annotations on the annotated thing (if any). **/
   def annotations: Seq[Annotation]
@@ -150,7 +141,7 @@ private[api] class DefaultAnnotatedThing(
     
   val title: String,
   
-  val realizationOf: Option[AnnotatedThing] = None,
+  val isPartOf: Option[AnnotatedThing] = None,
     
   val identifier: Option[String] = None,
   
@@ -180,15 +171,15 @@ private[api] class DefaultAnnotatedThing(
       
 ) extends AnnotatedThing {
 
-  // If this thing is an expression, create 'downwards' relation Work->Expression
-  if (realizationOf.isDefined) {
-    if (realizationOf.get.isInstanceOf[DefaultAnnotatedThing])
-      realizationOf.get.expressions.asInstanceOf[ListBuffer[AnnotatedThing]].append(this)
+  // If this thing is a part, create 'downwards' relation
+  if (isPartOf.isDefined) {
+    if (isPartOf.get.isInstanceOf[DefaultAnnotatedThing])
+      isPartOf.get.parts.asInstanceOf[ListBuffer[AnnotatedThing]].append(this)
     else
       throw new RuntimeException("cannot mix different model impelementation types - requires instance of DefaultAnnotatedThing")
   }
   
-  val expressions: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
+  val parts: ListBuffer[AnnotatedThing] =  ListBuffer.empty[AnnotatedThing]
   
   val annotations: ListBuffer[Annotation] = ListBuffer.empty[Annotation]
   
@@ -199,7 +190,7 @@ object AnnotatedThing extends AbstractApiCompanion {
   
   def apply(uri: String, title: String,
       
-            realizationOf: ObjOrOption[AnnotatedThing] = new ObjOrOption(None),
+            isPartOf: ObjOrOption[AnnotatedThing] = new ObjOrOption(None),
             
             identifier: ObjOrOption[String] = new ObjOrOption(None),
             
@@ -227,7 +218,7 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
     
-    new DefaultAnnotatedThing(uri, title, realizationOf.option, identifier.option, description.option, homepage.option, sources.seq, primaryTopicOf,
+    new DefaultAnnotatedThing(uri, title, isPartOf.option, identifier.option, description.option, homepage.option, sources.seq, primaryTopicOf,
                               temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
                               bibliographicCitations.seq, subjects.seq)
   }

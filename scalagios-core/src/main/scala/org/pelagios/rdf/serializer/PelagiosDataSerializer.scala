@@ -86,10 +86,10 @@ object PelagiosDataSerializer {
     thing.subjects.foreach(subject => model.add(rdfThing, DCTerms.subject, f.createURI(subject)))
     
     // frbr:realizationOf
-    thing.realizationOf.map(work => model.add(rdfThing, FRBR.realizationOf, f.createURI(work.uri)))
+    thing.isPartOf.map(work => model.add(rdfThing, FRBR.realizationOf, f.createURI(work.uri)))
     
     // Expressions
-    thing.expressions.foreach(expression => serializeAnnotatedThing(expression, model))
+    thing.parts.foreach(expression => serializeAnnotatedThing(expression, model))
       
     // Annotations
     thing.annotations.foreach(annotation => {

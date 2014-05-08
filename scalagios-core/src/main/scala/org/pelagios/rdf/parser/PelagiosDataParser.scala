@@ -52,9 +52,9 @@ class PelagiosDataParser extends ResourceCollector {
       val realizationOf = thing.resource.getFirst(FRBR.realizationOf).map(_.stringValue)
       if (realizationOf.isDefined) {        
         val work = allAnnotatedThings.find(t => { t.uri.equals(realizationOf.get) })
-        thing.realizationOf = work
+        thing.isPartOf = work
         if (work.isDefined) {
-          work.get.expressions = thing +: work.get.expressions
+          work.get.parts = thing +: work.get.parts
         }
       }
     })  
@@ -85,7 +85,7 @@ class PelagiosDataParser extends ResourceCollector {
     })
     
     // Filter out top-level things, i.e. those that are not expressions of something else
-    allAnnotatedThings.filter(thing => thing.realizationOf.isEmpty)
+    allAnnotatedThings.filter(thing => thing.isPartOf.isEmpty)
   }
       
 }
@@ -149,7 +149,7 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   lazy val title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
-  var realizationOf: Option[AnnotatedThing] = None
+  var isPartOf: Option[AnnotatedThing] = None
   
   lazy val identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
 
@@ -180,7 +180,7 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   var annotations = Seq.empty[AnnotationResource]
   
-  var expressions = Seq.empty[AnnotatedThingResource]
+  var parts = Seq.empty[AnnotatedThingResource]
   
 }
 

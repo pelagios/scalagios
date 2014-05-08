@@ -23,8 +23,8 @@ trait Agent {
 private[api] class DefaultAgent(val uri: String, val name: Option[String]) extends Agent
 
 /** Companion object for generating DefaultAgent instances **/
-object Agent {
+object Agent extends AbstractApiCompanion {
   
-  def apply(uri: String, name: Option[String] = None) = new DefaultAgent(uri, name)
+  def apply(uri: String, name: ObjOrOption[String] = new ObjOrOption(None)) = new DefaultAgent(uri, name.option)
   
 } 
