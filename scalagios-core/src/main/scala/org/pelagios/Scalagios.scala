@@ -131,8 +131,17 @@ object Scalagios {
     */
   def readVoID(file: File): Iterable[Dataset] =
     readVoID(new FileInputStream(file), new URI(file.getAbsolutePath).toString, getParser(file.getName))    
-  
-  def readVoID(is: InputStream, baseURI: String, parser: RDFParser): Iterable[Dataset] = {
+ 
+  /** Parses Pelagios-style VoID data from an input stream.
+    * 
+    * @param is the input stream
+    * @param baseURI the base URI
+    * @param format the RDF serialization format the data is in
+    */   
+  def readVoID(is: InputStream, baseURI: String, format: RDFFormat): Iterable[Dataset] =
+    readVoID(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
+    
+  private def readVoID(is: InputStream, baseURI: String, parser: RDFParser): Iterable[Dataset] = {
     val handler = new VoIDParser()
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
