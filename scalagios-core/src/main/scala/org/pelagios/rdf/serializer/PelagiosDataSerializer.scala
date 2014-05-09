@@ -23,7 +23,7 @@ object PelagiosDataSerializer {
   
   private def serializeAgent(agent: Agent, model: Model): URI = {
     val f = model.getValueFactory()
-    val agentNode = f.createURI(agent.uri)
+    val agentNode = f.createURI(agent.uri.get)
     model.add(agentNode, RDF.TYPE, FOAF.Agent)
     agent.name.map(n => model.add(agentNode, FOAF.name, f.createLiteral(n)))
     agentNode

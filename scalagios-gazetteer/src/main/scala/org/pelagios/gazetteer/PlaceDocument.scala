@@ -53,10 +53,10 @@ object PlaceDocument {
     doc.add(new TextField(PlaceIndex.FIELD_TITLE, place.title, Field.Store.YES))
     place.descriptions.foreach(description => {
       val fieldName = description.lang.map(PlaceIndex.FIELD_DESCRIPTION + "_" + _).getOrElse(PlaceIndex.FIELD_DESCRIPTION)
-      doc.add(new TextField(fieldName, description.label, Field.Store.YES))
+      doc.add(new TextField(fieldName, description.chars, Field.Store.YES))
     })
     place.names.foreach(name => {
-      doc.add(new TextField(PlaceIndex.FIELD_NAME, name.label, Field.Store.YES)) 
+      doc.add(new TextField(PlaceIndex.FIELD_NAME, name.chars, Field.Store.YES)) 
     })
     place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, location.geoJSON, Field.Store.YES)))
     if (place.category.isDefined)

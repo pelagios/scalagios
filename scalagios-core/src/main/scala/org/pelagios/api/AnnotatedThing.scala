@@ -130,7 +130,7 @@ trait AnnotatedThing extends AnnotationTarget {
   def annotations: Seq[Annotation]
   
   /** Convenience method to list tags used in annotations on this thing **/
-  def getTags: Seq[Tag] = annotations.map(_.tags).flatten.toSet.toSeq
+  def getTags: Seq[Tag] = annotations.flatMap(_.tags).distinct
   
 }
 

@@ -7,7 +7,7 @@ package org.pelagios.api
 trait PlainLiteral {
   
   /** String label **/
-  def label: String
+  def chars: String
   
   /** ISO language code **/
   def lang: Option[String]
@@ -15,7 +15,7 @@ trait PlainLiteral {
 }
 
 /** A default POJO-style implementation of 'Label' **/
-private[api] class DefaultLabel(val label: String, val lang: Option[String]) extends PlainLiteral
+private[api] class DefaultLabel(val chars: String, val lang: Option[String]) extends PlainLiteral
 
 /** Companion object for generating DefaultLabel instances **/
 object PlainLiteral {

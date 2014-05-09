@@ -31,7 +31,7 @@ object GazetteerSerializer {
       writer.println("<" + place.uri + "> a pelagios:PlaceRecord ;")
       writer.println("  dcterms:title \"" + place.title.replaceAll("\\\"", "\\\\\"") + "\" ;")
       place.descriptions.foreach(d => 
-        writer.println("  dcterms:description \"" + d.label.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
+        writer.println("  dcterms:description \"" + d.chars.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
      
       if (place.category.isDefined)
         writer.println("  dcterms:type <" + PelagiosPlaceCategories.fromCategory(place.category.get) + "> ;")
@@ -40,7 +40,7 @@ object GazetteerSerializer {
         writer.println("  dcterms:subject <" + s + "> ;"))
 
       place.names.foreach(name => {
-        val label = name.label.trim
+        val label = name.chars.trim
         if (!label.isEmpty)
           writer.println("  pleiades:hasName [ rdfs:label \"" + label + name.lang.map("@" + _).getOrElse("") + "\" ] ;")
       })

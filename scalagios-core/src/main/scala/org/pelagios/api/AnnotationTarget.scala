@@ -16,3 +16,12 @@ trait AnnotationTarget {
   def hasSelector: Option[Selector] = None 
   
 }
+
+/** SpecificResource provides a generic implementation of a selector-based target **/  
+case class SpecificResource(private val annotatedThing: AnnotatedThing, private val selector: Selector) extends AnnotationTarget {
+  
+  override val hasSource: Option[AnnotatedThing] = Some(annotatedThing)
+  
+  override val hasSelector: Option[Selector] = Some(selector)
+  
+}

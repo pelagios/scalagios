@@ -20,7 +20,7 @@ class PelagiosDataParser extends ResourceCollector {
     val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))  
     
     // Resolve foaf:Agents
-    val agents = resourcesOfType(FOAF.Organization).map(new AgentResource(_)).map(agent => (agent.uri, agent)).toMap
+    val agents = resourcesOfType(FOAF.Organization).map(new AgentResource(_)).map(agent => (agent.uri.get, agent)).toMap
     
     // Resolve transcriptions
     val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))
@@ -91,10 +91,10 @@ class PelagiosDataParser extends ResourceCollector {
 }
 
 private[parser] class AgentResource(val resource: Resource) extends Agent {
+    
+  val name = resource.getFirst(FOAF.name).map(_.stringValue).get
   
-  val uri = resource.uri
-  
-  val name: Option[String] = resource.getFirst(FOAF.name).map(_.stringValue)
+  val uri = Some(resource.uri)
   
 }
 
