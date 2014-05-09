@@ -14,6 +14,8 @@ class VoIDParser extends ResourceCollector {
 
 private[parser] class DatasetResource(val resource: Resource) extends Dataset {
 
+  def uri: String = resource.uri
+  
   def title: String = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
 
   def publisher: String = resource.getFirst(DCTerms.publisher).map(_.stringValue).getOrElse("[NO PUBLISHER]") // 'NO PUBLISHER' should never happen!
@@ -27,7 +29,5 @@ private[parser] class DatasetResource(val resource: Resource) extends Dataset {
   def subjects: Seq[String] = resource.get(DCTerms.subject).map(_.stringValue)
   
   def datadumps: Seq[String] = resource.get(VoID.dataDump).map(_.stringValue)
-
-  def voidURI: Option[String] = Some(resource.uri)
   
 }

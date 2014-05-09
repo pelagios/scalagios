@@ -7,6 +7,9 @@ import org.pelagios.api.AbstractApiCompanion
  * @author Rainer Simon <rainer.simon@ait.ac.at>
  */
 trait Dataset {
+  
+  /** VoID file URI **/
+  def uri: String
 
   /** dcterms:title **/
   def title: String
@@ -28,15 +31,14 @@ trait Dataset {
   
   /** void:dataDump **/
   def datadumps: Seq[String]
-
-  /** VoID file URI **/
-  def voidURI: Option[String]
   
 }
 
 /** A default POJO-style implementation of Dataset. **/
 private[api] class DefaultDataset(
-    
+
+  val uri: String,
+  
   val title: String,
 
   val publisher: String,
@@ -49,14 +51,12 @@ private[api] class DefaultDataset(
   
   val subjects: Seq[String] = Seq.empty[String],
   
-  val datadumps: Seq[String] = Seq.empty[String],
-
-  val voidURI: Option[String] = None) extends Dataset
+  val datadumps: Seq[String] = Seq.empty[String]) extends Dataset
   
 /** Companion object with a pimped apply method for generating DefaultDataset instances **/
 object Dataset extends AbstractApiCompanion {
 
-  def apply(title: String, publisher: String, license: String,
+  def apply(uri: String, title: String, publisher: String, license: String,
       
       description: ObjOrOption[String] = new ObjOrOption(None),
       
@@ -64,11 +64,9 @@ object Dataset extends AbstractApiCompanion {
       
       subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
       
-      datadumps: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
-      
-      voidURI: ObjOrOption[String] = new ObjOrOption(None)): Dataset = {
+      datadumps: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): Dataset = {
     
-    new DefaultDataset(title, publisher, license, description.option, homepage.option, subjects.seq, datadumps.seq, voidURI.option)
+    new DefaultDataset(uri, title, publisher, license, description.option, homepage.option, subjects.seq, datadumps.seq)
   }
   
 }
