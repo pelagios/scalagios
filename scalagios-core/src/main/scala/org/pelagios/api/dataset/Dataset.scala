@@ -10,6 +10,9 @@ trait Dataset {
 
   /** dcterms:title **/
   def title: String
+  
+  /** dcterms:publisher **/
+  def publisher: String
 
   /** dcterms:license **/
   def license: String
@@ -36,6 +39,8 @@ private[api] class DefaultDataset(
     
   val title: String,
 
+  val publisher: String,
+  
   val license: String,
   
   val description: Option[String] = None,
@@ -51,7 +56,7 @@ private[api] class DefaultDataset(
 /** Companion object with a pimped apply method for generating DefaultDataset instances **/
 object Dataset extends AbstractApiCompanion {
 
-  def apply(title: String, license: String,
+  def apply(title: String, publisher: String, license: String,
       
       description: ObjOrOption[String] = new ObjOrOption(None),
       
@@ -63,7 +68,7 @@ object Dataset extends AbstractApiCompanion {
       
       voidURI: ObjOrOption[String] = new ObjOrOption(None)): Dataset = {
     
-    new DefaultDataset(title, license, description.option, homepage.option, subjects.seq, datadumps.seq, voidURI.option)
+    new DefaultDataset(title, publisher, license, description.option, homepage.option, subjects.seq, datadumps.seq, voidURI.option)
   }
   
 }

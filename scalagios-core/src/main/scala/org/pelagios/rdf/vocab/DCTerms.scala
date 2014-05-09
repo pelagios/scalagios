@@ -21,6 +21,8 @@ object DCTerms extends BaseVocab("http://purl.org/dc/terms/") {
   
   val license = createURI("license")
   
+  val publisher = createURI("publisher")
+  
   val source = createURI("source")
   
   val subject = createURI("subject")
