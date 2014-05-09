@@ -14,14 +14,14 @@ trait Dataset {
   /** dcterms:license **/
   def license: String
   
-  /** Last updated timestamp **/
-  def lastUpdated: Long
-  
   /** dcterms:description **/
   def description: Option[String]
   
   /** foaf:homepage ***/
   def homepage: Option[String]
+  
+  /** dcterms:subject **/
+  def subjects: Seq[String]
   
   /** void:dataDump **/
   def datadumps: Seq[String]
@@ -38,11 +38,11 @@ private[api] class DefaultDataset(
 
   val license: String,
   
-  val lastUpdated: Long,
-  
   val description: Option[String] = None,
   
   val homepage: Option[String] = None,
+  
+  val subjects: Seq[String] = Seq.empty[String],
   
   val datadumps: Seq[String] = Seq.empty[String],
 
@@ -51,17 +51,19 @@ private[api] class DefaultDataset(
 /** Companion object with a pimped apply method for generating DefaultDataset instances **/
 object Dataset extends AbstractApiCompanion {
 
-  def apply(title: String, license: String, lastUpdated: Long,
+  def apply(title: String, license: String,
       
       description: ObjOrOption[String] = new ObjOrOption(None),
       
       homepage: ObjOrOption[String] = new ObjOrOption(None),
       
+      subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+      
       datadumps: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
       
       voidURI: ObjOrOption[String] = new ObjOrOption(None)): Dataset = {
     
-    new DefaultDataset(title, license, lastUpdated, description.option, homepage.option, datadumps.seq, voidURI.option)
+    new DefaultDataset(title, license, description.option, homepage.option, subjects.seq, datadumps.seq, voidURI.option)
   }
   
 }

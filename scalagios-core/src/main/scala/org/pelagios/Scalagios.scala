@@ -28,6 +28,9 @@ import java.io.Writer
 import org.pelagios.rdf.serializer.PelagiosDataSerializer
 import org.pelagios.rdf.serializer.TTLTemplateSerializer
 import org.pelagios.rdf.serializer.GazetteerSerializer
+import scala.io.Source
+import org.pelagios.api.dataset.Dataset
+import org.pelagios.rdf.parser.VoIDParser
 
 /** A utility to parse & write Pelagios data.
   *
@@ -89,8 +92,8 @@ object Scalagios {
     
   /** Parses a Pelagios-style gazetteer dump file.
     *
-    *  @param file the gazetteer dump file to parse
-    *  @return the places, with names and locations in-lined  
+    * @param file the gazetteer dump file to parse
+    * @return the places, with names and locations in-lined  
     */
   def readPlaces(file: File): Iterable[Place] =
     readPlaces(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
@@ -119,6 +122,21 @@ object Scalagios {
     case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
     case f if f.endsWith("n3") => new N3ParserFactory().getParser()
     case _ => throw new UnsupportedRDFormatException("Format not supported")
+  }
+  
+  /** Parses a Pelagios-style VoID file.
+    *  
+    * @param file the VoID file to parse
+    * @return the datasets
+    */
+  def readVoID(file: File): Iterable[Dataset] =
+    readVoID(new FileInputStream(file), new URI(file.getAbsolutePath).toString, getParser(file.getName))    
+  
+  def readVoID(is: InputStream, baseURI: String, parser: RDFParser): Iterable[Dataset] = {
+    val handler = new VoIDParser()
+    parser.setRDFHandler(handler)
+    parser.parse(is, baseURI)
+    handler.datasets
   }
   
 }

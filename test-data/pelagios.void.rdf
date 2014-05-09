@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:nm="http://nomisma.org/id/" xmlns:dcterms="http://purl.org/dc/terms/"
+         xmlns:oac="http://www.openannotation.org/ns/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:void="http://rdfs.org/ns/void#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+   <void:dataSet>
+      <dcterms:title>American Numismatic Society</dcterms:title>
+      <dcterms:description>The Greek, Roman, and Byzantine coins of the American Numismatic Society.</dcterms:description>
+      <dcterms:license rdf:resource="http://opendatacommons.org/licenses/odbl/"/>
+      <dcterms:subject rdf:resource="http://dbpedia.org/resource/Annotation"/>
+      <void:dataDump rdf:resource="http://numismatics.org/pelagios.rdf"/>
+   </void:dataSet>
+</rdf:RDF>
