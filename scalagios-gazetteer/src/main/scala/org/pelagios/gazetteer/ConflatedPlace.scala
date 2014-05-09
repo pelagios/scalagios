@@ -1,6 +1,6 @@
 package org.pelagios.gazetteer
 
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 
 /** A 'conflated place' which represents the combination of multiple places in the same place network.
   *

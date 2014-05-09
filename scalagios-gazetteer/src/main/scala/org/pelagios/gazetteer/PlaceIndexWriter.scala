@@ -1,6 +1,6 @@
 package org.pelagios.gazetteer
 
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig }
 import org.apache.lucene.util.Version
 import org.slf4j.Logger

@@ -1,7 +1,7 @@
 package org.pelagios.tools.geoparsing
 
 import java.io.{ File, PrintWriter }
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 
 object CSVSerializer {
   

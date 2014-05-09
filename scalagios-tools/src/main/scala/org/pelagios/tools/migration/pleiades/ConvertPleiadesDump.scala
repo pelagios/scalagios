@@ -4,7 +4,8 @@ import java.io.FileInputStream
 import java.util.zip.GZIPInputStream
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
-import org.pelagios.api.{ PlainLiteral, Location, Place, PlaceCategory }
+import org.pelagios.api.PlainLiteral
+import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
 import org.pelagios.legacy.LegacyInterop
 
 object ConvertPleiadesDump extends App {

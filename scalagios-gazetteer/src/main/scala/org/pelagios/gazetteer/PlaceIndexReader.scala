@@ -1,6 +1,6 @@
 package org.pelagios.gazetteer
 
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 import org.apache.lucene.index.{ DirectoryReader, Term }
 import org.apache.lucene.search.{ BooleanClause, BooleanQuery, IndexSearcher, TermQuery, TopScoreDocCollector }
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser

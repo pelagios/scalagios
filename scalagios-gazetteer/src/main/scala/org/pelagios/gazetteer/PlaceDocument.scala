@@ -2,7 +2,8 @@ package org.pelagios.gazetteer
 
 import org.apache.lucene.document.{ Document, Field, StringField, TextField }
 import org.apache.lucene.index.IndexableField
-import org.pelagios.api.{ PlainLiteral, Location, Place, PlaceCategory }
+import org.pelagios.api.PlainLiteral
+import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON

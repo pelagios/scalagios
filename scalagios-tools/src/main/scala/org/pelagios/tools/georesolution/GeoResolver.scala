@@ -1,6 +1,6 @@
 package org.pelagios.tools.georesolution
 
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 import org.pelagios.gazetteer.PlaceIndex
 
 class GeoResolver(index: PlaceIndex) {
