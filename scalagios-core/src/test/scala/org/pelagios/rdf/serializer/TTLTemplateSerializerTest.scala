@@ -4,7 +4,7 @@ import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.BeforeAndAfter
-import org.pelagios.api._
+import org.pelagios.api.annotation._
 
 @RunWith(classOf[JUnitRunner])
 class TTLTemplateSerializerTest extends FunSuite {

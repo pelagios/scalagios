@@ -1,9 +1,10 @@
-package org.pelagios.api
+package org.pelagios.api.gazetteer
 
 import java.io.StringWriter
+import org.geotools.geojson.geom.GeometryJSON
 import com.vividsolutions.jts.io.{ WKTReader, WKTWriter }
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry, GeometryFactory }
-import org.geotools.geojson.geom.GeometryJSON
+import org.pelagios.api.{ AbstractApiCompanion, PlainLiteral }
 
 /** Pelagios 'Location' model primitive.
   *  

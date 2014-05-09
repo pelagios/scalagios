@@ -1,4 +1,4 @@
-package org.pelagios.api
+package org.pelagios.api.annotation
 
 /** 'Tag' model primitive **/
 trait Tag {

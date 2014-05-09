@@ -1,6 +1,6 @@
-package org.pelagios.api
+package org.pelagios.api.annotation
 
-import org.pelagios.api.selectors.Selector
+import org.pelagios.api.annotation.selector.Selector
 
 /** 'AnnotationTarget' model primitive.
   *  

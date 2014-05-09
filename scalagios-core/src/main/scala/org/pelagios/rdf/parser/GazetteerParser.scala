@@ -4,6 +4,8 @@ import org.pelagios.api._
 import org.pelagios.rdf.vocab._
 import org.openrdf.model.{ Literal, URI, Value }
 import org.openrdf.model.vocabulary.{ RDF, RDFS }
+import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.Location
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
   * 

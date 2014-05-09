@@ -1,8 +1,7 @@
-package org.pelagios.api
+package org.pelagios.api.gazetteer
 
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.GeometryCollection
-import com.vividsolutions.jts.geom.GeometryFactory
+import com.vividsolutions.jts.geom.{ Coordinate, GeometryFactory }
+import org.pelagios.api.{ AbstractApiCompanion, PlainLiteral }
 
 /** Pelagios 'Place' model entity.
   *  

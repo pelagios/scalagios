@@ -1,6 +1,6 @@
-package org.pelagios.api
+package org.pelagios.api.annotation
 
-import org.pelagios.rdf.vocab.Pelagios
+import org.pelagios.api.AbstractApiCompanion
 
 /** 'Transcription' model primitive.
   * 

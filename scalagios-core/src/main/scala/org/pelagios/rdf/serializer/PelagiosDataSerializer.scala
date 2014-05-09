@@ -10,8 +10,12 @@ import org.openrdf.rio.{Rio, RDFFormat}
 import org.openrdf.model.vocabulary.RDFS
 import org.callimachusproject.io.TurtleStreamWriterFactory
 import java.io.FileOutputStream
-import org.pelagios.api.selectors.TextOffsetSelector
+import org.pelagios.api.annotation.selector.TextOffsetSelector
 import org.openrdf.model.URI
+import org.pelagios.api.annotation.AnnotatedThing
+import org.pelagios.api.annotation.SpecificResource
+import org.pelagios.api.annotation.TranscriptionType
+import org.pelagios.api.annotation.Transcription
 
 /** Utility object to serialize Pelagios data to RDF.
   *  

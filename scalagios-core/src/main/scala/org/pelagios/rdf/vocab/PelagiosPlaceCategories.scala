@@ -1,8 +1,8 @@
 package org.pelagios.rdf.vocab
 
-import org.pelagios.api.PlaceCategory
 import org.openrdf.model.URI
 import org.openrdf.model.Value
+import org.pelagios.api.gazetteer.PlaceCategory
 
 object PelagiosPlaceCategories extends BaseVocab("http://pelagios.github.io/vocab/placeTypes#"){
 

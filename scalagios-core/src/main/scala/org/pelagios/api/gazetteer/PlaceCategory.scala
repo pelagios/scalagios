@@ -1,4 +1,4 @@
-package org.pelagios.api
+package org.pelagios.api.gazetteer
 
 object PlaceCategory extends Enumeration {
 

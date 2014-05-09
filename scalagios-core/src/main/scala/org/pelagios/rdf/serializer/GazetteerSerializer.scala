@@ -2,7 +2,7 @@ package org.pelagios.rdf.serializer
 
 import com.vividsolutions.jts.io.WKTWriter
 import java.io.{ File, PrintWriter }
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 import org.openrdf.rio.RDFFormat
 import org.pelagios.rdf.vocab.PelagiosPlaceCategories
 

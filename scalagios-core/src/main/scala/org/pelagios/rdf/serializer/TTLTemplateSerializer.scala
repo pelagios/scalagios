@@ -6,6 +6,7 @@ import java.io.{ File, FileOutputStream, OutputStream, PrintWriter }
 import org.fusesource.scalate.Template
 import org.fusesource.scalate.TemplateSource
 import scala.io.Source
+import org.pelagios.api.annotation.AnnotatedThing
 
 /** Template-based Turtle serializer as alternative to [[RDFSerializer]].
   *   

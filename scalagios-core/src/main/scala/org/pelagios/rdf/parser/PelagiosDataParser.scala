@@ -9,6 +9,14 @@ import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.Literal
 import org.openrdf.model.BNode
 import java.text.SimpleDateFormat
+import org.pelagios.api.annotation.Annotation
+import org.pelagios.api.annotation.AnnotatedThing
+import org.pelagios.api.annotation.AnnotationTarget
+import org.pelagios.api.annotation.Relation
+import org.pelagios.api.annotation.TranscriptionType
+import org.pelagios.api.annotation.Transcription
+import org.pelagios.api.annotation.Tag
+import org.pelagios.api.PeriodOfTime
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 

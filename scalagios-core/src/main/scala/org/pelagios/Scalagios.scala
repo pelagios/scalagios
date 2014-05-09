@@ -7,11 +7,11 @@ import org.openrdf.rio.UnsupportedRDFormatException
 import org.openrdf.rio.turtle.TurtleParserFactory
 import org.openrdf.rio.rdfxml.RDFXMLParserFactory
 import java.io.PrintWriter
-import org.pelagios.api.AnnotatedThing
+import org.pelagios.api.annotation.AnnotatedThing
 import org.pelagios.rdf.parser.PelagiosDataParser
 import java.net.URI
 import org.pelagios.rdf.parser.GazetteerParser
-import org.pelagios.api.Place
+import org.pelagios.api.gazetteer.Place
 import org.openrdf.rio.RDFFormat
 import java.io.InputStream
 import org.openrdf.rio.RDFParser

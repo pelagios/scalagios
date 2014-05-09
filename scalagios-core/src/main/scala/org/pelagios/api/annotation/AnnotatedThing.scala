@@ -1,7 +1,7 @@
-package org.pelagios.api
+package org.pelagios.api.annotation
 
-import java.util.Date
 import scala.collection.mutable.ListBuffer
+import org.pelagios.api.{ AbstractApiCompanion, Agent, PeriodOfTime }
 
 /** 'AnnotatedThing' model entity.
   * 

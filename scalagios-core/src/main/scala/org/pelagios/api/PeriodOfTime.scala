@@ -1,7 +1,6 @@
 package org.pelagios.api
 
 import java.util.Date
-import java.text.ParseException
 import java.util.Calendar
 
 /** A period of time.

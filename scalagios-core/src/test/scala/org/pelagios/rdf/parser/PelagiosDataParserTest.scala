@@ -5,6 +5,7 @@ import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
 import org.pelagios.api._
+import org.pelagios.api.annotation.TranscriptionType
 
 @RunWith(classOf[JUnitRunner])
 class PelagiosDataParserTest extends FunSuite {
