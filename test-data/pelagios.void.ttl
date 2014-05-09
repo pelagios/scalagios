@@ -1,0 +1,24 @@
+@prefix : <http://gap.alexandriaarchive.org/bookdata/GAPtriples/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+:gap a void:Dataset;
+   # Title and description
+   dcterms:title "Google Ancient Places";
+   dcterms:publisher "Google Ancient Places";
+   dcterms:description "Classical texts from the Google Books collection";
+
+   # License
+   dcterms:license <http://creativecommons.org/publicdomain/zero/1.0/>;
+
+   # Dump file location and serialization format
+   void:dataDump <http://gap.alexandriaarchive.org/bookdata/GAPtriples.n3>;
+
+   # A homepage with information ABOUT the data - OPTIONAL
+   foaf:homepage <http://googleancientplaces.wordpress.com/>;
+
+   # We could use dcterms:subject to assign categories - OPTIONAL (below are DUMMY subjects only!)
+   dcterms:subject <http://dbpedia.org/resource/Location>;
+   dcterms:subject <http://dbpedia.org/resource/Annotation>;
+   .
