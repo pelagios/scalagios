@@ -11,8 +11,10 @@ import org.geotools.geojson.geom.GeometryJSON
   */
 trait Location {
   
+  /** JTS geometry **/
   def geometry: Geometry
 
+  /** dcterms:descriptions **/
   def descriptions: Seq[PlainLiteral]
   
   /** The geometry as Well-Known-Text **/
