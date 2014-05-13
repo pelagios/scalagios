@@ -126,7 +126,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   var tags: Seq[Tag] = Seq.empty[Tag]
   
   val relation: Option[Relation.Type] = 
-    resource.getFirst(Pelagios.relation).map(uri => Relation.withName(uri.stringValue))
+    resource.getFirst(Pelagios.relation).map(uri => PelagiosRelations.fromURI(uri.stringValue))
     
   // TODO 
   def annotatedBy: Option[Agent] = None
