@@ -14,7 +14,7 @@ object ConvertPleiadesDump extends App {
   
   // private val PLEIADES_DATA = "test-data/legacy/test-places-pleiades.2012.07.ttl.gz"
   
-  private val PLEIADES_DATA = "/home/simonr/Downloads/pleiades-20140302/places-1.ttl"
+  private val PLEIADES_DATA = "/home/simonr/Downloads/pleiades/places-2.ttl"
 
   // private val is = new GZIPInputStream(new FileInputStream(PLEIADES_DATA))    
   
@@ -65,7 +65,7 @@ object ConvertPleiadesDump extends App {
       placeCategory = placeCategory)
   })
   
-  Scalagios.writePlaces(importedPlaces, "/home/simonr/Arbeitsfläche/migrated.ttl", RDFFormat.TURTLE)
+  Scalagios.writePlaces(importedPlaces, "/home/simonr/Downloads/migrated.ttl", RDFFormat.TURTLE)
   
   println("Migrated " + importedPlaces.size + " places")
   
