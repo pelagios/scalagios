@@ -11,7 +11,7 @@ private[gazetteer] class PlaceIndexBase(directory: File) {
   
   protected val index = FSDirectory.open(directory)
   
-  protected val analyzer = new StandardAnalyzer(Version.LUCENE_44)
+  protected val analyzer = new StandardAnalyzer(Version.LUCENE_48)
   
   protected val log = LoggerFactory.getLogger(getClass())
   
@@ -46,7 +46,7 @@ object PlaceIndex {
       dir.mkdirs()
       
       val writer = new IndexWriter(FSDirectory.open(dir), 
-          new IndexWriterConfig(Version.LUCENE_44, new StandardAnalyzer(Version.LUCENE_44)))
+          new IndexWriterConfig(Version.LUCENE_48, new StandardAnalyzer(Version.LUCENE_48)))
       writer.close()
     }
     

@@ -9,7 +9,7 @@ import org.apache.lucene.index.Term
 trait PlaceIndexWriter extends PlaceIndexReader {
     
   def addPlaces(places: Iterable[Place]) = {
-    val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_44, analyzer))
+    val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_48, analyzer))
     
     places.foreach(place => {
       if (findByURI(GazetteerUtils.normalizeURI(place.uri)).isDefined) {
