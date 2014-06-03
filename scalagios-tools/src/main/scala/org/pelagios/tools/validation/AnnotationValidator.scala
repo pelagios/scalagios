@@ -9,7 +9,7 @@ object AnnotationValidator extends App {
   val annotations = Scalagios.readAnnotations(INPUT_FILE)
   annotations.foreach(thing => {
     println(thing.title)
-    println(thing.temporal.map(t => t.start.getYear()))
+    println(thing.temporal.map(t => t.start))
     thing.annotations.foreach(annotation => {
       println("  " + annotation.relation.map(_.toString).getOrElse("") + " " + annotation.place)
       println("  annotated by " + annotation.annotatedBy)
