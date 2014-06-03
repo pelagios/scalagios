@@ -2,6 +2,7 @@ package org.pelagios.api
 
 import java.util.Date
 import java.util.Calendar
+import java.util.GregorianCalendar
 
 /** A period of time.
   *  
@@ -33,6 +34,13 @@ object PeriodOfTime extends AbstractApiCompanion {
   def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
   
   def fromString(str: String): PeriodOfTime = {
+    
+    def setEra(y: Int, cal: Calendar) = 
+      if (y < 0)
+        cal.set(Calendar.ERA, GregorianCalendar.BC)
+      else
+        cal.set(Calendar.ERA, GregorianCalendar.AD)
+    
     val fields = str.split(";").map(_.trim)
     val start = fields.find(_.startsWith("start=")).map(_.substring(6).toInt)
     val end = fields.find(_.startsWith("end=")).map(_.substring(4).toInt)
@@ -44,9 +52,12 @@ object PeriodOfTime extends AbstractApiCompanion {
     val calendar = Calendar.getInstance()
     
     calendar.set(Calendar.YEAR, start.get);
+    setEra(start.get, calendar)
+      
     val startDate = calendar.getTime()
     val endDate = end.map(e => {
       calendar.set(Calendar.YEAR, e)
+      setEra(e, calendar)  
       calendar.getTime()
     })
     
