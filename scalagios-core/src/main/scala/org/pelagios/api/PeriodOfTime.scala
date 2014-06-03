@@ -33,7 +33,7 @@ object PeriodOfTime extends AbstractApiCompanion {
   def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
   
   def fromString(str: String): PeriodOfTime = {
-    val fields = str.split(";")
+    val fields = str.split(";").map(_.trim)
     val start = fields.find(_.startsWith("start=")).map(_.substring(6).toInt)
     val end = fields.find(_.startsWith("end=")).map(_.substring(4).toInt)
     val name = fields.find(_.startsWith("name=")).map(_.substring(5))
