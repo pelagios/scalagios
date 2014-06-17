@@ -20,15 +20,15 @@ class GazetteerParser extends ResourceCollector {
     * @return the list of Places
     */
   def places: Iterable[Place] = {      	
-    logger.warn("Building Names table")    
+    logger.info("Building Names table")    
     val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
       .map(resource => (resource.uri -> resource.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get)).toMap
 
-    logger.warn("Building Locations table")
+    logger.info("Building Locations table")
     val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
       .map(resource => (resource.uri -> new LocationResource(resource))).toMap
            
-    logger.warn("Wrapping RDF to domain model")
+    logger.info("Wrapping RDF to domain model")
     resourcesOfType(Pelagios.PlaceRecord).view.map(resource => {
       val names = resource.get(PleiadesPlaces.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)

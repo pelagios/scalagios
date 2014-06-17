@@ -32,7 +32,7 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
   override def handleStatement(statement: Statement): Unit = {
     ctr += 1
     if (ctr % 50000 == 0)
-      logger.info("Parsed " + ctr + " statements")
+      logger.info("Parsed " + ctr + " triples")
       
     val subj = statement.getSubject.stringValue
     val resource = {
