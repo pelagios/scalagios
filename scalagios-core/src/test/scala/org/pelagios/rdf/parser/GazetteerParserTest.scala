@@ -9,7 +9,7 @@ import org.pelagios.Scalagios
 @RunWith(classOf[JUnitRunner])
 class GazetteerParserTest extends FunSuite {
   
-  val TEST_FILE = "test-data/test-places-pleiades.ttl"
+  val TEST_FILE = "../test-data/test-places-pleiades.ttl"
 
   test("Gazetteer Dump Import") {
     val places = Scalagios.readPlaces(new File(TEST_FILE))

@@ -13,7 +13,7 @@ import org.openrdf.model.vocabulary.RDF
   * @constructor create a new resource with a URI
   * @param uri the URI
   */
-private[parser] class Resource(val uri:String) {
+private[parser] case class Resource(val uri:String) {
   
   val properties = new ArrayBuffer[(URI, Value)]
   
