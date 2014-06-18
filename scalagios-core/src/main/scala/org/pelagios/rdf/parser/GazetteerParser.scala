@@ -20,8 +20,11 @@ class GazetteerParser extends OffHeapResourceCollector {
     * @return the list of Places
     */
   lazy val places: Iterable[Place] = {
-    logger.info("Wrapping RDF to domain model")
-    val places = resourcesOfType(Pelagios.PlaceRecord).map(resource => {
+    logger.info("Filtering RDF for place resources")
+    val rdfResources = resourcesOfType(Pelagios.PlaceRecord)
+    
+    logger.info("Building domain model")
+    val placeResources = rdfResources.map(resource => {
       val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
       new PlaceResource(resource, names.map(r => r.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get), locations.map(new LocationResource(_)))

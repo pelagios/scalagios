@@ -17,16 +17,33 @@ private[parser] abstract class OffHeapResourceCollector extends RDFHandlerBase {
 
   protected val resources = DBMaker.newTempHashMap[String, Resource]
   
+  // protected val resourcesByType = DBMaker.newTempHashMap[String, Seq[String]]
+  
   override def handleStatement(statement: Statement): Unit = {
     ctr += 1
     if (ctr % 50000 == 0)
       logger.info("Parsed " + ctr + " triples")
       
     val subj = statement.getSubject.stringValue
+    
     val resource = Option(resources.get(subj)).getOrElse(new Resource(subj))
     resource.properties.append((statement.getPredicate, statement.getObject))
     resources.put(subj, resource)
+    
+    /*
+    if (statement.getPredicate() == RDF.TYPE) {
+      val typeURI = statement.getObject.stringValue
+      val byType = Option(resourcesByType.get(typeURI)).getOrElse(Seq.empty[String])
+      resourcesByType.put(typeURI, subj +: byType)
+    }
+    */
   }
+  
+  protected def resourcesOfType(rdfType: URI): Iterator[Resource] =
+    resources.valuesIterator.filter(resource => {
+      val types = resource.get(RDF.TYPE) 
+      types.contains(rdfType)
+    })
   
   /** A helper method that filters the collected resources by type.
     * 
@@ -42,22 +59,14 @@ private[parser] abstract class OffHeapResourceCollector extends RDFHandlerBase {
     * @param typeRules the list of type checking rules
     * @return the list of resources that are of the specified RDF type or satisfy any of the rules
     */  
-  protected def resourcesOfType(rdfType: URI, 
-                                 typeRules: Seq[Resource => Boolean] = Seq.empty[Resource => Boolean])
-                                 :Seq[Resource] = {
-    
-    resources.valuesIterator.foldLeft(Seq.empty[Resource])((result, resource) => {
+  protected def resourcesOfType(rdfType: URI, typeRules: Seq[Resource => Boolean]): Iterator[Resource] =
+    resources.valuesIterator.filter(resource => {
       val types = resource.get(RDF.TYPE) 
-      if (types.contains(rdfType)) {
-        resource +: result // Resource was explicity typed and matches
-      } else {
-        if (typeRules.exists(rule => rule(resource))) // No type match - try the rules
-          resource +: result
-        else
-          result
-      }
+      if (types.contains(rdfType))
+        true // Resource was explicity typed and matches
+      else
+        typeRules.exists(rule => rule(resource)) // No type match - try the rules
     })
-  }
   
   protected def getResource(uri: Value): Option[Resource] =
     Option(resources.get(uri.stringValue))
