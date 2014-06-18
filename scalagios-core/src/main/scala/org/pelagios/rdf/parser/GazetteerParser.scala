@@ -13,27 +13,22 @@ import org.slf4j.LoggerFactory
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class GazetteerParser extends ResourceCollector {
+class GazetteerParser extends OffHeapResourceCollector {
   
   /** The Places collected by the parser.
    *  
     * @return the list of Places
     */
-  def places: Iterable[Place] = {      	
-    logger.info("Building Names table")    
-    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
-      .map(resource => (resource.uri -> resource.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get)).toMap
-
-    logger.info("Building Locations table")
-    val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
-      .map(resource => (resource.uri -> new LocationResource(resource))).toMap
-           
+  lazy val places: Iterable[Place] = {
     logger.info("Wrapping RDF to domain model")
-    resourcesOfType(Pelagios.PlaceRecord).view.map(resource => {
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
-      new PlaceResource(resource, names, locations)
+    val places = resourcesOfType(Pelagios.PlaceRecord).map(resource => {
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
+      new PlaceResource(resource, names.map(r => r.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get), locations.map(new LocationResource(_)))
     })
+    
+    resources.close()
+    places
   }  
 
 }

@@ -1,6 +1,5 @@
 package org.pelagios.rdf.parser
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable.{ArrayBuffer, HashMap}
 import org.openrdf.model.{ Literal, Statement, URI, Value }
 import org.openrdf.model.vocabulary.RDF
@@ -8,8 +7,6 @@ import org.openrdf.rio.helpers.RDFHandlerBase
 import org.pelagios.api.PlainLiteral
 import org.pelagios.rdf.vocab.PleiadesPlaces
 import org.pelagios.rdf.vocab.Pelagios
-import org.mapdb.DBMaker
-import org.slf4j.LoggerFactory
 
 /** An RDFHandler that collects triples into a more convenient map. 
   *   
@@ -20,28 +17,12 @@ import org.slf4j.LoggerFactory
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
 private[parser] abstract class ResourceCollector extends RDFHandlerBase {
+
+  protected val resources = new HashMap[String, Resource]
   
-  private var ctr = 0
-  
-  protected val logger = LoggerFactory.getLogger(classOf[GazetteerParser])
-  
-  // protected val resources = new HashMap[String, Resource]
-  
-  protected val resources = DBMaker.newTempHashMap[String, Resource]
-  
-  override def handleStatement(statement: Statement): Unit = {
-    ctr += 1
-    if (ctr % 50000 == 0)
-      logger.info("Parsed " + ctr + " triples")
-      
+  override def handleStatement(statement: Statement): Unit = {      
     val subj = statement.getSubject.stringValue
-    val resource = {
-      val nullable = resources.get(subj)
-      if (nullable == null)
-        new Resource(subj)
-      else
-        nullable
-    }
+    val resource = resources.getOrElse(subj, new Resource(subj))
     resource.properties.append((statement.getPredicate, statement.getObject))
     resources.put(subj, resource)
   }
@@ -64,23 +45,6 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
                                  typeRules: Seq[Resource => Boolean] = Seq.empty[Resource => Boolean])
                                  :Seq[Resource] = {
     
-    resources.entrySet.foldLeft(Seq.empty[Resource])((resultList, entry) => {
-      val (uri, resource) = (entry.getKey, entry.getValue)
-      val types = resource.get(RDF.TYPE)
-      
-      if (types.contains(rdfType)) {
-        // Resource was explicity typed and matches
-        resource +: resultList
-      } else {
-        // No match - try the rules
-        if (typeRules.exists(rule => rule(resource))) 
-          resource +: resultList
-        else
-          resultList        
-      } 
-    })
-    
-    /*
     resources.foldLeft(Seq.empty[Resource])((resultList, currentResource) => {
       val (uri, resource) = (currentResource._1, currentResource._2)
       val types = resource.get(RDF.TYPE)
@@ -96,7 +60,6 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
           resultList        
       }      
     })
-    */
   }
 
 }
