@@ -29,14 +29,6 @@ private[parser] abstract class OffHeapResourceCollector extends RDFHandlerBase {
     val resource = Option(resources.get(subj)).getOrElse(new Resource(subj))
     resource.properties.append((statement.getPredicate, statement.getObject))
     resources.put(subj, resource)
-    
-    /*
-    if (statement.getPredicate() == RDF.TYPE) {
-      val typeURI = statement.getObject.stringValue
-      val byType = Option(resourcesByType.get(typeURI)).getOrElse(Seq.empty[String])
-      resourcesByType.put(typeURI, subj +: byType)
-    }
-    */
   }
   
   protected def resourcesOfType(rdfType: URI): Iterator[Resource] =

@@ -29,8 +29,14 @@ class GazetteerParser extends OffHeapResourceCollector {
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
       new PlaceResource(resource, names.map(r => r.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get), locations.map(new LocationResource(_)))
     })
+    logger.info("Done")
     
+    // A dirty hack - forces immediate execution of .map to create an 
+    // immutable Seq that survives off-heap mem shutdown 
+    val places = placeResources.toSeq
+    places.foreach(_ => Unit)
     resources.close()
+    
     places
   }  
 
