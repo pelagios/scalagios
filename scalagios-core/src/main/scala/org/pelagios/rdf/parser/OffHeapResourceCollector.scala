@@ -15,9 +15,7 @@ private[parser] abstract class OffHeapResourceCollector extends RDFHandlerBase {
   
   protected val logger = LoggerFactory.getLogger(classOf[GazetteerParser])
 
-  protected val resources = DBMaker.newTempHashMap[String, Resource]
-  
-  // protected val resourcesByType = DBMaker.newTempHashMap[String, Seq[String]]
+  protected val resources = DBMaker.newTempHashMap[String, Resource]()
   
   override def handleStatement(statement: Statement): Unit = {
     ctr += 1

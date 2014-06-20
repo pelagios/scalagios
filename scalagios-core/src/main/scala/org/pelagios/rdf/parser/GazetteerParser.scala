@@ -6,14 +6,15 @@ import org.openrdf.model.{ Literal, URI, Value }
 import org.openrdf.model.vocabulary.{ RDF, RDFS }
 import org.pelagios.api.gazetteer.Place
 import org.pelagios.api.gazetteer.Location
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class GazetteerParser extends OffHeapResourceCollector {
+class GazetteerParser extends ResourceCollector {
+  
+  protected val logger = LoggerFactory.getLogger(classOf[GazetteerParser])
   
   /** The Places collected by the parser.
    *  
@@ -22,22 +23,11 @@ class GazetteerParser extends OffHeapResourceCollector {
   lazy val places: Iterable[Place] = {
     logger.info("Filtering RDF for place resources")
     val rdfResources = resourcesOfType(Pelagios.PlaceRecord)
-    
-    logger.info("Building domain model")
-    val placeResources = rdfResources.map(resource => {
+    rdfResources.map(resource => {
       val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
       new PlaceResource(resource, names.map(r => r.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get), locations.map(new LocationResource(_)))
-    })
-    logger.info("Done")
-    
-    // A dirty hack - forces immediate execution of .map to create an 
-    // immutable Seq that survives off-heap mem shutdown 
-    val places = placeResources.toSeq
-    places.foreach(_ => Unit)
-    resources.close()
-    
-    places
+    }).toSeq
   }  
 
 }

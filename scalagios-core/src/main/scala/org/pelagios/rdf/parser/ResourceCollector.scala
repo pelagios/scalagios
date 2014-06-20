@@ -27,6 +27,12 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     resources.put(subj, resource)
   }
   
+  protected def resourcesOfType(rdfType: URI): Iterable[Resource] =
+    resources.valuesIterator.filter(resource => {
+      val types = resource.get(RDF.TYPE)
+      types.contains(rdfType)
+    }).toIterable
+  
   /** A helper method that filters the collected resources by type.
     * 
     * The method takes two arguments: (i) the type to filter by, (ii) an optional list
@@ -41,26 +47,17 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     * @param typeRules the list of type checking rules
     * @return the list of resources that are of the specified RDF type or satisfy any of the rules
     */  
-  protected def resourcesOfType(rdfType: URI, 
-                                 typeRules: Seq[Resource => Boolean] = Seq.empty[Resource => Boolean])
-                                 :Seq[Resource] = {
-    
-    resources.foldLeft(Seq.empty[Resource])((resultList, currentResource) => {
-      val (uri, resource) = (currentResource._1, currentResource._2)
+  protected def resourcesOfType(rdfType: URI, typeRules: Seq[Resource => Boolean]): Iterable[Resource] =
+    resources.valuesIterator.filter(resource => {
       val types = resource.get(RDF.TYPE)
-      
-      if (types.contains(rdfType)) {
-        // Resource was explicity typed and matches
-        resource +: resultList
-      } else {
-        // No match - try the rules
-        if (typeRules.exists(rule => rule(resource))) 
-          resource +: resultList
-        else
-          resultList        
-      }      
-    })
-  }
+      if (types.contains(rdfType))
+        true
+      else
+        typeRules.exists(rule => rule(resource))        
+    }).toIterable
+  
+  protected def getResource(uri: Value): Option[Resource] =
+    resources.get(uri.stringValue)
 
 }
 
