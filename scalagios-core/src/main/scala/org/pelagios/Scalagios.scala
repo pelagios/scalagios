@@ -111,7 +111,9 @@ object Scalagios {
     val handler = new GazetteerParser
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
-    handler.places
+    val places = handler.places
+    is.close()
+    places
   }
   
   def writePlaces(data: Iterable[Place], file: String, format: RDFFormat) =

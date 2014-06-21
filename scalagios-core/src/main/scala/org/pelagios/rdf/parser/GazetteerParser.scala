@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class GazetteerParser extends ResourceCollector {
+class GazetteerParser extends DBBackedResourceCollector {
   
   protected val logger = LoggerFactory.getLogger(classOf[GazetteerParser])
   
@@ -21,14 +21,17 @@ class GazetteerParser extends ResourceCollector {
     * @return the list of Places
     */
   lazy val places: Iterable[Place] = {
-    logger.info("Filtering RDF for place resources")
-    val rdfResources = resourcesOfType(Pelagios.PlaceRecord)
-    rdfResources.map(resource => {
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri)).filter(_.isDefined).map(_.get)
+    logger.info("Filtering " + countAllTriples + " RDF resources for place resources")
+
+    val placeResources = resourcesOfType(Pelagios.PlaceRecord).map(getResource(_)).filter(_.isDefined).map(_.get)
+    
+    // logger.info("Got " + placeResources.size + " place resources - inlining names and locations")
+    placeResources.map(resource => {
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri.stringValue)).filter(_.isDefined).map(_.get)
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri.stringValue)).filter(_.isDefined).map(_.get)
       new PlaceResource(resource, names.map(r => r.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get), locations.map(new LocationResource(_)))
     }).toSeq
-  }  
+  } 
 
 }
 

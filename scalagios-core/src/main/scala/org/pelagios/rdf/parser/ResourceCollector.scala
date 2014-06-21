@@ -31,7 +31,7 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     resources.valuesIterator.filter(resource => {
       val types = resource.get(RDF.TYPE)
       types.contains(rdfType)
-    }).toIterable
+    }).toSeq
   
   /** A helper method that filters the collected resources by type.
     * 

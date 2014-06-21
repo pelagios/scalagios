@@ -14,8 +14,9 @@ libraryDependencies ++= Seq(
   "com.vividsolutions" % "jts" % "1.13",
   "org.geotools" % "gt-geojson" % "10.5",
   "net.liftweb" %% "lift-json" % "2.5",
-  "org.mapdb" % "mapdb" % "1.0.3",
-  "org.slf4j" % "slf4j-simple" % "1.7.7"
+  "org.slf4j" % "slf4j-simple" % "1.7.7",
+  "com.typesafe.slick" %% "slick" % "2.0.2",
+  "com.h2database" % "h2" % "1.4.178"  
 )
 
 /** Test dependencies **/

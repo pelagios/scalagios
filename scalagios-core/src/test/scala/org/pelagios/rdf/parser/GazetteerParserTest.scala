@@ -9,8 +9,9 @@ import org.pelagios.Scalagios
 @RunWith(classOf[JUnitRunner])
 class GazetteerParserTest extends FunSuite {
   
-  val TEST_FILE = "../test-data/test-places-pleiades.ttl"
-
+  // val TEST_FILE = "../test-data/test-places-pleiades.ttl"
+  val TEST_FILE = "/home/simonr/Workspaces/bitbucket/pelagios3-scripts/wikidata-place-extractor/data/wikidata.ttl"
+  
   test("Gazetteer Dump Import") {
     val places = Scalagios.readPlaces(new File(TEST_FILE))
     assert(places.size == 483, "invalid number of places")
