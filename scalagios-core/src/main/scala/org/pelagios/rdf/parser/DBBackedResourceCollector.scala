@@ -79,12 +79,16 @@ class DBBackedResourceCollector extends RDFHandlerBase {
   def countAllTriples(): Int =
     Query(query.length).first 
   
-  def resourcesOfType(uri: URI): Iterator[String] =
-    query.where(_.pred === RDF.TYPE.stringValue).filter(_.obj === uri.stringValue).map(_.subj).iterator
+  def resourcesOfType(uri: URI): Iterator[String] = {
+    logger.info("Retrieving resources of type " + uri)
+    val startTime = System.currentTimeMillis
+    val it = query.where(_.pred === RDF.TYPE.stringValue).filter(_.obj === uri.stringValue).map(_.subj).iterator
+    logger.info("Done - took " + (System.currentTimeMillis - startTime) + "ms")
+    it
+  }
   
-  def getResource(uri: String): Option[Resource] = {
-    val f = ValueFactoryImpl.getInstance
-     
+  def getResource(uri: String): Option[Resource] = {    
+    val f = ValueFactoryImpl.getInstance 
     val t = query.where(_.subj === uri).list
     if (t.size > 0) {
       val r = Resource(uri)

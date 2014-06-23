@@ -21,11 +21,8 @@ class GazetteerParser extends DBBackedResourceCollector {
     * @return the list of Places
     */
   lazy val places: Iterable[Place] = {
-    logger.info("Filtering " + countAllTriples + " RDF resources for place resources")
-
     val placeResources = resourcesOfType(Pelagios.PlaceRecord).map(getResource(_)).filter(_.isDefined).map(_.get)
-    
-    // logger.info("Got " + placeResources.size + " place resources - inlining names and locations")
+    logger.info("Inlining name and location resources")
     placeResources.map(resource => {
       val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri.stringValue)).filter(_.isDefined).map(_.get)
       val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri.stringValue)).filter(_.isDefined).map(_.get)
