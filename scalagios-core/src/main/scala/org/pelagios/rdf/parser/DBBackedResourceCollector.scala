@@ -7,8 +7,9 @@ import org.slf4j.LoggerFactory
 import org.h2.tools.DeleteDbFiles
 import scala.slick.driver.H2Driver.simple._
 import scala.slick.jdbc.meta.MTable
+import org.openrdf.model.vocabulary.RDF
 
-class Triples(tag: Tag) extends Table[(Option[Int], String, String, String)](tag, "TRIPLES") {
+class Triples(tag: Tag) extends Table[(Option[Int], String, String, String)](tag, "triples") {
   
   def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
   
@@ -20,35 +21,43 @@ class Triples(tag: Tag) extends Table[(Option[Int], String, String, String)](tag
   
   def * = (id.?, subj, pred, obj)
   
+  /** Indices **/
+  
+  def subjIdx = index("idx_subj", subj, unique = false)
+  
+  def predIdx = index("idx_pred", pred, unique = false)
+  
+  def objIdx = index("idx_obj", obj, unique = false)
+  
 }
 
 class DBBackedResourceCollector extends RDFHandlerBase {
   
-  private val JDBC_URL = "jdbc:h2:file:~/h2test.db"
+  private val DB_HOME = "~"
+  
+  private val DB_NAME = "h2test"
+  
+  private val JDBC_URL = "jdbc:h2:file:" + DB_HOME + "/" + DB_NAME + ".db"
     
   private val DRIVER = "org.h2.Driver"
     
   private val logger = LoggerFactory.getLogger(classOf[DBBackedResourceCollector])
-
+  
   private val query = TableQuery[Triples]
 
+  private implicit val session = Database.forURL(JDBC_URL, driver = DRIVER).createSession
+  
   // Drop database if it exists
-  Database.forURL(JDBC_URL, driver = "org.h2.Driver").withSession { implicit session =>
-    if (MTable.getTables("TRIPLES").list().size > 0) {
-      logger.info("Old database file detected - deleting")
-      close()
-    }
+  if (MTable.getTables("triples").list().size > 0) {
+    logger.info("Old database file detected - deleting")
+    DeleteDbFiles.execute(DB_HOME, DB_NAME, true)
   }
       
   private val startTime = System.currentTimeMillis
   
   private var counter = 0
   
-  private implicit val session = Database.forURL(JDBC_URL, driver = DRIVER).createSession
-  
-  Database.forURL(JDBC_URL, driver = "org.h2.Driver").withSession { implicit session =>
-    query.ddl.create
-  }
+  query.ddl.create
   
   override def handleStatement(s: Statement): Unit = {
     counter += 1
@@ -62,37 +71,41 @@ class DBBackedResourceCollector extends RDFHandlerBase {
   }
   
   override def endRDF(): Unit = {
-    session.close()   
+    logger.info("File parsing complete")
     logger.info("Imported " + countAllTriples + " triples")
     logger.info("Took " + (System.currentTimeMillis - startTime) + "ms")
   }
-  
-  def close() =
-    DeleteDbFiles.execute("~", "h2test", true)
     
   def countAllTriples(): Int =
-    Database.forURL(JDBC_URL, driver = "org.h2.Driver").withSession { implicit session =>
-      Query(query.length).first 
-    }
+    Query(query.length).first 
   
   def resourcesOfType(uri: URI): Iterator[String] =
-    Database.forURL(JDBC_URL, driver = "org.h2.Driver").withSession { implicit session => 
-      query.where(_.pred === uri.stringValue).map(_.subj).iterator
-    }
+    query.where(_.pred === RDF.TYPE.stringValue).filter(_.obj === uri.stringValue).map(_.subj).iterator
   
   def getResource(uri: String): Option[Resource] = {
     val f = ValueFactoryImpl.getInstance
      
-    Database.forURL(JDBC_URL, driver = "org.h2.Driver").withSession { implicit session => 
-      val t = query.where(_.subj === uri).list
-      if (t.size > 0) {
-        val r = Resource(uri)
-        t.foreach(triple => r.properties.append((f.createURI(triple._3), f.createURI(triple._4))))
-        Some(r)
-      } else {
-        None
-      }
+    val t = query.where(_.subj === uri).list
+    if (t.size > 0) {
+      val r = Resource(uri)
+      t.foreach(triple => {
+        val pred = f.createURI(triple._3)
+        val obj = triple._4 match {
+          case s if s.startsWith("http://") => f.createURI(s)
+          case s if s.startsWith("node") => f.createBNode(s)
+          case s => f.createLiteral(s)
+        }
+        r.properties.append((pred, obj))
+      })
+      Some(r)
+    } else {
+      None
     }
   }
-
+  
+  def close() = {
+    session.close()
+    DeleteDbFiles.execute("~", "h2test", true)
+  }
+  
 }
