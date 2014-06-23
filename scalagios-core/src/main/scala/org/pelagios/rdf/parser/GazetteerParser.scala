@@ -20,14 +20,20 @@ class GazetteerParser extends LuceneBackedResourceCollector {
    *  
     * @return the list of Places
     */
-  lazy val places: Iterable[Place] = {
-    val placeResources = resourcesOfType(Pelagios.PlaceRecord).map(getResource(_)).filter(_.isDefined).map(_.get)
-    logger.info("Inlining name and location resources")
-    placeResources.map(resource => {
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => getResource(uri.stringValue)).filter(_.isDefined).map(_.get)
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => getResource(uri.stringValue)).filter(_.isDefined).map(_.get)
-      new PlaceResource(resource, names.map(r => r.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get), locations.map(new LocationResource(_)))
-    }).toSeq
+  lazy val places: Iterator[Place] = {
+    val placeURIs = resourcesOfType(Pelagios.PlaceRecord)
+    placeURIs.map(uri => {
+      val resource = getResource(uri).get
+      val nameResources = getResources(resource.get(PleiadesPlaces.hasName).toList.map(_.stringValue))
+      val locationResources = getResources(resource.get(PleiadesPlaces.hasLocation).toList.map(_.stringValue))
+      
+      val names = nameResources.map(_.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get)
+      val locations = locationResources.map(new LocationResource(_))
+      
+      val place = new PlaceResource(resource, names, locations)
+      logger.debug(place.title)
+      place
+    })
   } 
 
 }

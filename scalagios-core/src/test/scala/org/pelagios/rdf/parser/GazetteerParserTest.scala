@@ -11,13 +11,13 @@ import java.io.FileInputStream
 @RunWith(classOf[JUnitRunner])
 class GazetteerParserTest extends FunSuite {
   
-  // val TEST_FILE = "../test-data/test-places-pleiades.ttl"
-  val TEST_FILE = "/home/simonr/Workspaces/bitbucket/pelagios3-scripts/wikidata-place-extractor/data/wikidata.ttl"
+  val TEST_FILE = "../test-data/test-places-pleiades.ttl"
+  // val TEST_FILE = "/home/simonr/Workspaces/bitbucket/pelagios3-scripts/wikidata-place-extractor/data/wikidata.ttl"
   
   test("Gazetteer Dump Import") {
     val rdfReader = new RDFPlaceReader(new FileInputStream(TEST_FILE))
 
-    val places = rdfReader.read(TEST_FILE)
+    val places = rdfReader.read(TEST_FILE).toList
     assert(places.size == 483, "invalid number of places")
     places.foreach(place => {
       assert(place.title != null, "title is null")

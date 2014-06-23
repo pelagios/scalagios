@@ -95,7 +95,7 @@ object Scalagios {
     * @param file the gazetteer dump file to parse
     * @return the places, with names and locations in-lined  
     */
-  def readPlaces(file: File): Iterable[Place] =
+  def readPlaces(file: File): Iterator[Place] =
     readPlaces(new FileInputStream(file), new URI(file.getAbsolutePath()).toString, getParser(file.getName))
   
   /** Parses Pelagios-style gazetteer data from an input stream.
@@ -104,10 +104,10 @@ object Scalagios {
     * @param baseURI the base URI
     * @param format the RDF serialization format the data is in
     */
-  def readPlaces(is: InputStream, baseURI: String, format: RDFFormat): Iterable[Place] =
+  def readPlaces(is: InputStream, baseURI: String, format: RDFFormat): Iterator[Place] =
     readPlaces(is, baseURI, RDFParserRegistry.getInstance.get(format).getParser)
   
-  private def readPlaces(is: InputStream, baseURI:String, parser: RDFParser): Iterable[Place] = {
+  private def readPlaces(is: InputStream, baseURI:String, parser: RDFParser): Iterator[Place] = {
     val handler = new GazetteerParser
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
@@ -147,7 +147,7 @@ object Scalagios {
     val handler = new VoIDParser()
     parser.setRDFHandler(handler)
     parser.parse(is, baseURI)
-    handler.datasets
+    handler.datasets.toIterable
   }
   
 }

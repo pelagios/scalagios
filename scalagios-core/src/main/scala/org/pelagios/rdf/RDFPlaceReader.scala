@@ -13,7 +13,7 @@ class RDFPlaceReader(is: InputStream) {
 
   private val handler = new GazetteerParser()
 
-  def read(filename: String): Iterable[Place] = {
+  def read(filename: String): Iterator[Place] = {
     val parser = filename match {
       case f if f.endsWith("ttl") => new TurtleParserFactory().getParser()
       case f if f.endsWith("rdf") => new RDFXMLParserFactory().getParser()
@@ -23,10 +23,10 @@ class RDFPlaceReader(is: InputStream) {
     read(parser)
   }
   
-  def read(format: RDFFormat): Iterable[Place] =
+  def read(format: RDFFormat): Iterator[Place] =
     read(RDFParserRegistry.getInstance.get(format).getParser)
   
-  private def read(parser: RDFParser): Iterable[Place] = {
+  private def read(parser: RDFParser): Iterator[Place] = {
     parser.setRDFHandler(handler)
     parser.parse(is, "http://www.pelagios.org")
     handler.places

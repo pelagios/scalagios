@@ -16,6 +16,8 @@ import org.openrdf.model.vocabulary.RDF
 import org.apache.lucene.search.BooleanClause
 import org.apache.lucene.search.MatchAllDocsQuery
 import org.apache.commons.io.FileUtils
+import org.openrdf.model.Value
+import org.apache.lucene.store.NIOFSDirectory
 
 class Triple(val doc: Document) {
 
@@ -52,6 +54,8 @@ class LuceneBackedResourceCollector extends RDFHandlerBase {
   private val IDX_NAME = "scalagios-staging-idx"
     
   private val logger = LoggerFactory.getLogger(classOf[LuceneBackedResourceCollector])
+  
+  private val f = ValueFactoryImpl.getInstance 
       
   private val startTime = System.currentTimeMillis
   
@@ -65,7 +69,7 @@ class LuceneBackedResourceCollector extends RDFHandlerBase {
         new IndexWriterConfig(Version.LUCENE_48, new StandardAnalyzer(Version.LUCENE_48)))
     initializer.close()      
       
-    FSDirectory.open(file)
+    new NIOFSDirectory(file)
   }
   
   private val idxWriter = new IndexWriter(idx, new IndexWriterConfig(Version.LUCENE_48, new StandardAnalyzer(Version.LUCENE_48)))
@@ -93,7 +97,9 @@ class LuceneBackedResourceCollector extends RDFHandlerBase {
     
   lazy val countAllTriples: Int = {
     val searcher = searcherManager.acquire()
-    searcher.getIndexReader.numDocs
+    val count = searcher.getIndexReader.numDocs
+    searcherManager.release(searcher)
+    count
   }
   
   def resourcesOfType(uri: URI): Iterator[String] = {
@@ -101,21 +107,101 @@ class LuceneBackedResourceCollector extends RDFHandlerBase {
     q.add(new TermQuery(new Term(Triple.PREDICATE, RDF.TYPE.stringValue)), BooleanClause.Occur.MUST)
     q.add(new TermQuery(new Term(Triple.OBJECT, uri.stringValue)), BooleanClause.Occur.MUST)
     
-    val searcher = searcherManager.acquire()
-    val topDocsCollector = TopScoreDocCollector.create(countAllTriples, false)
-    searcher.search(q, topDocsCollector)
-    topDocsCollector.topDocs.scoreDocs.map(scoreDoc => searcher.doc(scoreDoc.doc).get(Triple.SUBJECT)).toIterator
+    new Iterator[String] {
+      
+      private val BATCH_SIZE: Int = 50000
+      
+      private var hasAnotherBatch: Boolean = true
+      
+      private var offset: Int = 0
+      
+      private var currentBatch =  {
+        val (total, batch) = getNextBatch()
+        logger.info(total + " resources of type " + uri.stringValue)
+        batch
+      }
+      
+      private var cursor: Int = 0
+      
+      private var totalHits: Option[Int] = None
+      
+      private def getNextBatch(): (Int, Seq[String]) = {
+        logger.info("Streaming next batch from index: " + offset + " to " + (offset + BATCH_SIZE))
+        
+        val searcher = searcherManager.acquire()
+        val topDocsCollector = TopScoreDocCollector.create(offset + BATCH_SIZE, true)
+        searcher.search(q, topDocsCollector)
+        
+        val total = topDocsCollector.getTotalHits
+        if (total <= offset + BATCH_SIZE)
+          hasAnotherBatch = false
+          
+        val docs = topDocsCollector.topDocs(offset, BATCH_SIZE).scoreDocs
+        offset = offset + docs.size 
+          
+        val batch = docs.map(scoreDoc => searcher.doc(scoreDoc.doc).get(Triple.SUBJECT))
+        searcherManager.release(searcher)
+        (total, batch)
+      }
+      
+      override def hasNext: Boolean =
+        hasAnotherBatch || (cursor < currentBatch.size)
+      
+      override def next(): String = {
+        if (cursor == currentBatch.size) {
+          if (!hasAnotherBatch)
+            throw new NoSuchElementException
+            
+          currentBatch = getNextBatch()._2
+          cursor = 0
+        }
+        
+        val str = currentBatch(cursor)
+        cursor += 1
+        str
+      }
+      
+    }
   }
   
-  def getResource(uri: String): Option[Resource] = {    
-    val q = new TermQuery(new Term(Triple.SUBJECT, uri))
+  def getResources(uris: Seq[String]): Seq[Resource] = {
     val searcher = searcherManager.acquire()
-    val topDocsCollector = TopScoreDocCollector.create(countAllTriples, false)
+    val q = new BooleanQuery()
+    uris.foreach(uri => 
+      q.add(new TermQuery(new Term(Triple.SUBJECT, uri)), BooleanClause.Occur.SHOULD))
+    
+    val topDocsCollector = TopScoreDocCollector.create(countAllTriples, true)
+    searcher.search(q, topDocsCollector)
+    val allTriples = topDocsCollector.topDocs.scoreDocs.map(scoreDoc => new Triple(searcher.doc(scoreDoc.doc)))
+    
+    def toValue(rdfValue: String): Value = rdfValue match {
+      case s if s.startsWith("http://") => f.createURI(s)
+      case s if s.startsWith("node") => f.createBNode(s)
+      case s => f.createLiteral(s)
+    }
+    
+    val resources = allTriples.groupBy(_.subj).toSeq.map { case (subj, triples) => {
+      val resource = Resource(subj)
+      triples.foreach(triple => {
+        val pred = f.createURI(triple.pred)
+        resource.properties.append((pred, toValue(triple.obj)))
+      })
+      resource
+    }}
+
+    searcherManager.release(searcher)
+    resources 
+  }
+  
+  def getResource(uri: String): Option[Resource] = {     
+    val searcher = searcherManager.acquire()
+    val q = new TermQuery(new Term(Triple.SUBJECT, uri))
+    val topDocsCollector = TopScoreDocCollector.create(countAllTriples, true)
     searcher.search(q, topDocsCollector)
     val triples = topDocsCollector.topDocs.scoreDocs.map(scoreDoc => new Triple(searcher.doc(scoreDoc.doc)))
     
     val f = ValueFactoryImpl.getInstance 
-    if (triples.size > 0) {
+    val result = if (triples.size > 0) {
       val r = Resource(uri)
       triples.foreach(triple => {
         val pred = f.createURI(triple.pred)
@@ -130,6 +216,9 @@ class LuceneBackedResourceCollector extends RDFHandlerBase {
     } else {
       None
     }
+
+    searcherManager.release(searcher)
+    result
   }
   
   def close() = {
