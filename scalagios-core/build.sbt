@@ -16,7 +16,9 @@ libraryDependencies ++= Seq(
   "net.liftweb" %% "lift-json" % "2.5",
   "org.slf4j" % "slf4j-simple" % "1.7.7",
   "com.typesafe.slick" %% "slick" % "2.0.2",
-  "com.h2database" % "h2" % "1.4.178"  
+  "com.h2database" % "h2" % "1.4.178",
+  "org.apache.lucene" % "lucene-analyzers-common" % "4.8.1",
+  "org.apache.lucene" % "lucene-queryparser" % "4.8.1"
 )
 
 /** Test dependencies **/

@@ -31,7 +31,7 @@ class Triples(tag: Tag) extends Table[(Option[Int], String, String, String)](tag
   
 }
 
-class DBBackedResourceCollector extends RDFHandlerBase {
+class H2BackedResourceCollector extends RDFHandlerBase {
   
   private val DB_HOME = "~"
   
@@ -41,7 +41,7 @@ class DBBackedResourceCollector extends RDFHandlerBase {
     
   private val DRIVER = "org.h2.Driver"
     
-  private val logger = LoggerFactory.getLogger(classOf[DBBackedResourceCollector])
+  private val logger = LoggerFactory.getLogger(classOf[H2BackedResourceCollector])
   
   private val query = TableQuery[Triples]
 

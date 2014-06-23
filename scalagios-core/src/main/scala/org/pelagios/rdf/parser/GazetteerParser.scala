@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class GazetteerParser extends DBBackedResourceCollector {
+class GazetteerParser extends LuceneBackedResourceCollector {
   
   protected val logger = LoggerFactory.getLogger(classOf[GazetteerParser])
   
