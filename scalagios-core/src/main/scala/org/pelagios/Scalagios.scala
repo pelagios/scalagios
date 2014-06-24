@@ -31,6 +31,7 @@ import org.pelagios.rdf.serializer.GazetteerSerializer
 import scala.io.Source
 import org.pelagios.api.dataset.Dataset
 import org.pelagios.rdf.parser.VoIDParser
+import org.pelagios.rdf.parser.StreamingGazetteerRDFHandler
 
 /** A utility to parse & write Pelagios data.
   *
@@ -89,7 +90,15 @@ object Scalagios {
     else
       PelagiosDataSerializer.writeToFile(data, new File(file), format)
   }
-    
+   
+  def readPlaceStream(is: InputStream, format: RDFFormat, handler: Place => Unit): Unit = {
+    val rdfHandler = new StreamingGazetteerRDFHandler(handler)
+    val parser = RDFParserRegistry.getInstance.get(format).getParser
+    parser.setRDFHandler(rdfHandler)
+    parser.parse(is, "http://pelagios.org")
+    is.close()
+  }
+  
   /** Parses a Pelagios-style gazetteer dump file.
     *
     * @param file the gazetteer dump file to parse
