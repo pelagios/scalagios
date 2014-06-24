@@ -4,6 +4,7 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
+import java.io.FileInputStream
 
 @RunWith(classOf[JUnitRunner])
 class VoIDParserTest extends FunSuite with UsesTestData {
@@ -12,7 +13,9 @@ class VoIDParserTest extends FunSuite with UsesTestData {
   
   test("Gazetteer Dump Import") {
     println("Loading test VoID from " + TEST_FILE.getAbsolutePath)
-    val datasets = Scalagios.readVoID(TEST_FILE).toSeq
+    
+    val is = new FileInputStream(TEST_FILE)
+    val datasets = Scalagios.readVoID(is, TEST_FILE.getName).toSeq
     assert(datasets.size == 1, "Wrong number of datasets")
     
     val dataset = datasets.head
@@ -24,6 +27,8 @@ class VoIDParserTest extends FunSuite with UsesTestData {
     assert(dataset.subjects.head == "http://dbpedia.org/resource/Annotation")
     assert(dataset.datadumps.size == 1)
     assert(dataset.datadumps.head == "http://numismatics.org/pelagios.rdf")
+    
+    is.close()
   }
 
 }

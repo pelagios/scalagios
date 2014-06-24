@@ -8,7 +8,7 @@ import org.pelagios.rdf.vocab.PelagiosPlaceCategories
 
 object GazetteerSerializer {
 
-  def writeToFile(places: Iterable[Place], file: String, format: RDFFormat) = {
+  def writeToFile(places: Iterator[Place], file: String, format: RDFFormat) = {
     // TODO support other formats beyond Turtle
     if (format != RDFFormat.TURTLE)
       throw new UnsupportedOperationException

@@ -10,7 +10,7 @@ object GazetteerToJSON extends App {
   
   private val GAZETTEER_DUMP = "/home/simonr/Workspaces/pelagios/scalagios/test-data/pleiades-20120826-migrated.ttl"
     
-  val places = Scalagios.readPlaces(new FileInputStream(GAZETTEER_DUMP), "http://www.example.com/",RDFFormat.TURTLE)
+  val places = Scalagios.readPlaces(new FileInputStream(GAZETTEER_DUMP), RDFFormat.TURTLE)
   
   val json = places.foldLeft(Seq.empty[String])((list, next) => {
     val centroid = next.getCentroid

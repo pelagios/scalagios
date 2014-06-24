@@ -1,53 +1,32 @@
 package org.pelagios.rdf.parser
 
 import java.io.File
-import org.openrdf.rio.helpers.RDFHandlerBase
-import org.slf4j.LoggerFactory
-import org.openrdf.model.{ URI, Statement }
-import org.openrdf.model.impl.ValueFactoryImpl
+import org.apache.commons.io.FileUtils
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.{ Document, Field, StringField }
 import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig, Term }
-import org.apache.lucene.search.{ SearcherManager, SearcherFactory, TermQuery, TopScoreDocCollector }
-import org.apache.lucene.store.FSDirectory
+import org.apache.lucene.search.{ BooleanClause, BooleanQuery, SearcherManager, SearcherFactory, TermQuery, TopScoreDocCollector }
+import org.apache.lucene.store.{ FSDirectory, NIOFSDirectory }
 import org.apache.lucene.util.Version
-import org.apache.lucene.search.BooleanQuery
+import org.openrdf.model.{ Statement, URI, Value }
+import org.openrdf.model.impl.ValueFactoryImpl
 import org.openrdf.model.vocabulary.RDF
-import org.apache.lucene.search.BooleanClause
-import org.apache.lucene.search.MatchAllDocsQuery
-import org.apache.commons.io.FileUtils
-import org.openrdf.model.Value
-import org.apache.lucene.store.NIOFSDirectory
+import org.openrdf.rio.helpers.RDFHandlerBase
+import org.slf4j.LoggerFactory
 
-class Triple(val doc: Document) {
-
-  lazy val subj = doc.get(Triple.SUBJECT)
-  
-  lazy val pred = doc.get(Triple.PREDICATE)
-  
-  lazy val obj = doc.get(Triple.OBJECT)
-  
-}
-
-object Triple {
-  
-  val SUBJECT = "subject"
-    
-  val PREDICATE = "predicate"
-    
-  val OBJECT = "object"
-  
-  def apply(subj: String, pred: String, obj: String) = {
-    val doc = new Document()
-    doc.add(new StringField(Triple.SUBJECT, subj, Field.Store.YES))
-    doc.add(new StringField(Triple.PREDICATE, pred, Field.Store.YES))
-    doc.add(new StringField(Triple.OBJECT, obj, Field.Store.YES))
-    new Triple(doc)
-  }
-  
-}
-
-class LuceneBackedResourceCollector extends RDFHandlerBase {
+/** An alternative ResourceCollector that collects triples into a Lucene index instead of memory.
+  *
+  * This implementation is (much) slower than the default ResourceCollector, but has the advantage
+  * that it can ingest huge RDF files without running out of memory. (Disk space is the only
+  * limitation to import size.)
+  * 
+  * Note: in case you know that your RDF dump contains resources in a sequential order (which
+  * is need not necessarily be the case!) you should use the ResourceStreamCollector for maximum
+  * performance without memory problems  
+  * 
+  * @author Rainer Simon <rainer.simon@ait.ac.at>
+  */
+private[parser] class LuceneBackedResourceCollector extends RDFHandlerBase {
 
   private val IDX_HOME = "/home/simonr"
   
@@ -224,6 +203,36 @@ class LuceneBackedResourceCollector extends RDFHandlerBase {
   def close() = {
     FileUtils.deleteDirectory(new File(IDX_HOME, IDX_NAME))
     searcherManager.close()
+  }
+  
+}
+
+/** Helper class to represent an RDF triple in the index **/
+class Triple(val doc: Document) {
+
+  val subj = doc.get(Triple.SUBJECT)
+  
+  val pred = doc.get(Triple.PREDICATE)
+  
+  val obj = doc.get(Triple.OBJECT)
+  
+}
+
+/** Companion with an alternative apply method to build an indexable triple from (subj, pred, obj) **/
+object Triple {
+  
+  val SUBJECT = "subject"
+    
+  val PREDICATE = "predicate"
+    
+  val OBJECT = "object"
+  
+  def apply(subj: String, pred: String, obj: String) = {
+    val doc = new Document()
+    doc.add(new StringField(Triple.SUBJECT, subj, Field.Store.YES))
+    doc.add(new StringField(Triple.PREDICATE, pred, Field.Store.YES))
+    doc.add(new StringField(Triple.OBJECT, obj, Field.Store.YES))
+    new Triple(doc)
   }
   
 }

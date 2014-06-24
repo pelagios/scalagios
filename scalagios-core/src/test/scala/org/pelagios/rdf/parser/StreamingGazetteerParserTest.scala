@@ -1,29 +1,29 @@
 package org.pelagios.rdf.parser
 
-import java.io.File
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import org.pelagios.Scalagios
-import org.pelagios.rdf.RDFPlaceReader
+import org.scalatest.FunSuite
 import java.io.FileInputStream
 import org.pelagios.api.gazetteer.Place
+import org.pelagios.Scalagios
 import org.openrdf.rio.RDFFormat
 
-@RunWith(classOf[JUnitRunner])
-class StreamingGazetteerParserTest extends FunSuite {
 
-  // val TEST_FILE = "../test-data/test-places-pleiades.ttl"
-  val TEST_FILE = "/home/simonr/Workspaces/bitbucket/pelagios3-scripts/wikidata-place-extractor/data/wikidata.ttl"
+@RunWith(classOf[JUnitRunner])
+class StreamingGazetteerParserTest extends FunSuite with UsesTestData {
+
+  private val TEST_FILE = getFile("test-places-pleiades.ttl")
+  // private val TEST_FILE = getFile("wikidata.ttl")
   
   test("Streaming Gazetteer Dump Import") {
     val is = new FileInputStream(TEST_FILE)
-    
-    def handler(place: Place) = {
+        
+    def streamHandler(place: Place): Unit = {
       println(place.title)
     }
     
-    Scalagios.readPlaceStream(is, RDFFormat.TURTLE, handler)
+    Scalagios.streamPlaces(is, TEST_FILE.getName, streamHandler)
+    is.close()
   }
   
 }

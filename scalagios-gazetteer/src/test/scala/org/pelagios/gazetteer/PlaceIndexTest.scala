@@ -28,12 +28,14 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     val index = PlaceIndex.open(INDEX_DIR)
 
     println("Loading DARE data")
-    val dare = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_DARE)), "http://imperium.ahlfeldt.se/", RDFFormat.TURTLE)
+    val dareIs = new GZIPInputStream(new FileInputStream(DATA_DARE))
+    val dare = Scalagios.readPlaces(dareIs, RDFFormat.TURTLE)
     println("Inserting " + dare.size + " places (" + dare.flatMap(_.names).size + " names) into index")
     index.addPlaces(dare.toIterable)
     
     println("Loading Pleiades data")
-    val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_PLEIADES)), "http://pleiades.stoa.org/", RDFFormat.TURTLE)
+    val pleiadesIs = new GZIPInputStream(new FileInputStream(DATA_PLEIADES))
+    val pleiades = Scalagios.readPlaces(pleiadesIs, RDFFormat.TURTLE)
     println("Inserting " + pleiades.size + " places (" + pleiades.flatMap(_.names).size + " names) into index")
     index.addPlaces(pleiades.toIterable)
 
@@ -88,7 +90,8 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     assert(conflated.size == 1)
     println(" - ok")
     
-    
+    dareIs.close()
+    pleiadesIs.close()
     println("Done.")
   }
   

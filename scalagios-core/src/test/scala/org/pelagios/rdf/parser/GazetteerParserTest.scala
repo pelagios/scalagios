@@ -5,19 +5,17 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
-import org.pelagios.rdf.RDFPlaceReader
 import java.io.FileInputStream
+import org.openrdf.rio.RDFFormat
 
 @RunWith(classOf[JUnitRunner])
-class GazetteerParserTest extends FunSuite {
+class GazetteerParserTest extends FunSuite with UsesTestData {
   
-  val TEST_FILE = "../test-data/test-places-pleiades.ttl"
-  // val TEST_FILE = "/home/simonr/Workspaces/bitbucket/pelagios3-scripts/wikidata-place-extractor/data/wikidata.ttl"
+  val TEST_FILE = getFile("../test-data/test-places-pleiades.ttl")
   
   test("Gazetteer Dump Import") {
-    val rdfReader = new RDFPlaceReader(new FileInputStream(TEST_FILE))
-
-    val places = rdfReader.read(TEST_FILE).toList
+    val is = new FileInputStream(TEST_FILE)
+    val places = Scalagios.readPlaces(is, RDFFormat.TURTLE).toList
     assert(places.size == 483, "invalid number of places")
     places.foreach(place => {
       assert(place.title != null, "title is null")
@@ -35,7 +33,7 @@ class GazetteerParserTest extends FunSuite {
     val placesWithNames = places.filter(_.names.size > 0)
     assert(placesWithNames.size == 449, "invalid number of places with names")
     
-    rdfReader.close()
+    is.close()
   }
   
 }

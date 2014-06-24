@@ -1,8 +1,8 @@
 package org.pelagios.rdf.parser
 
-import scala.collection.mutable.ArrayBuffer
 import org.openrdf.model.{ URI, Value }
 import org.openrdf.model.vocabulary.RDF
+import scala.collection.mutable.ArrayBuffer
 
 /** A helper structure to collect the triples for a specific RDF resource.
   *  

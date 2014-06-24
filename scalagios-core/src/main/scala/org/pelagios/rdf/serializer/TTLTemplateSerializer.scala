@@ -24,17 +24,17 @@ object TTLTemplateSerializer {
   
   val template = TemplateSource.fromSource("ttl.mustache", Source.fromInputStream(getClass.getResourceAsStream("ttl.mustache"), "UTF-8"))
 
-  def toString(data: Iterable[AnnotatedThing]): String =
+  def toString(data: Iterator[AnnotatedThing]): String =
     engine.layout(template, Map("things" -> data))
     
-  def writeToStream(data: Iterable[AnnotatedThing], out: OutputStream) = {
+  def writeToStream(data: Iterator[AnnotatedThing], out: OutputStream) = {
     val printWriter = new PrintWriter(out)
     printWriter.write(toString(data))
     printWriter.flush
     printWriter.close    
   }
   
-  def writeToFile(data: Iterable[AnnotatedThing], out: File) =
+  def writeToFile(data: Iterator[AnnotatedThing], out: File) =
     writeToStream(data, new FileOutputStream(out))
   
 }

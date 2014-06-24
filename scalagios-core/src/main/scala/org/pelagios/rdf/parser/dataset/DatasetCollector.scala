@@ -1,13 +1,21 @@
-package org.pelagios.rdf.parser
+package org.pelagios.rdf.parser.dataset
 
 import org.pelagios.api.dataset.Dataset
 import org.pelagios.rdf.vocab.{ DCTerms, VoID, FOAF }
+import org.pelagios.rdf.parser.Resource
+import org.pelagios.rdf.parser.Resource
+import org.pelagios.rdf.parser.ResourceCollector
 
-class VoIDParser extends ResourceCollector {
+/** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle VoID dataset descriptions.
+  * 
+  * TODO build dataset hierarchy
+  * 
+  * @author Rainer Simon <rainer.simon@ait.ac.at>
+  */
+class DatasetCollector extends ResourceCollector {
   
-  lazy val datasets: Iterable[Dataset] =
-    resourcesOfType(VoID.Dataset,
-      Seq(_.hasPredicate(VoID.dataDump)))
+  lazy val datasets: Iterator[Dataset] =
+    resourcesOfType(VoID.Dataset, Seq(_.hasPredicate(VoID.dataDump)))
       .map(new DatasetResource(_))
 
 }

@@ -1,12 +1,14 @@
 package org.pelagios.tools.validation
 
 import org.pelagios.Scalagios
+import java.io.FileInputStream
 
 object AnnotationValidator extends App {
   
   val INPUT_FILE = "/home/simonr/Downloads/pelagios.rdf"
     
-  val annotations = Scalagios.readAnnotations(INPUT_FILE)
+  val is = new FileInputStream(INPUT_FILE)
+  val annotations = Scalagios.readAnnotations(is, INPUT_FILE)
   annotations.foreach(thing => {
     println(thing.title)
     println(thing.temporal.map(t => t.start))
@@ -16,5 +18,6 @@ object AnnotationValidator extends App {
       println("  annotated at " + annotation.annotatedAt)
     })
   })
+  is.close()
 
 }

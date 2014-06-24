@@ -6,15 +6,17 @@ import org.scalatest.junit.JUnitRunner
 import org.pelagios.Scalagios
 import org.pelagios.api._
 import org.pelagios.api.annotation.TranscriptionType
+import java.io.FileInputStream
 
 @RunWith(classOf[JUnitRunner])
-class PelagiosDataParserTest extends FunSuite {
+class PelagiosDataParserTest extends FunSuite with UsesTestData {
 
-  val TEST_FILE = "test-data/test-annotations-vicarello.ttl"
+  private val TEST_FILE = getFile("test-annotations-vicarello.ttl")
     
   test("Pelagios Data Dump Import") {
     // Parse test data
-    val things = Scalagios.readAnnotations(TEST_FILE)
+    val is = new FileInputStream(TEST_FILE)
+    val things = Scalagios.readAnnotations(is, TEST_FILE.getName).toList
     
     // Dump contains one work with one expression - verify there is only one top-level AnnotatedThing
     assert(things.size == 1, "object graph contains wrong number of AnnotatedThings (" + things.size + ")")
@@ -43,6 +45,8 @@ class PelagiosDataParserTest extends FunSuite {
       assert(annotation.transcription.get.nameType == TranscriptionType.Toponym)
       assert(annotation.hasTarget.equals(expression.uri), "annotation targets should point to Expression!")
     })
+    
+    is.close()
   }
   
 }

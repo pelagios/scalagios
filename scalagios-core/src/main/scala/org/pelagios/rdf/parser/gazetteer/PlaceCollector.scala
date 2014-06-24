@@ -1,38 +1,38 @@
-package org.pelagios.rdf.parser
+package org.pelagios.rdf.parser.gazetteer
 
-import org.pelagios.api._
-import org.pelagios.rdf.vocab._
-import org.openrdf.model.{ Literal, URI, Value }
-import org.openrdf.model.vocabulary.{ RDF, RDFS }
-import org.pelagios.api.gazetteer.Place
-import org.pelagios.api.gazetteer.Location
+import org.openrdf.model.vocabulary.RDFS
+import org.pelagios.api.PlainLiteral
+import org.pelagios.api.gazetteer.{ Place, Location }
+import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
+import org.pelagios.rdf.vocab.{ DCTerms, OSGeo, Pelagios, PelagiosPlaceCategories, PleiadesPlaces, SKOS, W3CGeo }
 import org.slf4j.LoggerFactory
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-class GazetteerParser extends LuceneBackedResourceCollector {
+class PlaceCollector extends ResourceCollector {
   
-  protected val logger = LoggerFactory.getLogger(classOf[GazetteerParser])
+  protected val logger = LoggerFactory.getLogger(classOf[PlaceCollector])
   
   /** The Places collected by the parser.
    *  
     * @return the list of Places
     */
   lazy val places: Iterator[Place] = {
-    val placeURIs = resourcesOfType(Pelagios.PlaceRecord)
-    placeURIs.map(uri => {
-      val resource = getResource(uri).get
-      val nameResources = getResources(resource.get(PleiadesPlaces.hasName).toList.map(_.stringValue))
-      val locationResources = getResources(resource.get(PleiadesPlaces.hasLocation).toList.map(_.stringValue))
-      
-      val names = nameResources.map(_.getFirst(RDFS.LABEL).map(ResourceCollector.toLabel(_)).get)
-      val locations = locationResources.map(new LocationResource(_))
-      
-      val place = new PlaceResource(resource, names, locations)
-      logger.debug(place.title)
-      place
+    logger.info("Building Names table")    
+    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
+      .map(resource => (resource.uri -> resource.getFirst(RDFS.LABEL).map(ResourceCollector.toPlainLiteral(_)).get)).toMap
+
+    logger.info("Building Locations table")
+    val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
+      .map(resource => (resource.uri -> new LocationResource(resource))).toMap
+           
+    logger.info("Wrapping RDF to domain model")
+    resourcesOfType(Pelagios.PlaceRecord).map(resource => {
+      val names = resource.get(PleiadesPlaces.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
+      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
+      new PlaceResource(resource, names, locations)
     })
   } 
 
@@ -51,7 +51,7 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
   
   def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
-  def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toLabel(_))
+  def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_))
   
   def category = resource.getFirst(DCTerms.typ).map(uri => PelagiosPlaceCategories.toCategory(uri)).flatten
   
@@ -87,7 +87,7 @@ private[parser] class LocationResource(val resource: Resource) extends Location 
   }
   
   def descriptions: Seq[PlainLiteral] =
-    (resource.get(DCTerms.description) ++ resource.get(RDFS.LABEL)).map(ResourceCollector.toLabel(_))
+    (resource.get(DCTerms.description) ++ resource.get(RDFS.LABEL)).map(ResourceCollector.toPlainLiteral(_))
 
 }
 

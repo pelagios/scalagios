@@ -1,12 +1,10 @@
-package org.pelagios.rdf.parser
+package org.pelagios.rdf.parser.annotation
 
 import java.util.Date
 import org.pelagios.api._
 import org.pelagios.rdf.vocab._
-import org.openrdf.model.vocabulary.RDFS
 import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
-import org.openrdf.model.Literal
 import org.openrdf.model.BNode
 import java.text.SimpleDateFormat
 import org.pelagios.api.annotation.Annotation
@@ -17,6 +15,9 @@ import org.pelagios.api.annotation.TranscriptionType
 import org.pelagios.api.annotation.Transcription
 import org.pelagios.api.annotation.Tag
 import org.pelagios.api.PeriodOfTime
+import org.pelagios.rdf.parser.Resource
+import org.pelagios.rdf.parser.Resource
+import org.pelagios.rdf.parser.ResourceCollector
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -24,7 +25,7 @@ import org.pelagios.api.PeriodOfTime
   */
 class PelagiosDataParser extends ResourceCollector {   
   
-  def data: Iterable[AnnotatedThing] = {
+  def data: Iterator[AnnotatedThing] = {
     val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))  
     
     // Resolve foaf:Agents
@@ -68,7 +69,7 @@ class PelagiosDataParser extends ResourceCollector {
     })  
     
     // Link annotations and annotated things
-    val annotationsPerThing = allAnnotations.groupBy(_.resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty"))
+    val annotationsPerThing = allAnnotations.toSeq.groupBy(_.resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty"))
     allAnnotatedThings.foreach(thing => {
       val annotations = annotationsPerThing.get(thing.uri).getOrElse(Seq.empty[AnnotationResource])
       annotations.foreach(_.hasTarget = thing)

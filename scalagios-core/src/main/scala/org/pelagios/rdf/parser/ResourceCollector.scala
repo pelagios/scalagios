@@ -1,12 +1,10 @@
 package org.pelagios.rdf.parser
 
-import scala.collection.mutable.{ArrayBuffer, HashMap}
-import org.openrdf.model.{ Literal, Statement, URI, Value }
-import org.openrdf.model.vocabulary.RDF
 import org.openrdf.rio.helpers.RDFHandlerBase
+import org.openrdf.model.{ Literal, URI, Statement, Value }
+import org.openrdf.model.vocabulary.RDF
 import org.pelagios.api.PlainLiteral
-import org.pelagios.rdf.vocab.PleiadesPlaces
-import org.pelagios.rdf.vocab.Pelagios
+import scala.collection.mutable.HashMap
 
 /** An RDFHandler that collects triples into a more convenient map. 
   *   
@@ -27,11 +25,11 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     resources.put(subj, resource)
   }
   
-  protected def resourcesOfType(rdfType: URI): Iterable[Resource] =
+  protected def resourcesOfType(rdfType: URI): Iterator[Resource] =
     resources.valuesIterator.filter(resource => {
       val types = resource.get(RDF.TYPE)
       types.contains(rdfType)
-    }).toSeq
+    }).toIterator
   
   /** A helper method that filters the collected resources by type.
     * 
@@ -47,14 +45,14 @@ private[parser] abstract class ResourceCollector extends RDFHandlerBase {
     * @param typeRules the list of type checking rules
     * @return the list of resources that are of the specified RDF type or satisfy any of the rules
     */  
-  protected def resourcesOfType(rdfType: URI, typeRules: Seq[Resource => Boolean]): Iterable[Resource] =
+  protected def resourcesOfType(rdfType: URI, typeRules: Seq[Resource => Boolean]): Iterator[Resource] =
     resources.valuesIterator.filter(resource => {
       val types = resource.get(RDF.TYPE)
       if (types.contains(rdfType))
         true
       else
         typeRules.exists(rule => rule(resource))        
-    }).toIterable
+    }).toIterator
   
   protected def getResource(uri: Value): Option[Resource] =
     resources.get(uri.stringValue)
@@ -69,7 +67,7 @@ private[parser] object ResourceCollector {
     * @param value the RDF value
     * @return the label
     */
-  def toLabel(value: Value): PlainLiteral = {
+  def toPlainLiteral(value: Value): PlainLiteral = {
     value match {
       case v if v.isInstanceOf[Literal] => { 
         val literal = v.asInstanceOf[Literal]
@@ -89,6 +87,6 @@ private[parser] object ResourceCollector {
     * @param values the sequence of RDF values
     * @return the labels
     */
-  def toLabel(values: Seq[Value]): Seq[PlainLiteral] = values.map(toLabel(_))
+  def toPlainLiteral(values: Seq[Value]): Seq[PlainLiteral] = values.map(toPlainLiteral(_))
   
 }
