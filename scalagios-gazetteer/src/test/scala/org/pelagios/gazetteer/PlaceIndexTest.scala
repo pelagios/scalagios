@@ -30,12 +30,12 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     println("Loading DARE data")
     val dare = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_DARE)), "http://imperium.ahlfeldt.se/", RDFFormat.TURTLE)
     println("Inserting " + dare.size + " places (" + dare.flatMap(_.names).size + " names) into index")
-    index.addPlaces(dare)
+    index.addPlaces(dare.toIterable)
     
     println("Loading Pleiades data")
     val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(DATA_PLEIADES)), "http://pleiades.stoa.org/", RDFFormat.TURTLE)
     println("Inserting " + pleiades.size + " places (" + pleiades.flatMap(_.names).size + " names) into index")
-    index.addPlaces(pleiades)
+    index.addPlaces(pleiades.toIterable)
 
     println()
     println("### Testing retrieval by URI ###")

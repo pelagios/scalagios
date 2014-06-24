@@ -20,6 +20,8 @@ class StreamingGazetteerRDFHandler(val handlePlace: Place => Unit) extends RDFHa
 
   private var tripleCounter = 0
   
+  private var placeCounter = 0
+  
   private def exportPlaces() = {
 	// Step 1 - get all PlaceRecord resources
     val placeResources = cache.values.filter(resource => {
@@ -46,10 +48,13 @@ class StreamingGazetteerRDFHandler(val handlePlace: Place => Unit) extends RDFHa
         val locations = locationResources.map(r => new LocationResource(r.get))
         handlePlace(new PlaceResource(resource, names, locations))
         
-        // And clear the place - along with names and locations - from the cache
+        // ...clear the place (along with names and locations) from the cache...
         cache.remove(resource.uri)
         nameURIs.foreach(uri => cache.remove(uri.stringValue))
         locationURIs.foreach(uri => cache.remove(uri.stringValue))
+        
+        // ...and increment the counter
+        placeCounter += 1
       }
 	})
   }
@@ -75,9 +80,20 @@ class StreamingGazetteerRDFHandler(val handlePlace: Place => Unit) extends RDFHa
   }
   
   override def endRDF(): Unit = {
-	cache.clear()
-    logger.info("File parsing complete (" + tripleCounter + " triples)")
+    exportPlaces()
+    
+    logger.info("File parsing complete (" + tripleCounter + " triples, " + placeCounter + " places)")
     logger.info("Took " + (System.currentTimeMillis - startTime) + "ms")
+    
+    if (cache.size > 0) {
+      logger.warn("There are unassigned triples left in the streaming cache:")
+      cache.values.foreach(resource => {
+        logger.warn(resource.uri)
+        resource.properties.foreach { case (pred, obj) => logger.warn("  " + pred.stringValue + " -> " + obj.stringValue) }
+      })
+    }
+    
+	cache.clear()
   }
 	
 }
