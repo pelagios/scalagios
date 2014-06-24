@@ -63,9 +63,9 @@ object ConvertPleiadesDump extends App {
     Place(uri = legacy.uri, title = legacy.label.getOrElse("[unnamed]"),
       descriptions = descriptions, names = names, locations = locations,
       placeCategory = placeCategory)
-  }).toIterator
+  })
   
-  Scalagios.writePlaces(importedPlaces, "/home/simonr/Downloads/migrated.ttl", RDFFormat.TURTLE)
+  Scalagios.writePlaces(importedPlaces, "/home/simonr/Downloads/migrated.ttl", Scalagios.TURTLE)
   
   println("Migrated " + importedPlaces.size + " places")
   

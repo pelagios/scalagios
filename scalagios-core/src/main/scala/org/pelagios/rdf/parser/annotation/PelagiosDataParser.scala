@@ -25,7 +25,7 @@ import org.pelagios.rdf.parser.ResourceCollector
   */
 class PelagiosDataParser extends ResourceCollector {   
   
-  def data: Iterator[AnnotatedThing] = {
+  def data: Iterable[AnnotatedThing] = {
     val allAnnotations = resourcesOfType(OA.Annotation).map(new AnnotationResource(_))  
     
     // Resolve foaf:Agents

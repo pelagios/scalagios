@@ -7,15 +7,17 @@ import org.pelagios.api.annotation.AnnotatedThing
 import org.pelagios.rdf.serializer.{ GazetteerSerializer, TTLTemplateSerializer, PelagiosDataSerializer }
 
 trait ScalagiosWriter {
-
-  def writeAnnotations(data: Iterator[AnnotatedThing], out: OutputStream, format: RDFFormat) = {
-    if (format == RDFFormat.TURTLE)
+	
+  import Scalagios._
+  
+  def writeAnnotations(data: Iterable[AnnotatedThing], out: OutputStream, format: String) = {
+    if (format.equalsIgnoreCase(TURTLE))
       TTLTemplateSerializer.writeToStream(data, out)
     else
       PelagiosDataSerializer.writeToStream(data, out, format)
   } 
   
-  def writePlaces(data: Iterator[Place], file: String, format: RDFFormat) =
+  def writePlaces(data: Iterable[Place], file: String, format: String) =
     GazetteerSerializer.writeToFile(data, file, format)
   
 }

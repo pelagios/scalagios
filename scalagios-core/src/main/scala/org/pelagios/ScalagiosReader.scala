@@ -17,91 +17,53 @@ trait ScalagiosReader {
   
   import Scalagios._
 
-  /** Parses Pelagios annotations from an input stream, using a parser for the specified format.
+  /** Parses Pelagios annotations from an input stream in the specified RDF format.
     *  
     * @param is the input stream
-    * @param format the RDF serialization format the data is in  
+    * @param format the RDF serialization format 
     */
-  def readAnnotations(is: InputStream, format: RDFFormat): Iterator[AnnotatedThing] =
-    readAnnotations(is, RDFParserRegistry.getInstance.get(format).getParser)
-
-  /** Parses Pelagios annotations from an input stream, using a parser determined based on file extension.
-    *  
-    * @param is the input stream
-    * @param filename the source filename 
-    */
-  def readAnnotations(is: InputStream, filename: String): Iterator[AnnotatedThing] =
-    readAnnotations(is, getParser(filename))
-  
-  private def readAnnotations(is: InputStream, parser: RDFParser): Iterator[AnnotatedThing] = {
+  def readAnnotations(is: InputStream, format: String): Iterable[AnnotatedThing] = {
+    val parser = getParser(format)
     val handler = new PelagiosDataParser()
     parser.setRDFHandler(handler)
     parser.parse(is, BASE_URI)
     handler.data      
   }
-
-  
-  
-  
-  
-  /** Parses a Pelagios-style VoID dataset definition from an input stream, using a parser for the specified format.
+    
+  /** Parses a Pelagios-style VoID dataset definition from an input stream in the specified RDF format.
     *  
     * @param is the input stream
-    * @param format the RDF serialization format the data is in  
-    */
-  def readVoID(is: InputStream, format: RDFFormat): Iterator[Dataset] =
-    readVoID(is, RDFParserRegistry.getInstance.get(format).getParser)
-    
-  /** Parses a Pelagios-style VoID dataset definition from an input stream, using a parser determined based on file extension.
-    *  
-    * @param is the input stream
-    * @param filename the source filename 
-    */
-  def readVoID(is: InputStream, filename: String): Iterator[Dataset] =
-    readVoID(is, getParser(filename))
-    
-  private def readVoID(is: InputStream, parser: RDFParser): Iterator[Dataset] = {
+    * @param format the RDF serialization format
+    */    
+  def readVoID(is: InputStream, format: String): Iterable[Dataset] = {
+	val parser = getParser(format)
     val handler = new DatasetCollector()
     parser.setRDFHandler(handler)
     parser.parse(is, BASE_URI)
     handler.datasets
   }
   
-  
-  
-  
-  
-  /** Parses a Pelagios gazetteer dump file from an input stream, using a parser for the specified format.
+  /** Parses a Pelagios gazetteer dump file from an input stream in the specified RDF format.
     *
     * @param is the input stream
-    * @param format the RDF serialization format the data is in  
+    * @param format the RDF serialization format  
     */
-  def readPlaces(is: InputStream, format: RDFFormat): Iterator[Place] =
-    readPlaces(is, RDFParserRegistry.getInstance.get(format).getParser)
-    
-  /** Parses a Pelagios gazetteer dump file from an input stream, using a parser determined based on file extension.
-    *  
-    * @param is the input stream
-    * @param filename the source filename 
-    */
-  def readPlaces(is: InputStream, filename: String): Iterator[Place] =
-    readPlaces(is, getParser(filename))
-  
-  private def readPlaces(is: InputStream, parser: RDFParser): Iterator[Place] = {
+  def readPlaces(is: InputStream, format: String): Iterable[Place] = {
+	val parser = getParser(format)
     val handler = new PlaceCollector()
     parser.setRDFHandler(handler)
     parser.parse(is, BASE_URI)
     handler.places
   }  
     
-  /**  Parses a 'streamable' gazetteer dump file from an input stream, using a parser determined based on file extension.
+  /**  Parses a 'streamable' gazetteer dump file from an input stream in the specified RDF format.
     *
     * @param is the input stream
-    * @param filename the source filename 
+    * @param format the RDF serialization format  
     * @param streamHandler the handler function
     */  
-  def streamPlaces(is: InputStream, filename: String, streamHandler: Place => Unit): Unit = {
-    val parser = getParser(filename)
+  def streamPlaces(is: InputStream, format: String, streamHandler: Place => Unit): Unit = {
+    val parser = getParser(format)
     val rdfHandler = new PlaceStreamHandler(streamHandler)
     parser.setRDFHandler(rdfHandler)
     parser.parse(is, BASE_URI)

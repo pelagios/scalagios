@@ -1,12 +1,10 @@
 package org.pelagios.rdf.serializer
 
-import org.pelagios.api._
-import org.fusesource.scalate.TemplateEngine
 import java.io.{ File, FileOutputStream, OutputStream, PrintWriter }
-import org.fusesource.scalate.Template
-import org.fusesource.scalate.TemplateSource
-import scala.io.Source
+import org.fusesource.scalate.{ Template, TemplateSource, TemplateEngine }
+import org.pelagios.api._
 import org.pelagios.api.annotation.AnnotatedThing
+import scala.io.Source
 
 /** Template-based Turtle serializer as alternative to [[RDFSerializer]].
   *   
@@ -24,17 +22,17 @@ object TTLTemplateSerializer {
   
   val template = TemplateSource.fromSource("ttl.mustache", Source.fromInputStream(getClass.getResourceAsStream("ttl.mustache"), "UTF-8"))
 
-  def toString(data: Iterator[AnnotatedThing]): String =
+  def toString(data: Iterable[AnnotatedThing]): String =
     engine.layout(template, Map("things" -> data))
+
+  def writeToFile(data: Iterable[AnnotatedThing], out: File) =
+    writeToStream(data, new FileOutputStream(out))
     
-  def writeToStream(data: Iterator[AnnotatedThing], out: OutputStream) = {
+  def writeToStream(data: Iterable[AnnotatedThing], out: OutputStream) = {
     val printWriter = new PrintWriter(out)
     printWriter.write(toString(data))
     printWriter.flush
     printWriter.close    
   }
-  
-  def writeToFile(data: Iterator[AnnotatedThing], out: File) =
-    writeToStream(data, new FileOutputStream(out))
-  
+    
 }

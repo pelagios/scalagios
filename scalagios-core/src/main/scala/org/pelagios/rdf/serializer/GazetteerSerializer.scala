@@ -4,13 +4,14 @@ import com.vividsolutions.jts.io.WKTWriter
 import java.io.{ File, PrintWriter }
 import org.pelagios.api.gazetteer.Place
 import org.openrdf.rio.RDFFormat
+import org.pelagios.Scalagios
 import org.pelagios.rdf.vocab.PelagiosPlaceCategories
 
 object GazetteerSerializer {
 
-  def writeToFile(places: Iterator[Place], file: String, format: RDFFormat) = {
+  def writeToFile(places: Iterable[Place], file: String, format: String) = {
     // TODO support other formats beyond Turtle
-    if (format != RDFFormat.TURTLE)
+    if (!format.equalsIgnoreCase(Scalagios.TURTLE))
       throw new UnsupportedOperationException
       
     val f = new File(file)

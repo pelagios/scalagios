@@ -3,7 +3,6 @@ package org.pelagios.tools.geoparsing
 import java.io.{ File, FileInputStream, PrintWriter }
 import java.util.zip.GZIPInputStream
 import javax.swing.JFileChooser
-import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
 import org.pelagios.gazetteer.PlaceIndex
 import org.pelagios.tools.georesolution.GeoResolver
@@ -80,7 +79,7 @@ object TextToCSV extends App {
   private def initIndex(idx: PlaceIndex) = {
     println("There is no gazetter index yet - just a second...")     
     println("Loading Pleiades data")
-    val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(GAZETTEER_DATA_PATH)), RDFFormat.TURTLE)
+    val pleiades = Scalagios.readPlaces(new GZIPInputStream(new FileInputStream(GAZETTEER_DATA_PATH)), Scalagios.TURTLE)
     println("Building index")
     idx.addPlaces(pleiades.toIterable)      
     println("Index complete")          

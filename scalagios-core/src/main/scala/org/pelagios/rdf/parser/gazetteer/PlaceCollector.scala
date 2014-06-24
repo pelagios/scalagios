@@ -19,7 +19,7 @@ class PlaceCollector extends ResourceCollector {
    *  
     * @return the list of Places
     */
-  lazy val places: Iterator[Place] = {
+  lazy val places: Iterable[Place] = {
     logger.info("Building Names table")    
     val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
       .map(resource => (resource.uri -> resource.getFirst(RDFS.LABEL).map(ResourceCollector.toPlainLiteral(_)).get)).toMap

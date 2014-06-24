@@ -26,11 +26,7 @@ import org.slf4j.LoggerFactory
   * 
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-private[parser] class LuceneBackedResourceCollector extends RDFHandlerBase {
-
-  private val IDX_HOME = "/home/simonr"
-  
-  private val IDX_NAME = "scalagios-staging-idx"
+private[parser] class LuceneBackedResourceCollector(idxDir: String) extends RDFHandlerBase {
     
   private val logger = LoggerFactory.getLogger(classOf[LuceneBackedResourceCollector])
   
@@ -39,9 +35,9 @@ private[parser] class LuceneBackedResourceCollector extends RDFHandlerBase {
   private val startTime = System.currentTimeMillis
   
   private val idx = {
-    val file = new File(IDX_HOME, IDX_NAME)
+    val file = new File(idxDir)
     if (file.exists)
-      FileUtils.deleteDirectory(new File(IDX_HOME, IDX_NAME))
+      FileUtils.deleteDirectory(new File(idxDir))
       
     file.mkdirs
     val initializer = new IndexWriter(FSDirectory.open(file), 
@@ -51,7 +47,8 @@ private[parser] class LuceneBackedResourceCollector extends RDFHandlerBase {
     new NIOFSDirectory(file)
   }
   
-  private val idxWriter = new IndexWriter(idx, new IndexWriterConfig(Version.LUCENE_48, new StandardAnalyzer(Version.LUCENE_48)))
+  private val idxWriter =
+    new IndexWriter(idx, new IndexWriterConfig(Version.LUCENE_48, new StandardAnalyzer(Version.LUCENE_48)))
   
   private val searcherManager = new SearcherManager(idx, new SearcherFactory())
   
@@ -201,7 +198,7 @@ private[parser] class LuceneBackedResourceCollector extends RDFHandlerBase {
   }
   
   def close() = {
-    FileUtils.deleteDirectory(new File(IDX_HOME, IDX_NAME))
+    FileUtils.deleteDirectory(new File(idxDir))
     searcherManager.close()
   }
   

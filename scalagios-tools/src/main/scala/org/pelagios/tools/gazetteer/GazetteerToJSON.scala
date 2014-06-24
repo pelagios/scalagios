@@ -1,16 +1,14 @@
 package org.pelagios.tools.gazetteer
 
 import org.pelagios.Scalagios
-import java.io.FileInputStream
-import org.openrdf.rio.RDFFormat
-import java.io.PrintWriter
+import java.io.{ FileInputStream, PrintWriter }
 
 /** Quick hack to convert Pelagios gazetteer RDF to JSON **/
 object GazetteerToJSON extends App {
   
   private val GAZETTEER_DUMP = "/home/simonr/Workspaces/pelagios/scalagios/test-data/pleiades-20120826-migrated.ttl"
     
-  val places = Scalagios.readPlaces(new FileInputStream(GAZETTEER_DUMP), RDFFormat.TURTLE)
+  val places = Scalagios.readPlaces(new FileInputStream(GAZETTEER_DUMP), Scalagios.TURTLE)
   
   val json = places.foldLeft(Seq.empty[String])((list, next) => {
     val centroid = next.getCentroid

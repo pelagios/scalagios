@@ -14,7 +14,7 @@ import org.pelagios.rdf.parser.ResourceCollector
   */
 class DatasetCollector extends ResourceCollector {
   
-  lazy val datasets: Iterator[Dataset] =
+  lazy val datasets: Iterable[Dataset] =
     resourcesOfType(VoID.Dataset, Seq(_.hasPredicate(VoID.dataDump)))
       .map(new DatasetResource(_))
 

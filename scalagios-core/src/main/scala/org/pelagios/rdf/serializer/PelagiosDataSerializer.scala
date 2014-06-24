@@ -1,21 +1,16 @@
 package org.pelagios.rdf.serializer
 
-import java.io.{ File, OutputStream }
-import org.pelagios.api._
-import org.pelagios.rdf.vocab._
-import org.openrdf.model.{BNode, Model}
-import org.openrdf.model.impl.LinkedHashModel
-import org.openrdf.model.vocabulary.RDF
-import org.openrdf.rio.{Rio, RDFFormat}
-import org.openrdf.model.vocabulary.RDFS
+import java.io.{ File, FileOutputStream, OutputStream }
 import org.callimachusproject.io.TurtleStreamWriterFactory
-import java.io.FileOutputStream
+import org.openrdf.model.{ URI, BNode, Model }
+import org.openrdf.model.impl.LinkedHashModel
+import org.openrdf.model.vocabulary.{ RDF, RDFS }
+import org.openrdf.rio.{ Rio, RDFFormat }
+import org.pelagios.Scalagios
+import org.pelagios.api._
+import org.pelagios.api.annotation.{ AnnotatedThing, SpecificResource, Transcription, TranscriptionType }
 import org.pelagios.api.annotation.selector.TextOffsetSelector
-import org.openrdf.model.URI
-import org.pelagios.api.annotation.AnnotatedThing
-import org.pelagios.api.annotation.SpecificResource
-import org.pelagios.api.annotation.TranscriptionType
-import org.pelagios.api.annotation.Transcription
+import org.pelagios.rdf.vocab._
 
 /** Utility object to serialize Pelagios data to RDF.
   *  
@@ -153,7 +148,7 @@ object PelagiosDataSerializer {
     * @param annotatedThings the annotated things
     * @return the RDF model
     */
-  def toRDF(annotatedThings: Iterator[AnnotatedThing]): Model = {
+  def toRDF(annotatedThings: Iterable[AnnotatedThing]): Model = {
     val model = new LinkedHashModel()
     model.setNamespace("oa", OA.NAMESPACE)
     model.setNamespace("oax", OAX.NAMESPACE)
@@ -173,12 +168,12 @@ object PelagiosDataSerializer {
     * @param out the output stream
     * @param format the RDF serialization format
     */
-  def writeToStream(annotatedThings: Iterator[AnnotatedThing], out: OutputStream, format: RDFFormat) = {
-    if (format.equals(RDFFormat.TURTLE)) {
+  def writeToStream(annotatedThings: Iterable[AnnotatedThing], out: OutputStream, format: String) = {
+    if (format.equalsIgnoreCase(Scalagios.TURTLE)) {
       // A little hack - for turtle we'll use a custom serializer that handles blank nodes
       Rio.write(toRDF(annotatedThings), new TurtleStreamWriterFactory().createWriter(out, null))
     } else {
-      Rio.write(toRDF(annotatedThings), out, format)
+      Rio.write(toRDF(annotatedThings), out, Scalagios.getFormat(format))
     } 
   }
   
@@ -188,7 +183,7 @@ object PelagiosDataSerializer {
     * @param out the output file
     * @param format the RDF serialization format
     */
-  def writeToFile(annotatedThings: Iterator[AnnotatedThing], out: File, format: RDFFormat) =
+  def writeToFile(annotatedThings: Iterable[AnnotatedThing], out: File, format: String) =
     writeToStream(annotatedThings, new FileOutputStream(out), format)
   
 }
