@@ -17,7 +17,7 @@ class TTLTemplateSerializerTest extends FunSuite {
                          transcription = Transcription("Athens", TranscriptionType.Toponym))
     })
     
-    val ttl = TTLTemplateSerializer.toString(Iterator(thing))
+    val ttl = TTLTemplateSerializer.toString(Iterable(thing))
     println(ttl)
   }
   

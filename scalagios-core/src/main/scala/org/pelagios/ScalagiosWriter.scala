@@ -6,7 +6,7 @@ import org.pelagios.api.gazetteer.Place
 import org.pelagios.api.annotation.AnnotatedThing
 import org.pelagios.rdf.serializer.{ GazetteerSerializer, TTLTemplateSerializer, PelagiosDataSerializer }
 
-trait ScalagiosWriter {
+private[pelagios] trait ScalagiosWriter {
 	
   import Scalagios._
   

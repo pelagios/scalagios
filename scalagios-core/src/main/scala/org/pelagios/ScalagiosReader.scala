@@ -13,7 +13,7 @@ import org.pelagios.rdf.parser.gazetteer.{ PlaceCollector, PlaceStreamHandler }
   *
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-trait ScalagiosReader {
+private[pelagios] trait ScalagiosReader {
   
   import Scalagios._
 
