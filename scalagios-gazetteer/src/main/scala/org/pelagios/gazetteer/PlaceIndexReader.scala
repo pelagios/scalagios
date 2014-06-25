@@ -5,6 +5,7 @@ import org.apache.lucene.index.{ DirectoryReader, Term }
 import org.apache.lucene.search.{ BooleanClause, BooleanQuery, IndexSearcher, TermQuery, TopScoreDocCollector }
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser
 import org.apache.lucene.util.Version
+import net.sf.junidecode.Junidecode
 
 trait PlaceIndexReader extends PlaceIndexBase {
   
@@ -50,14 +51,21 @@ trait PlaceIndexReader extends PlaceIndexBase {
     places
   }
   
-  def query(query: String, fuzzy: Boolean = false): Iterable[PlaceDocument] = {
+  def query(query: String, fuzzy: Boolean = false): Iterable[PlaceDocument] = {    
     // We only support keyword queries, and remove all special characters that may mess it up
     val invalidChars = Seq("(", ")", "[", "]")
     val normalizedQuery = invalidChars.foldLeft(query)((normalized, invalidChar) => normalized.replace(invalidChar, ""))
-    
+    val transliteratedQuery = Junidecode.unidecode(normalizedQuery)    
+
     val fields = Seq(PlaceIndex.FIELD_TITLE, PlaceIndex.FIELD_NAME).toArray    
     val suffix = if (fuzzy) " ~" else ""
-    val q = new MultiFieldQueryParser(Version.LUCENE_48, fields, analyzer).parse(normalizedQuery + suffix)
+    val expandedQuery =
+      if (normalizedQuery == transliteratedQuery) 
+        normalizedQuery + suffix
+      else
+        normalizedQuery + suffix + " OR " + transliteratedQuery + suffix
+        
+    val q = new MultiFieldQueryParser(Version.LUCENE_48, fields, analyzer).parse(expandedQuery)
     
     // TODO creating a new reader of every access has some overhead - could be improved
     val reader = DirectoryReader.open(index)

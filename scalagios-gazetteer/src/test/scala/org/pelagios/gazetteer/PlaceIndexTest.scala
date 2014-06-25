@@ -3,7 +3,6 @@ package org.pelagios.gazetteer
 import java.io.FileInputStream
 import java.util.zip.GZIPInputStream
 import org.junit.runner.RunWith
-import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -29,13 +28,13 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
 
     println("Loading DARE data")
     val dareIs = new GZIPInputStream(new FileInputStream(DATA_DARE))
-    val dare = Scalagios.readPlaces(dareIs, RDFFormat.TURTLE)
+    val dare = Scalagios.readPlaces(dareIs, Scalagios.TURTLE)
     println("Inserting " + dare.size + " places (" + dare.flatMap(_.names).size + " names) into index")
     index.addPlaces(dare.toIterable)
     
     println("Loading Pleiades data")
     val pleiadesIs = new GZIPInputStream(new FileInputStream(DATA_PLEIADES))
-    val pleiades = Scalagios.readPlaces(pleiadesIs, RDFFormat.TURTLE)
+    val pleiades = Scalagios.readPlaces(pleiadesIs, Scalagios.TURTLE)
     println("Inserting " + pleiades.size + " places (" + pleiades.flatMap(_.names).size + " names) into index")
     index.addPlaces(pleiades.toIterable)
 
