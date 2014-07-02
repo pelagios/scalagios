@@ -13,11 +13,32 @@ import org.pelagios.rdf.parser.ResourceCollector
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
 class DatasetCollector extends ResourceCollector {
-  
-  lazy val datasets: Iterable[Dataset] =
-    resourcesOfType(VoID.Dataset, Seq(_.hasPredicate(VoID.dataDump)))
-      .map(new DatasetResource(_))
 
+  /** Builds the dataset hierarchy and returns the top-level datasets **/
+  lazy val datasets: Iterable[Dataset] = {
+    val allDatasets =
+      resourcesOfType(VoID.Dataset, Seq(_.hasPredicate(VoID.dataDump)))
+        .map(new DatasetResource(_))
+  
+    val subsetLookupTable: Map[Dataset, Seq[String]] =
+      allDatasets
+        .filter(_.resource.hasPredicate(VoID.subset))
+        .map(parent => (parent, parent.resource.get(VoID.subset).map(_.stringValue))).toMap
+      
+    val parentLookupTable: Map[String, Dataset] =
+      subsetLookupTable.flatMap(tuple => tuple._2.map(uri => (uri, tuple._1)))      
+    
+    // Step 1: wire parent/child relations
+    allDatasets.foreach(dataset => {
+      dataset.subsets = subsetLookupTable.get(dataset).getOrElse(Seq.empty[String])
+        .map(uri => allDatasets.find(_.uri == uri)).filter(_.isDefined).map(_.get)
+       
+      dataset.isSubsetOf = parentLookupTable.get(dataset.uri)  
+    })
+    
+    allDatasets.filter(_.isSubsetOf.isEmpty)
+  }
+      
 }
 
 private[parser] class DatasetResource(val resource: Resource) extends Dataset {
@@ -29,6 +50,8 @@ private[parser] class DatasetResource(val resource: Resource) extends Dataset {
   def publisher: String = resource.getFirst(DCTerms.publisher).map(_.stringValue).getOrElse("[NO PUBLISHER]") // 'NO PUBLISHER' should never happen!
   
   def license: String = resource.getFirst(DCTerms.license).map(_.stringValue).getOrElse("[NO LICENSE]") // 'NO LICENSE' should never happen!
+  
+  var isSubsetOf: Option[Dataset] = None
     
   def description: Option[String] = resource.getFirst(DCTerms.description).map(_.stringValue)
  
@@ -37,5 +60,7 @@ private[parser] class DatasetResource(val resource: Resource) extends Dataset {
   def subjects: Seq[String] = resource.get(DCTerms.subject).map(_.stringValue)
   
   def datadumps: Seq[String] = resource.get(VoID.dataDump).map(_.stringValue)
+  
+  var subsets: Seq[Dataset] = Seq.empty[Dataset]
   
 }

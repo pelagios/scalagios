@@ -20,6 +20,9 @@ trait Dataset {
   /** dcterms:license **/
   def license: String
   
+  /** The parent dataset, in case this dataset is a subset (as defined through void:subset) **/
+  def isSubsetOf: Option[Dataset]
+  
   /** dcterms:description **/
   def description: Option[String]
   
@@ -31,6 +34,9 @@ trait Dataset {
   
   /** void:dataDump **/
   def datadumps: Seq[String]
+  
+  /** Subsets to this dataset, as defined through void:subset **/
+  def subsets: Seq[Dataset]
   
 }
 
@@ -45,18 +51,24 @@ private[api] class DefaultDataset(
   
   val license: String,
   
+  val isSubsetOf: Option[Dataset] = None,
+  
   val description: Option[String] = None,
   
   val homepage: Option[String] = None,
   
   val subjects: Seq[String] = Seq.empty[String],
   
-  val datadumps: Seq[String] = Seq.empty[String]) extends Dataset
+  val datadumps: Seq[String] = Seq.empty[String],
+  
+  val subsets: Seq[Dataset] = Seq.empty[Dataset]) extends Dataset
   
 /** Companion object with a pimped apply method for generating DefaultDataset instances **/
 object Dataset extends AbstractApiCompanion {
 
   def apply(uri: String, title: String, publisher: String, license: String,
+      
+      isSubsetOf: ObjOrOption[Dataset] = new ObjOrOption(None),
       
       description: ObjOrOption[String] = new ObjOrOption(None),
       
@@ -64,9 +76,11 @@ object Dataset extends AbstractApiCompanion {
       
       subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
       
-      datadumps: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): Dataset = {
+      datadumps: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+      
+      subsets: Seq[Dataset] = Seq.empty[Dataset]): Dataset = {
     
-    new DefaultDataset(uri, title, publisher, license, description.option, homepage.option, subjects.seq, datadumps.seq)
+    new DefaultDataset(uri, title, publisher, license,  isSubsetOf.option, description.option, homepage.option, subjects.seq, datadumps.seq, subsets)
   }
   
 }
