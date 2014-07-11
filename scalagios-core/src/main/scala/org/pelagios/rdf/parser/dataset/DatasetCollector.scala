@@ -47,9 +47,9 @@ private[parser] class DatasetResource(val resource: Resource) extends Dataset {
   
   def title: String = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
 
-  def publisher: String = resource.getFirst(DCTerms.publisher).map(_.stringValue).getOrElse("[NO PUBLISHER]") // 'NO PUBLISHER' should never happen!
+  def publisher: Option[String] = resource.getFirst(DCTerms.publisher).map(_.stringValue)
   
-  def license: String = resource.getFirst(DCTerms.license).map(_.stringValue).getOrElse("[NO LICENSE]") // 'NO LICENSE' should never happen!
+  def license: Option[String] = resource.getFirst(DCTerms.license).map(_.stringValue)
   
   var isSubsetOf: Option[Dataset] = None
     

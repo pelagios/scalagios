@@ -15,10 +15,10 @@ trait Dataset {
   def title: String
   
   /** dcterms:publisher **/
-  def publisher: String
+  def publisher: Option[String]
 
   /** dcterms:license **/
-  def license: String
+  def license: Option[String]
   
   /** The parent dataset, in case this dataset is a subset (as defined through void:subset) **/
   def isSubsetOf: Option[Dataset]
@@ -47,9 +47,9 @@ private[api] class DefaultDataset(
   
   val title: String,
 
-  val publisher: String,
+  val publisher: Option[String],
   
-  val license: String,
+  val license: Option[String],
   
   val isSubsetOf: Option[Dataset] = None,
   
@@ -66,7 +66,11 @@ private[api] class DefaultDataset(
 /** Companion object with a pimped apply method for generating DefaultDataset instances **/
 object Dataset extends AbstractApiCompanion {
 
-  def apply(uri: String, title: String, publisher: String, license: String,
+  def apply(uri: String, title: String,
+      
+      publisher: ObjOrOption[String], 
+      
+      license: ObjOrOption[String],
       
       isSubsetOf: ObjOrOption[Dataset] = new ObjOrOption(None),
       
@@ -80,7 +84,8 @@ object Dataset extends AbstractApiCompanion {
       
       subsets: Seq[Dataset] = Seq.empty[Dataset]): Dataset = {
     
-    new DefaultDataset(uri, title, publisher, license,  isSubsetOf.option, description.option, homepage.option, subjects.seq, datadumps.seq, subsets)
+    new DefaultDataset(uri, title, publisher.option, license.option,  isSubsetOf.option, 
+        description.option, homepage.option, subjects.seq, datadumps.seq, subsets)
   }
   
 }
