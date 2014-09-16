@@ -66,11 +66,11 @@ private[api] class DefaultDataset(
 /** Companion object with a pimped apply method for generating DefaultDataset instances **/
 object Dataset extends AbstractApiCompanion {
 
-  def apply(uri: String, title: String,
+  def apply(uri: String, title: String, 
+  
+      publisher: ObjOrOption[String] = new ObjOrOption(None),
       
-      publisher: ObjOrOption[String], 
-      
-      license: ObjOrOption[String],
+      license: ObjOrOption[String] = new ObjOrOption(None),
       
       isSubsetOf: ObjOrOption[Dataset] = new ObjOrOption(None),
       
@@ -84,8 +84,7 @@ object Dataset extends AbstractApiCompanion {
       
       subsets: Seq[Dataset] = Seq.empty[Dataset]): Dataset = {
     
-    new DefaultDataset(uri, title, publisher.option, license.option,  isSubsetOf.option, 
-        description.option, homepage.option, subjects.seq, datadumps.seq, subsets)
+    new DefaultDataset(uri, title, publisher.option, license.option,  isSubsetOf.option, description.option, homepage.option, subjects.seq, datadumps.seq, subsets)
   }
   
 }
