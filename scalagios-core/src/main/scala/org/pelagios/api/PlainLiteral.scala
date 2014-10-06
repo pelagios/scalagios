@@ -12,6 +12,8 @@ trait PlainLiteral {
   /** ISO language code **/
   def lang: Option[String]
   
+  override def toString = lang.map(_ + ": ").getOrElse("") + chars
+  
 }
 
 /** A default POJO-style implementation of 'Label' **/

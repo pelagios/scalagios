@@ -70,11 +70,8 @@ private[parser] abstract class ResourceStreamHandler(triggerType: URI) extends R
     logger.info(tripleCounter + " triples")
     
     if (cache.size > 0) {
-      logger.warn("There are unassigned triples left in the streaming cache:")
-      cache.values.foreach(resource => {
-        logger.warn(resource.uri)
-        resource.properties.foreach { case (pred, obj) => logger.warn("  " + pred.stringValue + " -> " + obj.stringValue) }
-      })
+      logger.warn("There are " + cache.values.size + " unassigned triples left in the streaming cache:")
+      cache.values.foreach(resource => logger.debug(resource.uri))
     }
     
 	cache.clear()

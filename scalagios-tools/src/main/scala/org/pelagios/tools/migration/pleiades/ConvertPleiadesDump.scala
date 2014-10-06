@@ -12,13 +12,9 @@ object ConvertPleiadesDump extends App {
   
   import org.pelagios.rdf.vocab.PleiadesPlaceTypes._
   
-  // private val PLEIADES_DATA = "test-data/legacy/test-places-pleiades.2012.07.ttl.gz"
+  private val PLEIADES_DATA = "../test-data/legacy/test-places-pleiades.2012.07.ttl.gz"
   
-  private val PLEIADES_DATA = "/home/simonr/Downloads/pleiades/places-2.ttl"
-
-  // private val is = new GZIPInputStream(new FileInputStream(PLEIADES_DATA))    
-  
-  private val is = /* new GZIPInputStream( */ new FileInputStream(PLEIADES_DATA)
+  private val is = new GZIPInputStream(new FileInputStream(PLEIADES_DATA))    
     
   // Note: is 'Oasis' a settlement or rather a natural feature?  
   private val SETTLEMENT = Set(settlement, settlementModern, urbanArea, station, port, oasis, productionCenter, fort)

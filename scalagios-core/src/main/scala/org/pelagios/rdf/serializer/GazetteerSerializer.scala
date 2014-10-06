@@ -21,15 +21,16 @@ object GazetteerSerializer {
     val writer = new PrintWriter(f)
       
     // Write header
-    writer.println("@prefix dcterms: <http://purl.org/dc/terms/> .")   
-    writer.println("@prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .")   
-    writer.println("@prefix pelagios: <http://pelagios.github.io/vocab/terms#> .")
-    writer.println("@prefix pleiades: <http://pleiades.stoa.org/places/vocab#> .\n")
-    
+    writer.println("@prefix dcterms: <http://purl.org/dc/terms/> .")
+    writer.println("@prefix geo:<http://www.w3.org/2003/01/geo/wgs84_pos#> .")
+    writer.println("@prefix lawd: <http://lawd.info/ontology/> .")
+    writer.println("@prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .")
+    writer.println()
+
     val wktWriter = new WKTWriter()
     
     places.foreach(place => {
-      writer.println("<" + place.uri + "> a pelagios:PlaceRecord ;")
+      writer.println("<" + place.uri + "> a lawd:Place;")
       writer.println("  dcterms:title \"" + place.title.replaceAll("\\\"", "\\\\\"") + "\" ;")
       place.descriptions.foreach(d => 
         writer.println("  dcterms:description \"" + d.chars.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
@@ -43,11 +44,11 @@ object GazetteerSerializer {
       place.names.foreach(name => {
         val label = name.chars.trim
         if (!label.isEmpty)
-          writer.println("  pleiades:hasName [ rdfs:label \"" + label + name.lang.map("@" + _).getOrElse("") + "\" ] ;")
+          writer.println("  lawd:hasName [ lawd:primaryForm \"" + label + name.lang.map("@" + _).getOrElse("") + "\" ] ;")
       })
       
       place.locations.foreach(l => {
-        writer.println("  pleiades:hasLocation [ osgeo:asWKT \"" + wktWriter.write(l.geometry) + "\" ] ;")
+        writer.println("  geo:location [ osgeo:asWKT \"" + wktWriter.write(l.geometry) + "\" ] ;")
       })
       
       writer.println("  .\n")

@@ -4,7 +4,7 @@ import org.openrdf.model.vocabulary.RDFS
 import org.pelagios.api.PlainLiteral
 import org.pelagios.api.gazetteer.{ Place, Location }
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
-import org.pelagios.rdf.vocab.{ DCTerms, OSGeo, Pelagios, PelagiosPlaceCategories, PleiadesPlaces, SKOS, W3CGeo }
+import org.pelagios.rdf.vocab.{ DCTerms, LAWD, OSGeo, Pelagios, PelagiosPlaceCategories, PleiadesPlaces, SKOS, W3CGeo }
 import org.slf4j.LoggerFactory
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
@@ -25,13 +25,13 @@ class PlaceCollector extends ResourceCollector {
       .map(resource => (resource.uri -> resource.getFirst(RDFS.LABEL).map(ResourceCollector.toPlainLiteral(_)).get)).toMap
 
     logger.info("Building Locations table")
-    val locationsTable = resourcesOfType(PleiadesPlaces.Location, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
+    val locationsTable = resourcesOfType(W3CGeo.SpatialThing, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
       .map(resource => (resource.uri -> new LocationResource(resource))).toMap
            
     logger.info("Wrapping RDF to domain model")
-    resourcesOfType(Pelagios.PlaceRecord).map(resource => {
-      val names = resource.get(PleiadesPlaces.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
-      val locations = resource.get(PleiadesPlaces.hasLocation).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
+    resourcesOfType(LAWD.Place).map(resource => {
+      val names = resource.get(LAWD.hasName).map(uri => namesTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
+      val locations = resource.get(W3CGeo.location).map(uri => locationsTable.get(uri.stringValue)).filter(_.isDefined).map(_.get)
       new PlaceResource(resource, names, locations)
     })
   } 

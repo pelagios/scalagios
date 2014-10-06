@@ -3,9 +3,9 @@ package org.pelagios.rdf.parser.gazetteer
 import org.openrdf.model.vocabulary.{ RDF, RDFS }
 import org.pelagios.api.gazetteer.Place
 import org.pelagios.rdf.parser.{ ResourceCollector, ResourceStreamHandler }
-import org.pelagios.rdf.vocab.{ Pelagios, PleiadesPlaces }
+import org.pelagios.rdf.vocab.{ LAWD, Pelagios, W3CGeo }
 
-class PlaceStreamHandler(val onNextPlace: Place => Unit) extends ResourceStreamHandler(Pelagios.PlaceRecord) {
+class PlaceStreamHandler(val onNextPlace: Place => Unit) extends ResourceStreamHandler(LAWD.Place) {
 
   private var placeCounter = 0
   
@@ -13,12 +13,12 @@ class PlaceStreamHandler(val onNextPlace: Place => Unit) extends ResourceStreamH
 	// Get all PlaceRecord resources from the cache
     val placeResources = cache.values.filter(resource => {
       val types = resource.get(RDF.TYPE)
-      types.contains(Pelagios.PlaceRecord)
+      types.contains(LAWD.Place)
     })
     
     placeResources.foreach(resource => {
-      val nameURIs = resource.get(PleiadesPlaces.hasName)
-      val locationURIs = resource.get(PleiadesPlaces.hasLocation)
+      val nameURIs = resource.get(LAWD.hasName)
+      val locationURIs = resource.get(W3CGeo.location)
       
 	  val nameResources = nameURIs.map(uri => cache.get(uri.stringValue))
       val locationResources = locationURIs.map(uri => cache.get(uri.stringValue))
@@ -31,7 +31,7 @@ class PlaceStreamHandler(val onNextPlace: Place => Unit) extends ResourceStreamH
          
       if (isComplete) {
 		// We notify the callback handler...
-        val names = nameResources.map(_.get.getFirst(RDFS.LABEL).map(ResourceCollector.toPlainLiteral(_)).get)
+        val names = nameResources.map(_.get.getFirst(LAWD.primaryForm).map(ResourceCollector.toPlainLiteral(_)).get)
         val locations = locationResources.map(r => new LocationResource(r.get))
         onNextPlace(new PlaceResource(resource, names, locations))
         
