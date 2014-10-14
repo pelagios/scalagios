@@ -33,13 +33,23 @@ object PeriodOfTime extends AbstractApiCompanion {
   
   def apply(start: Int, end: Option[Int] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
   
+  /** Note: we support DCMI Period Encoding scheme and <start>/<end> **/
   def fromString(str: String): PeriodOfTime = {
-    val fields = str.split(";").map(_.trim)
-    val start = fields.find(_.startsWith("start=")).map(_.substring(6).toInt)
-    val end = fields.find(_.startsWith("end=")).map(_.substring(4).toInt)
-    val name = fields.find(_.startsWith("name=")).map(_.substring(5))
+    if (str.contains(";")) {
+      // DCMI
+      val fields = str.split(";").map(_.trim)
+      val start = fields.find(_.startsWith("start=")).map(_.substring(6).toInt)
+      val end = fields.find(_.startsWith("end=")).map(_.substring(4).toInt)
+      val name = fields.find(_.startsWith("name=")).map(_.substring(5))
 
-    PeriodOfTime(start.get, end, name)
+      PeriodOfTime(start.get, end, name)
+    } else {
+      // <start>/<end>
+      val fields = str.split("/").map(_.trim)
+      val start = fields(0).toInt
+      val end = if (fields.size > 1) Some(fields(1).toInt) else None
+      PeriodOfTime(start, end)
+    }
   }
   
 }
