@@ -21,8 +21,8 @@ class PlaceCollector extends ResourceCollector {
     */
   lazy val places: Iterable[Place] = {
     logger.info("Building Names table")    
-    val namesTable = resourcesOfType(PleiadesPlaces.Name, Seq(_.hasPredicate(RDFS.LABEL)))
-      .map(resource => (resource.uri -> resource.getFirst(RDFS.LABEL).map(ResourceCollector.toPlainLiteral(_)).get)).toMap
+    val namesTable = resourcesOfType(LAWD.PlaceName, Seq(_.hasPredicate(LAWD.primaryForm)))
+      .map(resource => (resource.uri -> resource.getFirst(LAWD.primaryForm).map(ResourceCollector.toPlainLiteral(_)).get)).toMap
 
     logger.info("Building Locations table")
     val locationsTable = resourcesOfType(W3CGeo.SpatialThing, Seq(_.hasAnyPredicate(Seq(OSGeo.asWKT, OSGeo.asGeoJSON, W3CGeo.lat))))
