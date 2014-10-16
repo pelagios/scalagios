@@ -25,13 +25,14 @@ object GazetteerSerializer {
     writer.println("@prefix geo:<http://www.w3.org/2003/01/geo/wgs84_pos#> .")
     writer.println("@prefix lawd: <http://lawd.info/ontology/> .")
     writer.println("@prefix osgeo: <http://data.ordnancesurvey.co.uk/ontology/geometry/> .")
+    writer.println("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .")
     writer.println()
 
     val wktWriter = new WKTWriter()
     
     places.foreach(place => {
       writer.println("<" + place.uri + "> a lawd:Place;")
-      writer.println("  dcterms:title \"" + place.title.replaceAll("\\\"", "\\\\\"") + "\" ;")
+      writer.println("  rdfs:label \"" + place.label.replaceAll("\\\"", "\\\\\"") + "\" ;")
       place.descriptions.foreach(d => 
         writer.println("  dcterms:description \"" + d.chars.replaceAll("\\\"", "\\\\\"") + d.lang.map("@" + _).getOrElse("") + "\" ;"))
      

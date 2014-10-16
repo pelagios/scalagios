@@ -5,8 +5,8 @@ import org.openrdf.rio.helpers.RDFHandlerBase
 import org.openrdf.model.Statement
 import org.openrdf.model.vocabulary.{OWL, RDFS}
 import org.pelagios.legacy.api.{Place, DefaultPlace}
-import org.pelagios.rdf.vocab.{SKOS, DCTerms, W3CGeo, OSSpatial, OSGeo, PleiadesPlaces}
-import org.pelagios.rdf.vocab.NeoGeoSpatial
+import org.pelagios.rdf.vocab.{ NeoGeoSpatial, DCTerms, W3CGeo, OSSpatial, OSGeo, PleiadesPlaces}
+import org.pelagios.legacy.rdf.vocab.SKOS
 
 /**
  * Analogous to the OpenRDF <em>StatementCollector</em>, this RDFHandler

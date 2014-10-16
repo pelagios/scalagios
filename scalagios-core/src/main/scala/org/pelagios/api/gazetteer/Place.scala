@@ -12,13 +12,13 @@ trait Place {
   /** A URI for the place in the namespace of the contributing gazetteer **/ 
   def uri: String
   
-  /** dcterms:title
+  /** rdfs:label
     *  
     * A title or 'screen name' for the place, for use as an identification label in
     * the user interface. This should *not* be considered a 'primary name' for the
     * place, but serves purely presentational purposes. 
     */ 
-  def title: String
+  def label: String
   
   /** dcterms:description
     *   
@@ -40,7 +40,7 @@ trait Place {
   
   /** dcterms:type
     *
-    * Place type according to the minimalistic Pleagios feature-type vocabulary 
+    * Place type according to the minimalistic Pelagios feature-type vocabulary 
     */
   def category: Option[PlaceCategory.Category]
   
@@ -54,9 +54,15 @@ trait Place {
   
   /** skos:closeMatch
     * 
-    * Mappings to places in other gazetteers.
+    * 'Vague' mappings to places in other gazetteers.
     */
   def closeMatches: Seq[String]
+  
+  /** skos:exactMatch
+    *
+    * Exact mappings to places in other gazetteers.   
+    */
+  def exactMatches: Seq[String]
   
   /** Utility method that computes the centroid of all locations for this place **/
   def getCentroid: Option[Coordinate] = {
@@ -77,7 +83,7 @@ private[api] class DefaultPlace (
     
   val uri: String,
   
-  val title: String,
+  val label: String,
   
   val descriptions: Seq[PlainLiteral] = Seq.empty[PlainLiteral],
   
@@ -89,7 +95,9 @@ private[api] class DefaultPlace (
   
   val subjects: Seq[String] = Seq.empty[String],
   
-  val closeMatches: Seq[String] = Seq.empty[String]
+  val closeMatches: Seq[String] = Seq.empty[String],
+  
+  val exactMatches: Seq[String] = Seq.empty[String]
 
 ) extends Place
   
@@ -110,9 +118,11 @@ object Place extends AbstractApiCompanion {
 
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
    
-            closeMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
+            closeMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
+            
+            exactMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
     
-    new DefaultPlace(uri, title, descriptions.seq, names.seq, locations.seq, placeCategory.option, subjects.seq, closeMatches.seq)
+    new DefaultPlace(uri, title, descriptions.seq, names.seq, locations.seq, placeCategory.option, subjects.seq, closeMatches.seq, exactMatches.seq)
   }
   
 }

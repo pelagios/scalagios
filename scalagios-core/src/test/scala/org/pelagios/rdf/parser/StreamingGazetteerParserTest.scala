@@ -19,7 +19,7 @@ class StreamingGazetteerParserTest extends FunSuite with UsesTestData {
     val is = new FileInputStream(TEST_FILE)
         
     def streamHandler(place: Place): Unit = {
-      println(place.title)
+      println(place.label)
     }
     
     Scalagios.streamPlaces(is, TEST_FILE.getName, streamHandler)

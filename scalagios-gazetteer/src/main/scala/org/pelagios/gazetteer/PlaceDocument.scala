@@ -16,7 +16,7 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   val uri: String = doc.get(PlaceIndex.FIELD_URI)
   
-  val title: String = doc.get(PlaceIndex.FIELD_TITLE)
+  val label: String = doc.get(PlaceIndex.FIELD_LABEL)
   
   val descriptions: Seq[PlainLiteral] =
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
@@ -31,6 +31,8 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   
   val closeMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_CLOSE_MATCH).toSeq
+  
+  val exactMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_EXACT_MATCH).toSeq
   
   val seedURI: String = doc.get(PlaceIndex.FIELD_SEED_URI)
   
@@ -51,7 +53,7 @@ object PlaceDocument {
   def apply(place: Place, seedURI: Option[String]) = {
     val doc = new Document()
     doc.add(new StringField(PlaceIndex.FIELD_URI, GazetteerUtils.normalizeURI(place.uri), Field.Store.YES))
-    doc.add(new TextField(PlaceIndex.FIELD_TITLE, place.title, Field.Store.YES))
+    doc.add(new TextField(PlaceIndex.FIELD_LABEL, place.label, Field.Store.YES))
     place.descriptions.foreach(description => {
       val fieldName = description.lang.map(PlaceIndex.FIELD_DESCRIPTION + "_" + _).getOrElse(PlaceIndex.FIELD_DESCRIPTION)
       doc.add(new TextField(fieldName, description.chars, Field.Store.YES))

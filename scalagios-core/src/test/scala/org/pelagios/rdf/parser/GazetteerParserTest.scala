@@ -19,7 +19,7 @@ class GazetteerParserTest extends FunSuite with UsesTestData {
     
     assert(places.size == 483, "invalid number of places")
     places.foreach(place => {
-      assert(place.title != null, "title is null")
+      assert(place.label != null, "title is null")
       assert(place.uri.startsWith("http://pleiades.stoa.org/places/") ||
              place.uri.startsWith("http://atlantides.org/capgrids/"), "invalid place URI - " + place.uri)
     })

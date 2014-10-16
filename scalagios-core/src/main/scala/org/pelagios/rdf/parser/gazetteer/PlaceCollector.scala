@@ -49,7 +49,7 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
 
   def uri = resource.uri
   
-  def title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
+  def label = resource.getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
   def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_))
   
@@ -59,6 +59,8 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
   def subjects = Seq.empty[String]
   
   def closeMatches = resource.get(SKOS.closeMatch).map(_.stringValue)
+  
+  def exactMatches = resource.get(SKOS.exactMatch).map(_.stringValue)
 
 }
 

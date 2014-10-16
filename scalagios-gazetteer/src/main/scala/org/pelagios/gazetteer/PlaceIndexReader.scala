@@ -57,7 +57,7 @@ trait PlaceIndexReader extends PlaceIndexBase {
     val normalizedQuery = invalidChars.foldLeft(query)((normalized, invalidChar) => normalized.replace(invalidChar, ""))
     val transliteratedQuery = Junidecode.unidecode(normalizedQuery)    
 
-    val fields = Seq(PlaceIndex.FIELD_TITLE, PlaceIndex.FIELD_NAME).toArray    
+    val fields = Seq(PlaceIndex.FIELD_LABEL, PlaceIndex.FIELD_NAME).toArray    
     val suffix = if (fuzzy) " ~" else ""
     val expandedQuery =
       if (normalizedQuery == transliteratedQuery) 

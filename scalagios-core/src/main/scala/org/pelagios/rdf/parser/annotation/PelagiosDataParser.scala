@@ -58,7 +58,7 @@ class PelagiosDataParser extends ResourceCollector {
     // Construct Work/Expression hierarchy
     val allAnnotatedThings = resourcesOfType(Pelagios.AnnotatedThing).map(new AnnotatedThingResource(_))
     allAnnotatedThings.foreach(thing => {
-      val realizationOf = thing.resource.getFirst(FRBR.realizationOf).map(_.stringValue)
+      val realizationOf = thing.resource.getFirst(DCTerms.isPartOf).map(_.stringValue)
       if (realizationOf.isDefined) {        
         val work = allAnnotatedThings.find(t => { t.uri.equals(realizationOf.get) })
         thing.isPartOf = work

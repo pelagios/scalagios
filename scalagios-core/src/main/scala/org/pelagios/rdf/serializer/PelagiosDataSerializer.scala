@@ -11,6 +11,7 @@ import org.pelagios.api._
 import org.pelagios.api.annotation.{ AnnotatedThing, SpecificResource, Transcription, TranscriptionType }
 import org.pelagios.api.annotation.selector.TextOffsetSelector
 import org.pelagios.rdf.vocab._
+import org.openrdf.model.vocabulary.DCTERMS
 
 /** Utility object to serialize Pelagios data to RDF.
   *  
@@ -84,8 +85,8 @@ object PelagiosDataSerializer {
     // dcterms:subject
     thing.subjects.foreach(subject => model.add(rdfThing, DCTerms.subject, f.createURI(subject)))
     
-    // frbr:realizationOf
-    thing.isPartOf.map(work => model.add(rdfThing, FRBR.realizationOf, f.createURI(work.uri)))
+    // dcterms:isPartOf
+    thing.isPartOf.map(work => model.add(rdfThing, DCTerms.isPartOf, f.createURI(work.uri)))
     
     // Expressions
     thing.parts.foreach(expression => serializeAnnotatedThing(expression, model))
@@ -153,7 +154,6 @@ object PelagiosDataSerializer {
     model.setNamespace("oa", OA.NAMESPACE)
     model.setNamespace("oax", OAX.NAMESPACE)
     model.setNamespace("xs", "http://www.w3.org/2001/XMLSchema#")
-    model.setNamespace("frbr", FRBR.NAMESPACE)
     model.setNamespace("dcterms", DCTerms.NAMESPACE)
     model.setNamespace("pelagios", Pelagios.NAMESPACE)
     model.setNamespace("foaf", FOAF.NAMESPACE)

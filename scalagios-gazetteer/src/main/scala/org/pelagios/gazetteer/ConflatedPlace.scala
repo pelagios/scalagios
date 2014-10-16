@@ -61,7 +61,7 @@ class ConflatedPlace(network: Network,
       val names =  { head.names ++ tail.flatMap(_.names) }.toSet // Merge names and de-duplicate
       val closeMatches = head.closeMatches ++ tail.flatMap(_.closeMatches)
       
-      Place(uri, head.title, descriptions, 
+      Place(uri, head.label, descriptions, 
           names.toSeq,
           locations, 
           head.category, // TODO not sure how to handle different category definitions...
@@ -72,7 +72,7 @@ class ConflatedPlace(network: Network,
   
   def uri = place.uri
   
-  def title = place.title
+  def label = place.label
   
   def descriptions = place.descriptions
   
@@ -85,6 +85,8 @@ class ConflatedPlace(network: Network,
   def subjects = place.subjects
   
   def closeMatches = place.closeMatches
+  
+  def exactMatches = place.exactMatches
   
   lazy val seedURI = network.seedURI 
 

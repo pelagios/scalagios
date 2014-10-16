@@ -13,7 +13,7 @@ object GazetteerToJSON extends App {
   val json = places.foldLeft(Seq.empty[String])((list, next) => {
     val centroid = next.getCentroid
     if (centroid.isDefined) {
-     val json = "{ \"lat\": " + centroid.get.y + ", \"lon\": " + centroid.get.x + ", \"value\": 1, \"title\": \"" + next.title + "\" }"
+     val json = "{ \"lat\": " + centroid.get.y + ", \"lon\": " + centroid.get.x + ", \"value\": 1, \"title\": \"" + next.label + "\" }"
      list :+ json
     } else {
      list

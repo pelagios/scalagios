@@ -23,7 +23,7 @@ object PlaceIndex {
   
   val FIELD_URI = "uri"
   
-  val FIELD_TITLE = "title"
+  val FIELD_LABEL = "label"
   
   val FIELD_DESCRIPTION = "description"
     
@@ -36,6 +36,8 @@ object PlaceIndex {
   val FIELD_SUBJECT = "subject"
     
   val FIELD_CLOSE_MATCH = "close_match"
+    
+  val FIELD_EXACT_MATCH = "exact_match"
   
   val FIELD_SEED_URI = "group_uri"
   

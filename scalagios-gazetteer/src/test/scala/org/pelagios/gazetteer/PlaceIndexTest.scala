@@ -71,7 +71,7 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     println()
     val topHit = resultsAthens(0)
     println("### Testing network retrieval ###")
-    print("Network for " + topHit.title + " (expecting 2 places)")
+    print("Network for " + topHit.label + " (expecting 2 places)")
     val network = index.getNetwork(topHit)
     assert(network.places.size == 2, "Wrong number of places in network")
     assert(network.places.filter(_.uri.startsWith("http://www.imperium.ahlfeldt.se")).size == 1, "Wrong number of result from DARE")
