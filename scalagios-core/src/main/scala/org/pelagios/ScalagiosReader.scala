@@ -62,9 +62,9 @@ private[pelagios] trait ScalagiosReader {
     * @param format the RDF serialization format  
     * @param streamHandler the handler function
     */  
-  def streamPlaces(is: InputStream, format: String, streamHandler: Place => Unit): Unit = {
+  def streamPlaces(is: InputStream, format: String, streamHandler: Place => Unit, lowMemoryMode: Boolean = false): Unit = {
     val parser = getParser(format)
-    val rdfHandler = new PlaceStreamHandler(streamHandler)
+    val rdfHandler = new PlaceStreamHandler(streamHandler, lowMemoryMode)
     parser.setRDFHandler(rdfHandler)
     parser.parse(is, BASE_URI)
   }

@@ -5,7 +5,7 @@ import org.pelagios.api.gazetteer.Place
 import org.pelagios.rdf.parser.{ ResourceCollector, ResourceStreamHandler }
 import org.pelagios.rdf.vocab.{ LAWD, Pelagios, W3CGeo }
 
-class PlaceStreamHandler(val onNextPlace: Place => Unit, lowMemoryMode: Boolean = false) extends ResourceStreamHandler(LAWD.Place) {
+class PlaceStreamHandler(val onNextPlace: Place => Unit, lowMemoryMode: Boolean) extends ResourceStreamHandler(LAWD.Place) {
 
   private var placeCounter = 0
   
