@@ -16,7 +16,7 @@ import scala.io.Source
 object TextToCSV extends App {
 
   private val INDEX_DIR = "index"
-  private val GAZETTEER_DATA_PATH = "test-data/pleiades-20120826-migrated.ttl.gz"
+  private val GAZETTEER_DATA_PATH = "test-data/pleiades-201207-migrated.ttl.gz"
   
   val fileChooser = new FileChooser()
   val inputFile = fileChooser.getFile()
