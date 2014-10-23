@@ -65,7 +65,7 @@ trait PlaceIndexReader extends PlaceIndexBase {
       else
         normalizedQuery + suffix + " OR " + transliteratedQuery + suffix
         
-    val q = new MultiFieldQueryParser(Version.LUCENE_48, fields, analyzer).parse(expandedQuery)
+    val q = new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer).parse(expandedQuery)
     
     // TODO creating a new reader of every access has some overhead - could be improved
     val reader = DirectoryReader.open(index)
