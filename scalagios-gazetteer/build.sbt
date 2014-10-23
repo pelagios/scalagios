@@ -6,8 +6,8 @@ scalaVersion := "2.10.0"
 
 /** Runtime dependencies **/
 libraryDependencies ++= Seq(     
-  "org.apache.lucene" % "lucene-analyzers-common" % "4.8.1",
-  "org.apache.lucene" % "lucene-queryparser" % "4.8.1"
+  "org.apache.lucene" % "lucene-analyzers-common" % "4.9.0",
+  "org.apache.lucene" % "lucene-queryparser" % "4.9.0"
 )
 
 /** Test dependencies **/
