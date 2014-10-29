@@ -38,11 +38,10 @@ trait Annotation {
     * method 'transcription'), or tags (see method 'tags'). The 'place' 
     * method exposes annotation bodies representing gazetteer references.
     * 
-    * Note: It is possible to add multiple bodies that point to gazetteer 
-    * URIs - but only in order to refer to the same place in different
-    * gazetteers.
+    * Note: it is possible (in edge cases) that the annotation refers to multiple
+    * places - USE WITH caution. Not all system implementations may support this.
     */
-  def place: Seq[String]
+  def places: Seq[String]
   
   /** Transcription expressed through oa:hasBody
     *  
@@ -123,7 +122,7 @@ private[api] class DefaultAnnotation(
    
   val hasTarget: AnnotationTarget,
   
-  val place: Seq[String] = Seq.empty[String],
+  val places: Seq[String] = Seq.empty[String],
   
   val transcription: Option[Transcription] = None,
   

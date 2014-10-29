@@ -13,7 +13,7 @@ object AnnotationValidator extends App {
     println(thing.title)
     println(thing.temporal.map(t => t.start))
     thing.annotations.foreach(annotation => {
-      println("  " + annotation.relation.map(_.toString).getOrElse("") + " " + annotation.place)
+      println("  " + annotation.relation.map(_.toString).getOrElse("") + " " + annotation.places)
       println("  annotated by " + annotation.annotatedBy)
       println("  annotated at " + annotation.annotatedAt)
     })

@@ -117,7 +117,7 @@ object PelagiosDataSerializer {
       }
       
       // oa:hasBody (place)
-      annotation.place.foreach(uri => model.add(rdfAnnotation, OA.hasBody, f.createURI(uri)))
+      annotation.places.foreach(uri => model.add(rdfAnnotation, OA.hasBody, f.createURI(uri)))
       
       // oa:hasBody (transcription)
       annotation.transcription.map(transcription => model.add(rdfAnnotation, OA.hasBody, serializeTranscription(transcription, model)))
