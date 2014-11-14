@@ -36,6 +36,24 @@ trait PlaceIndexReader extends PlaceIndexBase {
       None
   }
   
+  def findByURIs(uris: Seq[String]): Map[String, PlaceDocument] = {
+    val q = new BooleanQuery()
+    uris.foreach(uri => {
+      q.add(new TermQuery(new Term(PlaceIndex.FIELD_URI, GazetteerUtils.normalizeURI(uri))), BooleanClause.Occur.SHOULD)
+    })
+    
+    // TODO creating a new reader of every access has some overhead - could be improved
+    val reader = DirectoryReader.open(index)
+    val searcher = new IndexSearcher(reader)
+    
+    val collector = TopScoreDocCollector.create(1, true)
+    searcher.search(q, collector)
+    
+    val places = collector.topDocs.scoreDocs.map(scoreDoc => new PlaceDocument(searcher.doc(scoreDoc.doc)))
+    reader.close()
+    places.map(place => (place.uri, place)).toMap
+  }
+  
   def findByByCloseMatch(uri: String): Seq[PlaceDocument] = {
     val q = new BooleanQuery()
     q.add(new TermQuery(new Term(PlaceIndex.FIELD_CLOSE_MATCH, GazetteerUtils.normalizeURI(uri))), BooleanClause.Occur.MUST)
