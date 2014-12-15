@@ -111,7 +111,6 @@ trait PlaceIndexReader extends PlaceIndexBase {
     val places = collector.topDocs.scoreDocs.map(scoreDoc => new PlaceDocument(searcher.doc(scoreDoc.doc)))
     reader.close()
     
-    // TODO temporary hack - for now we only return the list of places (and no links)
     Network(places, buildGraph(places))
   }
   
