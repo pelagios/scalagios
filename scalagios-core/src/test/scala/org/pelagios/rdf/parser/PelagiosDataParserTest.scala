@@ -40,7 +40,7 @@ class PelagiosDataParserTest extends FunSuite with UsesTestData {
     
     // Verify the annotations
     expression.annotations.foreach(annotation => {
-      assert(annotation.place.size == 1, "invalid number of place bodies")
+      assert(annotation.places.size == 1, "invalid number of place bodies")
       assert(annotation.transcription.isDefined, "missing: toponym")
       assert(annotation.transcription.get.nameType == TranscriptionType.Toponym)
       assert(annotation.hasTarget.equals(expression), "annotation targets should point to Expression!")

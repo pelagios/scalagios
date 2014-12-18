@@ -13,8 +13,8 @@ import java.io.File
 @RunWith(classOf[JUnitRunner])
 class PlaceIndexTest extends FunSuite with BeforeAndAfter {
   
-  private val DATA_PLEIADES = "test-data/pleiades-20120826-migrated.ttl.gz"
-  private val DATA_DARE = "test-data/dare-20140324.ttl.gz"
+  private val DATA_PLEIADES = "../test-data/pleiades-201207-migrated.ttl.gz"
+  private val DATA_DARE = "../test-data/dare-20140324.ttl.gz"
   private val INDEX_DIR = "tmp-index"
     
   before {
@@ -22,6 +22,7 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
   }
     
   test("Basic Index Operation") {
+    
     println("### Setting up the index ###")
     println("Initializing index")
     val index = PlaceIndex.open(INDEX_DIR)
@@ -30,6 +31,11 @@ class PlaceIndexTest extends FunSuite with BeforeAndAfter {
     val dareIs = new GZIPInputStream(new FileInputStream(DATA_DARE))
     val dare = Scalagios.readPlaces(dareIs, Scalagios.TURTLE)
     println("Inserting " + dare.size + " places (" + dare.flatMap(_.names).size + " names) into index")
+    
+    val namesWithLanguage = dare.flatMap(_.names).filter(_.lang.isDefined)
+    println(namesWithLanguage.size + " names with language")
+    println("Languages: " + namesWithLanguage.map(_.lang.get).toSet.mkString(", "))
+    
     index.addPlaces(dare.toIterable)
     
     println("Loading Pleiades data")
