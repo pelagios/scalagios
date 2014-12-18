@@ -29,6 +29,8 @@ object PlaceIndex {
     
   val FIELD_NAME = "name"
     
+  val FIELD_NAME_LITERALS = "name_literals"
+    
   val FIELD_GEOMETRY = "wkt"
     
   val FIELD_CATEGORY = "category"

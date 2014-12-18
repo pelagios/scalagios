@@ -7,6 +7,7 @@ import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON
+import org.apache.lucene.document.StoredField
 
 /** An implementation of the [[Place]] API primitive backed by a Lucene Document.
   *  
@@ -22,7 +23,15 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
   
   val names: Seq[PlainLiteral] = 
-    doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_NAME)).map(field => toLabel(field))
+    doc.get(PlaceIndex.FIELD_NAME_LITERALS).split("\n").map(lit=> {
+      val separatorIdx = lit.lastIndexOf("@")
+      val name = lit.substring(0, separatorIdx)
+      if (separatorIdx + 1 == lit.size) {
+        PlainLiteral(name)
+      } else {
+        PlainLiteral(name, Some(lit.substring(separatorIdx + 1)))
+      }
+    })
   
   val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(json => Location(Location.parseGeoJSON(json))).toSeq
   
@@ -58,9 +67,16 @@ object PlaceDocument {
       val fieldName = description.lang.map(PlaceIndex.FIELD_DESCRIPTION + "_" + _).getOrElse(PlaceIndex.FIELD_DESCRIPTION)
       doc.add(new TextField(fieldName, description.chars, Field.Store.YES))
     })
+    
+    // Index place names
     place.names.foreach(name => {
       doc.add(new TextField(PlaceIndex.FIELD_NAME, name.chars, Field.Store.YES)) 
     })
+    
+    // Store plain literals
+    val literals = place.names.map(name => name.chars + "@" + name.lang.getOrElse(""))
+    doc.add(new StoredField(PlaceIndex.FIELD_NAME_LITERALS, literals.mkString("\n")))
+    
     place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, location.geoJSON, Field.Store.YES)))
     if (place.category.isDefined)
       doc.add(new StringField(PlaceIndex.FIELD_CATEGORY, place.category.get.toString, Field.Store.YES))
