@@ -22,16 +22,21 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   val descriptions: Seq[PlainLiteral] =
     doc.getFields().filter(_.name.startsWith(PlaceIndex.FIELD_DESCRIPTION)).map(toLabel(_))
   
-  val names: Seq[PlainLiteral] = 
-    doc.get(PlaceIndex.FIELD_NAME_LITERALS).split("\n").map(lit=> {
-      val separatorIdx = lit.lastIndexOf("@")
-      val name = lit.substring(0, separatorIdx)
-      if (separatorIdx + 1 == lit.size) {
-        PlainLiteral(name)
-      } else {
-        PlainLiteral(name, Some(lit.substring(separatorIdx + 1)))
-      }
-    })
+  val names: Seq[PlainLiteral] = {
+    val literals = doc.get(PlaceIndex.FIELD_NAME_LITERALS)
+    if (literals == null)
+      Seq.empty[PlainLiteral]
+    else
+      literals.split("\n").map(lit=> {
+        val separatorIdx = lit.lastIndexOf("@")
+        val name = lit.substring(0, separatorIdx)
+        if (separatorIdx + 1 == lit.size) {
+          PlainLiteral(name)
+        } else {
+          PlainLiteral(name, Some(lit.substring(separatorIdx + 1)))
+        }
+      })
+  }
   
   val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(json => Location(Location.parseGeoJSON(json))).toSeq
   
@@ -74,8 +79,10 @@ object PlaceDocument {
     })
     
     // Store plain literals
-    val literals = place.names.map(name => name.chars + "@" + name.lang.getOrElse(""))
-    doc.add(new StoredField(PlaceIndex.FIELD_NAME_LITERALS, literals.mkString("\n")))
+    if (place.names.size > 0) {
+      val literals = place.names.map(name => name.chars + "@" + name.lang.getOrElse(""))
+      doc.add(new StoredField(PlaceIndex.FIELD_NAME_LITERALS, literals.mkString("\n")))
+    }
     
     place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, location.geoJSON, Field.Store.YES)))
     if (place.category.isDefined)
