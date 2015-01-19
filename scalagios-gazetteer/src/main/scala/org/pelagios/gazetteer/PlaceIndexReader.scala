@@ -69,7 +69,7 @@ trait PlaceIndexReader extends PlaceIndexBase {
     places
   }
   
-  def query(query: String, fuzzy: Boolean = false): Iterable[PlaceDocument] = {    
+  def query(query: String, fuzzy: Boolean = false, limit: Int = 50): Iterable[PlaceDocument] = {    
     // We only support keyword queries, and remove all special characters that may mess it up
     val invalidChars = Seq("(", ")", "[", "]")
     val normalizedQuery = invalidChars.foldLeft(query)((normalized, invalidChar) => normalized.replace(invalidChar, ""))
@@ -89,7 +89,7 @@ trait PlaceIndexReader extends PlaceIndexBase {
     val reader = DirectoryReader.open(index)
     val searcher = new IndexSearcher(reader)
     
-    val collector = TopScoreDocCollector.create(50, true)
+    val collector = TopScoreDocCollector.create(limit, true)
     searcher.search(q, collector)
     
     val places = collector.topDocs.scoreDocs.map(scoreDoc => new PlaceDocument(searcher.doc(scoreDoc.doc)))
