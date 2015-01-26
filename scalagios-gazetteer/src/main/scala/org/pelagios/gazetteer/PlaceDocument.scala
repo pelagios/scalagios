@@ -84,7 +84,7 @@ object PlaceDocument {
       doc.add(new StoredField(PlaceIndex.FIELD_NAME_LITERALS, literals.mkString("\n")))
     }
     
-    place.locations.foreach(location => doc.add(new StringField(PlaceIndex.FIELD_GEOMETRY, location.geoJSON, Field.Store.YES)))
+    place.locations.foreach(location => doc.add(new StoredField(PlaceIndex.FIELD_GEOMETRY, location.geoJSON)))
     if (place.category.isDefined)
       doc.add(new StringField(PlaceIndex.FIELD_CATEGORY, place.category.get.toString, Field.Store.YES))
     place.subjects.foreach(subject => doc.add(new StringField(PlaceIndex.FIELD_SUBJECT, subject, Field.Store.YES)))
