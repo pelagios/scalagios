@@ -1,12 +1,11 @@
 package org.pelagios.gazetteer
 
-import org.pelagios.api.gazetteer.Place
-import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig }
-import org.apache.lucene.util.Version
-import org.slf4j.Logger
-import org.apache.lucene.index.Term
 import java.io.InputStream
+import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig, Term }
+import org.apache.lucene.util.Version
 import org.pelagios.Scalagios
+import org.pelagios.api.gazetteer.Place
+import org.slf4j.Logger
 
 trait PlaceIndexWriter extends PlaceIndexReader {
     
@@ -35,6 +34,11 @@ trait PlaceIndexWriter extends PlaceIndexReader {
       // Add new document to index
       writer.addDocument(PlaceDocument(place, Some(seedURI)))
     }       
+  }
+  
+  def updatePlace(oldPlace: PlaceDocument, updatedPlace: Place, writer: IndexWriter) = {
+    writer.deleteDocuments(new Term(PlaceIndex.FIELD_URI, oldPlace.uri))
+    writer.addDocument(PlaceDocument(updatedPlace, Some(oldPlace.seedURI)))
   }
   
   def addPlaces(places: Iterable[Place]) = {

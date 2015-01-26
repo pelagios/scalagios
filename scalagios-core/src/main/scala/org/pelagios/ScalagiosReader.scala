@@ -4,10 +4,10 @@ import java.io.InputStream
 import org.openrdf.rio.{ RDFFormat, RDFParser, RDFParserRegistry }
 import org.pelagios.api.annotation.AnnotatedThing
 import org.pelagios.api.dataset.Dataset
-import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.{ PlacePatch, Place }
 import org.pelagios.rdf.parser.annotation.PelagiosDataParser
 import org.pelagios.rdf.parser.dataset.DatasetCollector
-import org.pelagios.rdf.parser.gazetteer.{ PlaceCollector, PlaceStreamHandler }
+import org.pelagios.rdf.parser.gazetteer.{ PlaceCollector, PlacePatchCollector, PlaceStreamHandler }
 
 /** Functionality for reading Pelagios data 
   *
@@ -36,7 +36,7 @@ private[pelagios] trait ScalagiosReader {
     * @param format the RDF serialization format
     */    
   def readVoID(is: InputStream, format: String): Iterable[Dataset] = {
-	val parser = getParser(format)
+	  val parser = getParser(format)
     val handler = new DatasetCollector()
     parser.setRDFHandler(handler)
     parser.parse(is, BASE_URI)
@@ -49,13 +49,26 @@ private[pelagios] trait ScalagiosReader {
     * @param format the RDF serialization format  
     */
   def readPlaces(is: InputStream, format: String): Iterable[Place] = {
-	val parser = getParser(format)
+	  val parser = getParser(format)
     val handler = new PlaceCollector()
     parser.setRDFHandler(handler)
     parser.parse(is, BASE_URI)
     handler.places
   }  
-    
+  
+  /** Parses a Pelagios gazetteer patch file from an input stream in the specified RDF format.
+    *
+    * @param is the input stream
+    * @param format the RDF serialization format  
+    */
+  def readPlacePatches(is: InputStream, format: String): Iterable[PlacePatch] = {
+    val parser = getParser(format)
+    val handler = new PlacePatchCollector()
+    parser.setRDFHandler(handler)
+    parser.parse(is, BASE_URI)
+    handler.patches
+  }
+  
   /**  Parses a 'streamable' gazetteer dump file from an input stream in the specified RDF format.
     *
     * @param is the input stream

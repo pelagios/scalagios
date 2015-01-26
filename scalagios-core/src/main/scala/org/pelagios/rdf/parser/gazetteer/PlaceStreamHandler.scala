@@ -20,7 +20,7 @@ class PlaceStreamHandler(val onNextPlace: Place => Unit, lowMemoryMode: Boolean)
       val nameURIs = resource.get(LAWD.hasName)
       val locationURIs = resource.get(W3CGeo.location)
       
-	  val nameResources = nameURIs.map(uri => cache.get(uri.stringValue))
+	    val nameResources = nameURIs.map(uri => cache.get(uri.stringValue))
       val locationResources = locationURIs.map(uri => cache.get(uri.stringValue))
 
       // If all URIs listed as the place's hasName and hasLocation properties are in the cache,
@@ -30,7 +30,7 @@ class PlaceStreamHandler(val onNextPlace: Place => Unit, lowMemoryMode: Boolean)
          (locationResources.filter(_.isDefined).size == locationURIs.size))
          
       if (isComplete) {
-		// We notify the callback handler...
+		    // We notify the callback handler...
         val names = nameResources.map(_.get.getFirst(LAWD.primaryForm).map(ResourceCollector.toPlainLiteral(_)).get)
         val locations = locationResources.map(r => new LocationResource(r.get))
         onNextPlace(new PlaceResource(resource, names, locations))

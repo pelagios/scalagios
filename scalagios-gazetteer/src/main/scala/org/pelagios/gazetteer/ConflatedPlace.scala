@@ -1,6 +1,6 @@
 package org.pelagios.gazetteer
 
-import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.{ Place, Location }
 
 /** A 'conflated place' which represents the combination of multiple places in the same place network.
   *
@@ -32,14 +32,14 @@ class ConflatedPlace(network: Network,
         }
       }
     
-      // Pick locations from preferred source, or just use head if no preference
+      // Pick locations from preferred source, or return all of them
       val locations = {
         if (prefLocationSource.isDefined) {
           val prefSource = network.places.filter(_.uri.startsWith(prefLocationSource.get))
           if (prefSource.size > 0)
             prefSource.head.locations
           else
-            head.locations
+            network.places.flatMap(_.locations)
         } else {
           head.locations
         }

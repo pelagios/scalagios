@@ -6,6 +6,8 @@ import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig }
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.util.Version
 import org.slf4j.LoggerFactory
+import org.pelagios.Scalagios
+import java.io.FileInputStream
 
 private[gazetteer] class PlaceIndexBase(directory: File) {
   
@@ -17,7 +19,28 @@ private[gazetteer] class PlaceIndexBase(directory: File) {
   
 }
 
-class PlaceIndex private(directory: File) extends PlaceIndexBase(directory) with PlaceIndexReader with PlaceIndexWriter
+class PlaceIndex private(directory: File) extends PlaceIndexBase(directory) with PlaceIndexReader with PlaceIndexWriter {
+  
+  /** Applies a gazetteer patch file to this index **/
+  def applyPatch(file: String, replace: Boolean) = {
+    val patches = Scalagios.readPlacePatches(new FileInputStream(file), file)
+    log.info("Loaded " + patches.size + " patch records")
+    
+    val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_4_9, analyzer))
+    patches.foreach(patch => {
+      val affectedPlace = findByURI(patch.uri)
+      if (affectedPlace.isEmpty) {
+        log.warn("Could not patch place " + patch.uri + " - not in index")
+      } else {
+        log.info("Patching place " + patch.uri)
+        val patchedPlace = patch.patch(affectedPlace.get, replace)
+        updatePlace(affectedPlace.get, patchedPlace, writer)
+      }
+    })
+    writer.close()
+  }
+  
+}
 
 object PlaceIndex {
   

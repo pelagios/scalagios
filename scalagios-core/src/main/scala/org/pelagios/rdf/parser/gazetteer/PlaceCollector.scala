@@ -16,7 +16,7 @@ class PlaceCollector extends ResourceCollector {
   protected val logger = LoggerFactory.getLogger(classOf[PlaceCollector])
   
   /** The Places collected by the parser.
-   *  
+    *  
     * @return the list of Places
     */
   lazy val places: Iterable[Place] = {

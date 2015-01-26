@@ -56,7 +56,7 @@ object ConvertPleiadesDump extends App {
       
     val placeCategory = legacy.featureType.map(getPlaceType(_)).flatten
     
-    Place(uri = legacy.uri, title = legacy.label.getOrElse("[unnamed]"),
+    Place(uri = legacy.uri, label = legacy.label.getOrElse("[unnamed]"),
       descriptions = descriptions, names = names, locations = locations,
       placeCategory = placeCategory)
   })

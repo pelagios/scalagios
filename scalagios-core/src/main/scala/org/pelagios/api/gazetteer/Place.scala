@@ -106,7 +106,7 @@ object Place extends AbstractApiCompanion {
   
   def apply(uri: String,
   
-            title: String,
+            label: String,
   
             descriptions: ObjOrSeq[PlainLiteral] = new ObjOrSeq(Seq.empty[PlainLiteral]),
   
@@ -122,7 +122,7 @@ object Place extends AbstractApiCompanion {
             
             exactMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
     
-    new DefaultPlace(uri, title, descriptions.seq, names.seq, locations.seq, placeCategory.option, subjects.seq, closeMatches.seq, exactMatches.seq)
+    new DefaultPlace(uri, label, descriptions.seq, names.seq, locations.seq, placeCategory.option, subjects.seq, closeMatches.seq, exactMatches.seq)
   }
   
 }
