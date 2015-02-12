@@ -22,19 +22,37 @@ private[gazetteer] class PlaceIndexBase(directory: File) {
 class PlaceIndex private(directory: File) extends PlaceIndexBase(directory) with PlaceIndexReader with PlaceIndexWriter {
   
   /** Applies a gazetteer patch file to this index **/
-  def applyPatch(file: String, replace: Boolean) = {
+  def applyPatch(file: String, replace: Boolean, propagate: Boolean) = {
     val patches = Scalagios.readPlacePatches(new FileInputStream(file), file)
     log.info("Loaded " + patches.size + " patch records")
     
     val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_4_9, analyzer))
     patches.foreach(patch => {
-      val affectedPlace = findByURI(patch.uri)
-      if (affectedPlace.isEmpty) {
+      val affectedPlaces = 
+        if (propagate) { 
+          val patchTarget = findByURI(patch.uri)
+          if (patchTarget.isEmpty) {
+            Seq.empty[PlaceDocument]
+          } else {
+            val network = getNetwork(patchTarget.get)
+            patchTarget.get +: network.places
+          }
+        } else {
+          findByURI(patch.uri).map(Seq(_)).getOrElse(Seq.empty[PlaceDocument])
+        }
+      
+      if (affectedPlaces.size == 0) {
         log.warn("Could not patch place " + patch.uri + " - not in index")
       } else {
         log.info("Patching place " + patch.uri)
-        val patchedPlace = patch.patch(affectedPlace.get, replace)
-        updatePlace(affectedPlace.get, patchedPlace, writer)
+        
+        affectedPlaces.foreach(affectedPlace => {
+          if (GazetteerUtils.normalizeURI(affectedPlace.uri) != GazetteerUtils.normalizeURI(patch.uri))
+            log.info("Propagating patch to " + affectedPlace.uri)
+            
+          val patchedPlace = patch.patch(affectedPlace, replace)
+          updatePlace(affectedPlace, patchedPlace, writer)
+        })
       }
     })
     writer.close()
