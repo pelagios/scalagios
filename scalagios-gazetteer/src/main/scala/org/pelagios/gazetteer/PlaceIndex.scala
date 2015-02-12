@@ -31,12 +31,10 @@ class PlaceIndex private(directory: File) extends PlaceIndexBase(directory) with
       val affectedPlaces = 
         if (propagate) { 
           val patchTarget = findByURI(patch.uri)
-          if (patchTarget.isEmpty) {
+          if (patchTarget.isEmpty)
             Seq.empty[PlaceDocument]
-          } else {
-            val network = getNetwork(patchTarget.get)
-            patchTarget.get +: network.places
-          }
+          else
+            getNetwork(patchTarget.get).places
         } else {
           findByURI(patch.uri).map(Seq(_)).getOrElse(Seq.empty[PlaceDocument])
         }
@@ -44,14 +42,14 @@ class PlaceIndex private(directory: File) extends PlaceIndexBase(directory) with
       if (affectedPlaces.size == 0) {
         log.warn("Could not patch place " + patch.uri + " - not in index")
       } else {
-        log.info("Patching place " + patch.uri)
+        log.info("Applying patch for " + patch.uri)
+        if (affectedPlaces.size > 1)
+          log.info("Propagating patch to " + (affectedPlaces.size - 1) + " network members")
         
         affectedPlaces.foreach(affectedPlace => {
-          if (GazetteerUtils.normalizeURI(affectedPlace.uri) != GazetteerUtils.normalizeURI(patch.uri))
-            log.info("Propagating patch to " + affectedPlace.uri)
-            
           val patchedPlace = patch.patch(affectedPlace, replace)
           updatePlace(affectedPlace, patchedPlace, writer)
+          log.info("Applied patch to " + affectedPlace.uri)
         })
       }
     })
