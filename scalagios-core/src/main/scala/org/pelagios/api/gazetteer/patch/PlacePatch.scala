@@ -1,6 +1,7 @@
-package org.pelagios.api.gazetteer
+package org.pelagios.api.gazetteer.patch
 
 import org.pelagios.api.PlainLiteral
+import org.pelagios.api.gazetteer._
 
 /** A 'patch' with information to replace in (or append to) an existing gazetteer record **/
 case class PlacePatch(

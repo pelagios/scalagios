@@ -2,7 +2,8 @@ package org.pelagios.rdf.parser.gazetteer
 
 import org.openrdf.model.vocabulary.RDFS
 import org.pelagios.api.PlainLiteral
-import org.pelagios.api.gazetteer.{ PlacePatch, Location }
+import org.pelagios.api.gazetteer.Location
+import org.pelagios.api.gazetteer.patch.PlacePatch
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.pelagios.rdf.vocab.{ DCTerms, LAWD, W3CGeo, OSGeo, PelagiosPlaceCategories, SKOS }
 import org.slf4j.LoggerFactory

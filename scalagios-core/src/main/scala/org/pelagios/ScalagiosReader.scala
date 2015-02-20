@@ -4,7 +4,8 @@ import java.io.InputStream
 import org.openrdf.rio.{ RDFFormat, RDFParser, RDFParserRegistry }
 import org.pelagios.api.annotation.AnnotatedThing
 import org.pelagios.api.dataset.Dataset
-import org.pelagios.api.gazetteer.{ PlacePatch, Place }
+import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.patch.PlacePatch
 import org.pelagios.rdf.parser.annotation.PelagiosDataParser
 import org.pelagios.rdf.parser.dataset.DatasetCollector
 import org.pelagios.rdf.parser.gazetteer.{ PlaceCollector, PlacePatchCollector, PlaceStreamHandler }

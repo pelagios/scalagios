@@ -6,6 +6,7 @@ import org.apache.lucene.search.{ BooleanClause, BooleanQuery, IndexSearcher, Te
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser
 import org.apache.lucene.util.Version
 import net.sf.junidecode.Junidecode
+import org.apache.lucene.search.PrefixQuery
 
 trait PlaceIndexReader extends PlaceIndexBase {
   
@@ -69,7 +70,7 @@ trait PlaceIndexReader extends PlaceIndexBase {
     places
   }
   
-  def query(query: String, fuzzy: Boolean = false, limit: Int = 50): Iterable[PlaceDocument] = {    
+  def query(query: String, fuzzy: Boolean = false, limit: Int = 50, allowedPrefixes: Option[Seq[String]] = None): Iterable[PlaceDocument] = {    
     // We only support keyword queries, and remove all special characters that may mess it up
     val invalidChars = Seq("(", ")", "[", "]")
     val normalizedQuery = invalidChars.foldLeft(query)((normalized, invalidChar) => normalized.replace(invalidChar, ""))
@@ -83,7 +84,24 @@ trait PlaceIndexReader extends PlaceIndexBase {
       else
         normalizedQuery + suffix + " OR " + transliteratedQuery + suffix
         
-    val q = new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer).parse(expandedQuery)
+    val q = 
+      if (allowedPrefixes.isDefined) {
+        val outerQuery = new BooleanQuery()
+        outerQuery.add(new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer).parse(expandedQuery), BooleanClause.Occur.MUST)
+        
+        if (allowedPrefixes.get.size == 1) {
+          outerQuery.add(new PrefixQuery(new Term(PlaceIndex.FIELD_URI, allowedPrefixes.get.head)), BooleanClause.Occur.MUST)    
+        } else {
+          val innerQuery = new BooleanQuery()
+          allowedPrefixes.get.foreach(prefix => 
+            innerQuery.add(new PrefixQuery(new Term(PlaceIndex.FIELD_URI, prefix)), BooleanClause.Occur.SHOULD))
+          outerQuery.add(innerQuery, BooleanClause.Occur.MUST)
+        }
+        
+        outerQuery
+      } else {
+        new MultiFieldQueryParser(Version.LUCENE_4_9, fields, analyzer).parse(expandedQuery)
+      }
     
     // TODO creating a new reader of every access has some overhead - could be improved
     val reader = DirectoryReader.open(index)
