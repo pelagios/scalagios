@@ -64,6 +64,7 @@ class ConflatedPlace(network: Network,
       Place(uri, head.label, descriptions, 
           names.toSeq,
           locations, 
+          (head.temporal +: tail.map(_.temporal)).flatten.headOption,
           head.category, // TODO not sure how to handle different category definitions...
           head.subjects ++ tail.flatMap(_.subjects), // Merge all subjects,
           { head.closeMatches ++ tail.flatMap(_.closeMatches) }.toSet.filter(!_.equals(uri)).toSeq) // Merge & de-duplicate    
@@ -79,6 +80,8 @@ class ConflatedPlace(network: Network,
   def names = place.names
   
   def locations = place.locations
+  
+  def temporal = place.temporal
   
   def category = place.category
   

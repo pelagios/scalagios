@@ -1,7 +1,7 @@
 package org.pelagios.api.gazetteer
 
 import com.vividsolutions.jts.geom.{ Coordinate, GeometryFactory }
-import org.pelagios.api.{ AbstractApiCompanion, PlainLiteral }
+import org.pelagios.api.{ AbstractApiCompanion, PlainLiteral, PeriodOfTime }
 
 /** Pelagios 'Place' model entity.
   *  
@@ -37,6 +37,14 @@ trait Place {
     * The list of locations for this place.   
     */
   def locations: Seq[Location]
+  
+  /** dcterms:temporal
+    * 
+    * According to the DCMI definition the "temporal coverage" or "temporal
+    * characteristics of the resource". We recommend using the DCMI
+    * Period Encoding Scheme: http://dublincore.org/documents/dcmi-period/
+    */
+  def temporal: Option[PeriodOfTime]
   
   /** dcterms:type
     *
@@ -91,6 +99,8 @@ private[api] class DefaultPlace (
   
   val locations: Seq[Location] = Seq.empty[Location],
   
+  val temporal: Option[PeriodOfTime] = None,
+  
   val category: Option[PlaceCategory.Category] = None,
   
   val subjects: Seq[String] = Seq.empty[String],
@@ -114,6 +124,8 @@ object Place extends AbstractApiCompanion {
   
             locations: ObjOrSeq[Location] = new ObjOrSeq(Seq.empty[Location]),
             
+            temporal: ObjOrOption[PeriodOfTime] = new ObjOrOption(None),
+            
             placeCategory: ObjOrOption[PlaceCategory.Category] = new ObjOrOption(None),
 
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
@@ -122,7 +134,7 @@ object Place extends AbstractApiCompanion {
             
             exactMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
     
-    new DefaultPlace(uri, label, descriptions.seq, names.seq, locations.seq, placeCategory.option, subjects.seq, closeMatches.seq, exactMatches.seq)
+    new DefaultPlace(uri, label, descriptions.seq, names.seq, locations.seq, temporal.option, placeCategory.option, subjects.seq, closeMatches.seq, exactMatches.seq)
   }
   
 }

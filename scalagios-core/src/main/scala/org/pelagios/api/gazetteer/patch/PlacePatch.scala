@@ -1,6 +1,6 @@
 package org.pelagios.api.gazetteer.patch
 
-import org.pelagios.api.PlainLiteral
+import org.pelagios.api.{ PlainLiteral, PeriodOfTime }
 import org.pelagios.api.gazetteer._
 
 /** A 'patch' with information to replace in (or append to) an existing gazetteer record **/
@@ -15,6 +15,8 @@ case class PlacePatch(
   names: Seq[PlainLiteral],
 
   locations: Seq[Location],
+  
+  temporal: Option[PeriodOfTime],
   
   category: Option[PlaceCategory.Category],
   
@@ -41,6 +43,7 @@ case class PlacePatch(
         { if (descriptions.size > 0) descriptions else place.descriptions },
         { if (names.size > 0) names else place.names },
         { if (locations.size > 0) locations else place.locations },
+        { if (temporal.isDefined) temporal else place.temporal },
         { if (category.isDefined) category else place.category },
         { if (subjects.size > 0) subjects else place.subjects },
         { if (closeMatches.size > 0) closeMatches else place.closeMatches },
@@ -53,6 +56,7 @@ case class PlacePatch(
         place.descriptions ++ descriptions,
         place.names ++ names,
         place.locations ++ locations,
+        { if (temporal.isDefined) temporal else place.temporal }, // Temporal will be replaced in any case
         { if (category.isDefined) category else place.category }, // Category will be replaced in any case
         place.subjects ++ subjects,
         place.closeMatches ++ closeMatches,

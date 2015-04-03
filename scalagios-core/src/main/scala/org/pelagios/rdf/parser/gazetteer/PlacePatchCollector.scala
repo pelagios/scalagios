@@ -1,7 +1,7 @@
 package org.pelagios.rdf.parser.gazetteer
 
 import org.openrdf.model.vocabulary.RDFS
-import org.pelagios.api.PlainLiteral
+import org.pelagios.api.{ PlainLiteral, PeriodOfTime }
 import org.pelagios.api.gazetteer.Location
 import org.pelagios.api.gazetteer.patch.PlacePatch
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
@@ -36,6 +36,7 @@ class PlacePatchCollector extends ResourceCollector {
     (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_)),
     names,
     locations,
+    resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue)),
     resource.getFirst(DCTerms.typ).flatMap(uri => PelagiosPlaceCategories.toCategory(uri)),
     Seq.empty[String], // TODO subjects
     resource.get(SKOS.closeMatch).map(_.stringValue),

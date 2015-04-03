@@ -1,7 +1,7 @@
 package org.pelagios.rdf.parser.gazetteer
 
 import org.openrdf.model.vocabulary.RDFS
-import org.pelagios.api.PlainLiteral
+import org.pelagios.api.{ PlainLiteral, PeriodOfTime }
 import org.pelagios.api.gazetteer.{ Place, Location }
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.pelagios.rdf.vocab.{ DCTerms, LAWD, OSGeo, Pelagios, PelagiosPlaceCategories, PleiadesPlaces, SKOS, W3CGeo }
@@ -52,6 +52,8 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
   def label = resource.getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
   def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_))
+  
+  def temporal = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
   
   def category = resource.getFirst(DCTerms.typ).map(uri => PelagiosPlaceCategories.toCategory(uri)).flatten
   
