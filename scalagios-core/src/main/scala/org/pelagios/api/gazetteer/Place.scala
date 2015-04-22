@@ -60,6 +60,14 @@ trait Place {
     */
   def subjects: Seq[String]
   
+  /** foaf:depiction
+    *
+    * TODO we may want to make this an object rather than a string in the future,
+    * in order to hold creator and license information along with the image URL
+    * as well.   
+    */
+  def depictions: Seq[String]
+  
   /** skos:closeMatch
     * 
     * 'Vague' mappings to places in other gazetteers.
@@ -105,6 +113,8 @@ private[api] class DefaultPlace (
   
   val subjects: Seq[String] = Seq.empty[String],
   
+  val depictions: Seq[String] = Seq.empty[String],
+  
   val closeMatches: Seq[String] = Seq.empty[String],
   
   val exactMatches: Seq[String] = Seq.empty[String]
@@ -129,12 +139,14 @@ object Place extends AbstractApiCompanion {
             placeCategory: ObjOrOption[PlaceCategory.Category] = new ObjOrOption(None),
 
             subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
+            
+            depictions: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
    
             closeMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String]),
             
             exactMatches: ObjOrSeq[String] = new ObjOrSeq(Seq.empty[String])): Place = {
     
-    new DefaultPlace(uri, label, descriptions.seq, names.seq, locations.seq, temporal.option, placeCategory.option, subjects.seq, closeMatches.seq, exactMatches.seq)
+    new DefaultPlace(uri, label, descriptions.seq, names.seq, locations.seq, temporal.option, placeCategory.option, subjects.seq, depictions.seq, closeMatches.seq, exactMatches.seq)
   }
   
 }

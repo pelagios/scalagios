@@ -87,6 +87,8 @@ class ConflatedPlace(network: Network,
   
   def subjects = place.subjects
   
+  def depictions = place.depictions
+  
   def closeMatches = place.closeMatches
   
   def exactMatches = place.exactMatches

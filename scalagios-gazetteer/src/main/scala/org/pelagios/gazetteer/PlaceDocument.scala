@@ -47,6 +47,8 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   
+  val depictions: Seq[String] = Seq.empty[String] // TODO implement
+  
   val closeMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_CLOSE_MATCH).toSeq
   
   val exactMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_EXACT_MATCH).toSeq

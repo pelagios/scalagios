@@ -6,6 +6,7 @@ import org.pelagios.api.gazetteer.{ Place, Location }
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.pelagios.rdf.vocab.{ DCTerms, LAWD, OSGeo, Pelagios, PelagiosPlaceCategories, PleiadesPlaces, SKOS, W3CGeo }
 import org.slf4j.LoggerFactory
+import org.pelagios.rdf.vocab.FOAF
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
   * 
@@ -56,9 +57,10 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
   def temporal = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
   
   def category = resource.getFirst(DCTerms.typ).map(uri => PelagiosPlaceCategories.toCategory(uri)).flatten
+
+  def subjects = resource.get(DCTerms.subject).map(_.stringValue)
   
-  // TODO
-  def subjects = Seq.empty[String]
+  def depictions = resource.get(FOAF.depiction).map(_.stringValue)
   
   def closeMatches = resource.get(SKOS.closeMatch).map(_.stringValue)
   
