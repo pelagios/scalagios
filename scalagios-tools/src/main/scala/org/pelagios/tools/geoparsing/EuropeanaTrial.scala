@@ -3,24 +3,63 @@ package org.pelagios.tools.geoparsing
 import java.util.zip.GZIPInputStream
 import java.io.FileInputStream
 import scala.xml.XML
+import scala.xml.Elem
+import org.pelagios.tools.georesolution.GeoResolver
+import org.pelagios.gazetteer.PlaceIndex
+import java.io.PrintWriter
 
 object EuropeanaTrial extends App {
+  
+  val startTime = System.currentTimeMillis
     
   // Parse dataset XML
   val TEST_DATASET = "test-data/europeana-enrichment-trial.xml.gz"
   val xml = XML.load(new GZIPInputStream(new FileInputStream(TEST_DATASET)))
+  
+  val resolver = new GeoResolver(PlaceIndex.open("index") )
+  val printWriter = new PrintWriter("europeana-enrichment.csv")
 
-  (xml \\ "ProvidedCHO" \ "description").par.foreach(elem => {
+  (xml \\ "ProvidedCHO").foreach(node =>
     
-    // Run selected fields through gazetteer index
+    if (node.isInstanceOf[Elem]) {
+      
+      val rdfAbout = node.asInstanceOf[Elem].attributes.head.value.text
     
-    // Run selected fields through gazetteer index after NER
+      val places = (node \ "_").par map (_ match {        
+        case e: Elem => e.label match {
+         
+          // Run these fields through NER and then geo-resolution
+          case "title" | "description" | "source" | "publisher" => {
+            GeoParser.parse(e.text).filter(_.category == "LOCATION").map(_.term).foreach(toponym => {
+              val place = resolver.matchToponym(toponym)
+              if (place.isDefined)
+                printWriter.write(rdfAbout + ";" + e.label + ";" + place.get.uri + ";" + place.get.label + ";ner;" + toponym + ";\n")
+            }) 
+          }
+          
+          // Run these fields JUST through geo-resolution
+          case "spatial" | "currentLocation" | "subject" => {
+            try {
+              val place = resolver.matchToponym(e.text.replace("~", " ").replace("*", " ")) // Just minimal cleanup
+              if (place.isDefined)
+                printWriter.write(rdfAbout + ";" + e.label + ";" + place.get.uri + ";" + place.get.label + ";no_ner;" + e.text + ";\n")          
+            } catch {
+              case t: Throwable => println(t.getClass.toString() + ": " + t.getMessage)
+            }
+          }
+          
+          case _ =>
+            
+        }
+      })
     
-    // Write CSV
-    val namedEntities = GeoParser.parse(elem.text)
-    val toponyms = namedEntities.filter(_.category == "LOCATION") 
-    toponyms.map(_.term).foreach(t => println(t))
+    }
 
-  })
+  )
+  
+  printWriter.flush()
+  printWriter.close()
+  
+  println("Done. Took " + (System.currentTimeMillis - startTime) / 1000 + "s.")
 
 }
