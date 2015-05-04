@@ -10,11 +10,24 @@ import java.io.PrintWriter
 
 object EuropeanaTrial extends App {
   
-  val startTime = System.currentTimeMillis
-    
-  // Parse dataset XML
   val TEST_DATASET = "test-data/europeana-enrichment-trial.xml.gz"
+  
+  val WIKIDATA_GAZETTEER = "test-data/22_oct_wiki_dump.ttl"
+  
+  private def initIndex(idx: PlaceIndex) = {    
+    println("There is no gazetter index yet - just a second...")     
+    println("Loading gazetteer data")
+    idx.addPlaceStream(new FileInputStream(WIKIDATA_GAZETTEER), "22_oct_wiki_dump.ttl", true)
+    println("Index complete")          
+  }
+  
+  val startTime = System.currentTimeMillis
+  
   val xml = XML.load(new GZIPInputStream(new FileInputStream(TEST_DATASET)))
+  
+  val idx = PlaceIndex.open("index") 
+  if (idx.isEmpty)
+    initIndex(idx)
   
   val resolver = new GeoResolver(PlaceIndex.open("index") )
   val printWriter = new PrintWriter("europeana-enrichment.csv")
@@ -61,5 +74,5 @@ object EuropeanaTrial extends App {
   printWriter.close()
   
   println("Done. Took " + (System.currentTimeMillis - startTime) / 1000 + "s.")
-
+  
 }
