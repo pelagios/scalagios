@@ -1,8 +1,7 @@
 package org.pelagios.api
 
-import java.util.Date
-import java.util.Calendar
-import java.util.GregorianCalendar
+import java.text.SimpleDateFormat
+import java.util.{ Calendar, Date }
 
 /** A period of time.
   *  
@@ -17,37 +16,50 @@ import java.util.GregorianCalendar
   */
 trait PeriodOfTime {
   
-  def start: Int
+  def start: Date
   
-  def end: Option[Int]
+  def end: Option[Date]
   
   def name: Option[String]
   
 }
 
 /** Default POJO-style implementation of 'PeriodOfTime' **/
-private[api] class DefaultPeriodOfTime(val start: Int, val end: Option[Int], val name: Option[String]) extends PeriodOfTime
+private[api] class DefaultPeriodOfTime(val start: Date, val end: Option[Date], val name: Option[String]) extends PeriodOfTime
 
 /** Companion object with a pimped apply method for generating DefaultPeriodOfTime instances **/
 object PeriodOfTime extends AbstractApiCompanion {
+
+  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+  def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
   
-  def apply(start: Int, end: Option[Int] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
+  /** Parses the YYYY-MM-DD format. Month & days are optional **/
+  private def parseYYYYMMDD(str: String): Date = {
+    if (str.contains("-")) {
+      dateFormat.parse(str)      
+    } else {
+      val calendar = Calendar.getInstance()
+      calendar.set(Calendar.YEAR, str.toInt)
+      calendar.getTime
+    }
+  }
   
   /** Note: we support DCMI Period Encoding scheme and <start>/<end> **/
   def fromString(str: String): PeriodOfTime = {
     if (str.contains(";")) {
       // DCMI
       val fields = str.split(";").map(_.trim)
-      val start = fields.find(_.startsWith("start=")).map(_.substring(6).toInt)
-      val end = fields.find(_.startsWith("end=")).map(_.substring(4).toInt)
-      val name = fields.find(_.startsWith("name=")).map(_.substring(5))
+      val start = fields.find(_.startsWith("start=")).map(str => parseYYYYMMDD(str.substring(6)))
+      val end = fields.find(_.startsWith("end=")).map(str => parseYYYYMMDD(str.substring(4)))
+      val name = fields.find(_.startsWith("name=")).map(str => str.substring(5))
 
       PeriodOfTime(start.get, end, name)
     } else {
-      // <start>/<end>
+      // <start>/<end>, with format YYYY[-MM-DD]
       val fields = str.split("/").map(_.trim)
-      val start = fields(0).toInt
-      val end = if (fields.size > 1) Some(fields(1).toInt) else None
+      val start = parseYYYYMMDD(fields(0))
+      val end = if (fields.size > 1) Some(parseYYYYMMDD(fields(1))) else None
       PeriodOfTime(start, end)
     }
   }
