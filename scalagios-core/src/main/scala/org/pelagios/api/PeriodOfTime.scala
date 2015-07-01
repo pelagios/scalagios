@@ -30,14 +30,20 @@ private[api] class DefaultPeriodOfTime(val start: Date, val end: Option[Date], v
 /** Companion object with a pimped apply method for generating DefaultPeriodOfTime instances **/
 object PeriodOfTime extends AbstractApiCompanion {
 
-  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private val yMdFormat = new SimpleDateFormat("yyyy-MM-dd")
+  
+  private val yMFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
   
   /** Parses the YYYY-MM-DD format. Month & days are optional **/
   private def parseYYYYMMDD(str: String): Date = {
     if (str.contains("-")) {
-      dateFormat.parse(str)      
+      val dateFormat = (str.split("-").size - 1) match {
+        case 1 => yMFormat
+        case _ => yMdFormat
+      }
+      dateFormat.parse(str)     
     } else {
       val calendar = Calendar.getInstance()
       calendar.set(Calendar.YEAR, str.toInt)
