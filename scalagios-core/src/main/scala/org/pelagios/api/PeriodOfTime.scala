@@ -32,21 +32,30 @@ object PeriodOfTime extends AbstractApiCompanion {
 
   private val yMdFormat = new SimpleDateFormat("yyyy-MM-dd")
   
-  private val yMFormat = new SimpleDateFormat("yyyy-MM-dd")
+  private val yMFormat = new SimpleDateFormat("yyyy-MM")
+  
+  private val MINUS = "-"
 
   def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
   
   /** Parses the YYYY-MM-DD format. Month & days are optional **/
   private def parseYYYYMMDD(str: String): Date = {
-    if (str.contains("-")) {
-      val dateFormat = (str.split("-").size - 1) match {
+    // Minus acts as separating char, but leading minus is... just a minus, so separate!
+    val (sgn, abs) =
+      if (str.trim.startsWith(MINUS))
+        (-1, str.trim.substring(1)) 
+      else
+        (1, str.trim)
+    
+    if (abs.contains(MINUS)) {
+      val dateFormat = (abs.split(MINUS).size - 1) match {
         case 1 => yMFormat
         case _ => yMdFormat
       }
       dateFormat.parse(str)     
     } else {
       val calendar = Calendar.getInstance()
-      calendar.set(Calendar.YEAR, str.toInt)
+      calendar.set(Calendar.YEAR, abs.toInt * sgn)
       calendar.getTime
     }
   }
