@@ -1,7 +1,7 @@
 package org.pelagios.api
 
 import java.text.SimpleDateFormat
-import java.util.{ Calendar, Date }
+import java.util.{ Calendar, Date, GregorianCalendar }
 
 /** A period of time.
   *  
@@ -16,9 +16,22 @@ import java.util.{ Calendar, Date }
   */
 trait PeriodOfTime {
   
+  private def getYear(date: Date) = {
+    val calendar = Calendar.getInstance()
+    calendar.setTime(date)
+    if (calendar.get(Calendar.ERA) == GregorianCalendar.AD)
+      calendar.get(Calendar.YEAR)
+    else
+      - calendar.get(Calendar.YEAR)
+  }
+  
   def start: Date
   
+  def startYear: Int = getYear(start)
+  
   def end: Option[Date]
+  
+  def endYear: Option[Int] = end.map(getYear(_))
   
   def name: Option[String]
   
@@ -29,7 +42,7 @@ private[api] class DefaultPeriodOfTime(val start: Date, val end: Option[Date], v
 
 /** Companion object with a pimped apply method for generating DefaultPeriodOfTime instances **/
 object PeriodOfTime extends AbstractApiCompanion {
-
+  
   private val yMdFormat = new SimpleDateFormat("yyyy-MM-dd")
   
   private val yMFormat = new SimpleDateFormat("yyyy-MM")
