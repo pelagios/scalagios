@@ -132,17 +132,17 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   // TODO 
   def annotatedBy: Option[Agent] = None
 
-  def annotatedAt: Option[Date] = resource.getFirst(OA.annotatedAt)
+  val annotatedAt: Option[Date] = resource.getFirst(OA.annotatedAt)
     .map(literal => DATE_FORMAT.parse(literal.stringValue))
     
-  def serializedBy: Option[Agent] = None
+  val serializedBy: Option[Agent] = None
   
   var creator: Option[Agent] = None
   
   // TODO
-  def created: Option[Date] = None
+  val created: Option[Date] = None
   
-  def index: Option[Int] = resource.getFirst(PelagiosSequence.index).map(_.stringValue.toInt)
+  val index: Option[Int] = resource.getFirst(PelagiosSequence.index).map(_.stringValue.toInt)
   
 }
 
@@ -156,21 +156,21 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
     
   val uri = resource.uri
   
-  lazy val title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
+  val title = resource.getFirst(DCTerms.title).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
   var isPartOf: Option[AnnotatedThing] = None
   
-  lazy val identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
+  val identifier = resource.getFirst(DCTerms.identifier).map(_.stringValue)
 
-  lazy val description = resource.getFirst(DCTerms.description).map(_.stringValue)
+  val description = resource.getFirst(DCTerms.description).map(_.stringValue)
   
-  def homepage = resource.getFirst(FOAF.homepage).map(_.stringValue)
+  val homepage = resource.getFirst(FOAF.homepage).map(_.stringValue)
   
-  def sources = resource.get(DCTerms.source).map(_.stringValue)
+  val sources = resource.get(DCTerms.source).map(_.stringValue)
   
-  def primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
+  val primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
   
-  def temporal: Option[PeriodOfTime] = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+  val temporal: Option[PeriodOfTime] = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
 
   var creator: Option[Agent] = None
 
