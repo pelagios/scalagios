@@ -82,12 +82,19 @@ object PeriodOfTime extends AbstractApiCompanion {
       val end = fields.find(_.startsWith("end=")).map(str => parseYYYYMMDD(str.substring(4)))
       val name = fields.find(_.startsWith("name=")).map(str => str.substring(5))
 
+      if (end.isDefined && end.get.before(start.get))
+        throw new NumberFormatException("End date before start date: " + str) 
+        
       PeriodOfTime(start.get, end, name)
     } else {
       // <start>/<end>, with format YYYY[-MM-DD]
       val fields = str.split("/").map(_.trim)
       val start = parseYYYYMMDD(fields(0))
       val end = if (fields.size > 1) Some(parseYYYYMMDD(fields(1))) else None
+      
+      if (end.isDefined && end.get.before(start))
+        throw new NumberFormatException("End date before start date: " + str) 
+      
       PeriodOfTime(start, end)
     }
   }
