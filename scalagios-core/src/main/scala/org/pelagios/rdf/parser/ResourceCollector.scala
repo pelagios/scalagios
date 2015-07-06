@@ -15,7 +15,7 @@ import scala.collection.mutable.HashMap
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
 private[parser] abstract class ResourceCollector extends RDFHandlerBase {
-
+  
   protected val resources = new HashMap[String, Resource]
   
   override def handleStatement(statement: Statement): Unit = {      

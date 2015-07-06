@@ -18,6 +18,7 @@ import org.pelagios.api.PeriodOfTime
 import org.pelagios.rdf.parser.Resource
 import org.pelagios.rdf.parser.Resource
 import org.pelagios.rdf.parser.ResourceCollector
+import org.slf4j.LoggerFactory
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -170,7 +171,18 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   val primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
   
-  val temporal: Option[PeriodOfTime] = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+  val temporal: Option[PeriodOfTime] =
+    try {
+      resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+    } catch {
+      case t: Throwable => {
+        // Vast majority of resources will be fine, so no need to create a logger, unless needed
+        val logger = LoggerFactory.getLogger(classOf[AnnotatedThingResource])
+        logger.warn("Error parsing dcterms:temporal on " + uri)
+        logger.warn(t.getMessage)
+        None
+      }
+    }
 
   var creator: Option[Agent] = None
 
