@@ -48,23 +48,34 @@ class PlaceCollector extends ResourceCollector {
  */
 private[parser] class PlaceResource(val resource: Resource, val names: Seq[PlainLiteral], val locations: Seq[Location]) extends Place {
 
-  def uri = resource.uri
+  val uri = resource.uri
   
-  def label = resource.getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
+  val label = resource.getFirst(RDFS.LABEL).map(_.stringValue).getOrElse("[NO TITLE]") // 'NO TITLE' should never happen!
   
-  def descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_))
+  val descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_))
   
-  def temporal = resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+  val temporal: Option[PeriodOfTime] =
+    try {
+      resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+    } catch {
+      case t: Throwable => {
+        // Vast majority of resources will be fine, so no need to create a logger, unless needed
+        val logger = LoggerFactory.getLogger(classOf[PlaceResource])
+        logger.warn("Error parsing dcterms:temporal on " + uri)
+        logger.warn(t.getMessage)
+        None
+      }
+    } 
   
-  def category = resource.getFirst(DCTerms.typ).map(uri => PelagiosPlaceCategories.toCategory(uri)).flatten
+  val category = resource.getFirst(DCTerms.typ).map(uri => PelagiosPlaceCategories.toCategory(uri)).flatten
 
-  def subjects = resource.get(DCTerms.subject).map(_.stringValue)
+  val subjects = resource.get(DCTerms.subject).map(_.stringValue)
   
-  def depictions = resource.get(FOAF.depiction).map(_.stringValue)
+  val depictions = resource.get(FOAF.depiction).map(_.stringValue)
   
-  def closeMatches = resource.get(SKOS.closeMatch).map(_.stringValue)
+  val closeMatches = resource.get(SKOS.closeMatch).map(_.stringValue)
   
-  def exactMatches = resource.get(SKOS.exactMatch).map(_.stringValue)
+  val exactMatches = resource.get(SKOS.exactMatch).map(_.stringValue)
 
 }
 
