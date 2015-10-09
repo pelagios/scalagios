@@ -1,6 +1,8 @@
 package org.pelagios.gazetteer
 
-import org.pelagios.api.gazetteer.{ Place, Location }
+import com.vividsolutions.jts.geom.Geometry
+import org.pelagios.api.Image
+import org.pelagios.api.gazetteer.Place
 
 /** A 'conflated place' which represents the combination of multiple places in the same place network.
   *
@@ -33,15 +35,15 @@ class ConflatedPlace(network: Network,
       }
     
       // Pick locations from preferred source, or return all of them
-      val locations = {
+      val location = {
         if (prefLocationSource.isDefined) {
           val prefSource = network.places.filter(_.uri.startsWith(prefLocationSource.get))
           if (prefSource.size > 0)
-            prefSource.head.locations
+            prefSource.head.location
           else
-            network.places.flatMap(_.locations)
+            network.places.head.location
         } else {
-          head.locations
+          head.location
         }
       }
       
@@ -63,11 +65,15 @@ class ConflatedPlace(network: Network,
       
       Place(uri, head.label, descriptions, 
           names.toSeq,
-          locations, 
-          (head.temporal +: tail.map(_.temporal)).flatten.headOption,
+          location, 
+          None,
+          (head.temporalCoverage +: tail.map(_.temporalCoverage)).flatten.headOption,
+          Seq.empty[String],
           head.category, // TODO not sure how to handle different category definitions...
           head.subjects ++ tail.flatMap(_.subjects), // Merge all subjects,
-          { head.closeMatches ++ tail.flatMap(_.closeMatches) }.toSet.filter(!_.equals(uri)).toSeq) // Merge & de-duplicate    
+          Seq.empty[Image],
+          { head.closeMatches ++ tail.flatMap(_.closeMatches) }.toSet.filter(!_.equals(uri)).toSeq,
+          { head.exactMatches ++ tail.flatMap(_.exactMatches) }.toSet.filter(!_.equals(uri)).toSeq) // Merge & de-duplicate    
     }
   }
   
@@ -79,9 +85,13 @@ class ConflatedPlace(network: Network,
   
   def names = place.names
   
-  def locations = place.locations
+  def location = place.location
   
-  def temporal = place.temporal
+  def geometry = Option.empty[Geometry]
+  
+  def temporalCoverage = place.temporalCoverage
+  
+  def timePeriods = Seq.empty[String]
   
   def category = place.category
   

@@ -48,9 +48,8 @@ object GazetteerSerializer {
           writer.println("  lawd:hasName [ lawd:primaryForm \"" + label + name.lang.map("@" + _).getOrElse("") + "\" ] ;")
       })
       
-      place.locations.foreach(l => {
-        writer.println("  geo:location [ osgeo:asWKT \"" + wktWriter.write(l.geometry) + "\" ] ;")
-      })
+      if (place.location.isDefined)
+        writer.println("  geo:location [ geo:lat " + place.location.get.y + " ; geo:long " + place.location.get.x + " ] ;")
       
       writer.println("  .\n")
     })

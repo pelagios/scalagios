@@ -4,8 +4,8 @@ import java.io.FileInputStream
 import java.util.zip.GZIPInputStream
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
-import org.pelagios.api.PlainLiteral
-import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
+import org.pelagios.api.{ Image, PlainLiteral }
+import org.pelagios.api.gazetteer.{ Place, PlaceCategory }
 import org.pelagios.legacy.LegacyInterop
 
 object ConvertPleiadesDump extends App {
@@ -50,15 +50,24 @@ object ConvertPleiadesDump extends App {
       (legacy.altLabels.map(_.split(",").toSeq).getOrElse(Seq.empty[String]) ++
        legacy.coverage.map(_.split(",").toSeq).getOrElse(Seq.empty[String]))
       .map(name => PlainLiteral(name))
-    
-    val locations = 
-      legacy.location.map(location => Seq(Location(location))).getOrElse(Seq.empty[Location])
       
     val placeCategory = legacy.featureType.map(getPlaceType(_)).flatten
     
-    Place(uri = legacy.uri, label = legacy.label.getOrElse("[unnamed]"),
-      descriptions = descriptions, names = names, locations = locations,
-      placeCategory = placeCategory)
+    Place(
+      legacy.uri,
+      legacy.label.getOrElse("[unnamed]"),
+      descriptions, 
+      names,
+      legacy.location.map(_.getCentroid.getCoordinate),
+      legacy.location,
+      None, // temporal coverage
+      Seq.empty[String], // time periods
+      placeCategory,
+      Seq.empty[String], // subject
+      Seq.empty[Image], // Depictions,
+      Seq.empty[String], // closeMatches
+      Seq.empty[String] // exactMatches
+    )
   })
   
   Scalagios.writePlaces(importedPlaces, "/home/simonr/Downloads/migrated.ttl", Scalagios.TURTLE)

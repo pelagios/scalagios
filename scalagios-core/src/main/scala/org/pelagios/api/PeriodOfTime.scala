@@ -41,7 +41,7 @@ trait PeriodOfTime {
 private[api] class DefaultPeriodOfTime(val start: Date, val end: Option[Date], val name: Option[String]) extends PeriodOfTime
 
 /** Companion object with a pimped apply method for generating DefaultPeriodOfTime instances **/
-object PeriodOfTime extends AbstractApiCompanion {
+object PeriodOfTime {
   
   private val yMdFormat = new SimpleDateFormat("yyyy-MM-dd")
   

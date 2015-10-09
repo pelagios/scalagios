@@ -51,8 +51,8 @@ class GeoResolver(index: PlaceIndex) {
     }}
     
     def distance(a: Place, b: Place): Double = {
-      def centroidA = a.getCentroid
-      def centroidB = b.getCentroid
+      def centroidA = a.location
+      def centroidB = b.location
       
       if (centroidA.isDefined && centroidB.isDefined) {
         val dX = Math.abs(centroidA.get.x - centroidB.get.x)

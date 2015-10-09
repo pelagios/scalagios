@@ -24,12 +24,8 @@ class GazetteerParserTest extends FunSuite with UsesTestData {
              place.uri.startsWith("http://atlantides.org/capgrids/"), "invalid place URI - " + place.uri)
     })
     
-    val placesWithLocations = places.filter(_.locations.size > 0)
+    val placesWithLocations = places.filter(_.location.isDefined)
     assert(placesWithLocations.size == 377, "invalid number of places with locations (" + placesWithLocations.size + ")")
-    placesWithLocations.foreach(p => { 
-      assert(p.locations.size == 1, "place has more than one location")
-      assert(p.locations(0).geometry != null, "place has null geometry")
-    })
     
     val placesWithNames = places.filter(_.names.size > 0)
     assert(placesWithNames.size == 449, "invalid number of places with names")

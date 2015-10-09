@@ -5,6 +5,8 @@ object FOAF extends BaseVocab("http://xmlns.com/foaf/0.1/") {
   
   val Agent = createURI("Agent")
   
+  val Image = createURI("Image")
+  
   val Organization = createURI("Organization")
   
   val depiction = createURI("depiction")

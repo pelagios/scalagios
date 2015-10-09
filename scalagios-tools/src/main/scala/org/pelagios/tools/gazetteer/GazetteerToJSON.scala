@@ -11,7 +11,7 @@ object GazetteerToJSON extends App {
   val places = Scalagios.readPlaces(new FileInputStream(GAZETTEER_DUMP), Scalagios.TURTLE)
   
   val json = places.foldLeft(Seq.empty[String])((list, next) => {
-    val centroid = next.getCentroid
+    val centroid = next.location
     if (centroid.isDefined) {
      val json = "{ \"lat\": " + centroid.get.y + ", \"lon\": " + centroid.get.x + ", \"value\": 1, \"title\": \"" + next.label + "\" }"
      list :+ json

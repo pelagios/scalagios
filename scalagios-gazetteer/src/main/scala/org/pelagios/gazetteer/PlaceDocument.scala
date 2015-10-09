@@ -1,14 +1,15 @@
 package org.pelagios.gazetteer
 
+import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.apache.lucene.document.{ Document, Field, StringField, TextField }
 import org.apache.lucene.index.IndexableField
 import org.pelagios.api.PlainLiteral
-import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
+import org.pelagios.api.gazetteer.{ Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON
 import org.apache.lucene.document.StoredField
-import org.pelagios.api.PeriodOfTime
+import org.pelagios.api.{ Image, PeriodOfTime }
 
 /** An implementation of the [[Place]] API primitive backed by a Lucene Document.
   *  
@@ -39,15 +40,19 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
       })
   }
   
-  val locations: Seq[Location] = doc.getValues(PlaceIndex.FIELD_GEOMETRY).map(json => Location(Location.parseGeoJSON(json))).toSeq
+  val geometry: Option[Geometry] = toOption(doc.get(PlaceIndex.FIELD_GEOMETRY)).map(json => Place.parseGeoJSON(json))
   
-  val temporal: Option[PeriodOfTime] = None // TODO implement
+  val location: Option[Coordinate] = geometry.map(_.getCentroid.getCoordinate)
+  
+  val temporalCoverage: Option[PeriodOfTime] = None // TODO implement
+  
+  val timePeriods: Seq[String] = Seq.empty[String]
   
   val category: Option[PlaceCategory.Category] = toOption(doc.get(PlaceIndex.FIELD_CATEGORY)).map(PlaceCategory.withName(_))
   
   val subjects: Seq[String] = doc.getValues(PlaceIndex.FIELD_SUBJECT).toSeq
   
-  val depictions: Seq[String] = Seq.empty[String] // TODO implement
+  val depictions: Seq[Image] = Seq.empty[Image] // TODO implement
   
   val closeMatches: Seq[String] = doc.getValues(PlaceIndex.FIELD_CLOSE_MATCH).toSeq
   
@@ -89,7 +94,7 @@ object PlaceDocument {
       doc.add(new StoredField(PlaceIndex.FIELD_NAME_LITERALS, literals.mkString("\n")))
     }
     
-    place.locations.foreach(location => doc.add(new StoredField(PlaceIndex.FIELD_GEOMETRY, location.geoJSON)))
+    place.location.map(l => doc.add(new StoredField(PlaceIndex.FIELD_GEOMETRY, "POINT (" + l.x + " " + l.y + ")")))
     if (place.category.isDefined)
       doc.add(new StringField(PlaceIndex.FIELD_CATEGORY, place.category.get.toString, Field.Store.YES))
     place.subjects.foreach(subject => doc.add(new StringField(PlaceIndex.FIELD_SUBJECT, subject, Field.Store.YES)))

@@ -1,6 +1,7 @@
 package org.pelagios.api.gazetteer.patch
 
-import org.pelagios.api.{ PlainLiteral, PeriodOfTime }
+import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
+import org.pelagios.api.{ Image, PlainLiteral, PeriodOfTime }
 import org.pelagios.api.gazetteer._
 
 /** A 'patch' with information to replace in (or append to) an existing gazetteer record **/
@@ -14,13 +15,19 @@ case class PlacePatch(
   
   names: Seq[PlainLiteral],
 
-  locations: Seq[Location],
+  location: Option[Coordinate],
   
-  temporal: Option[PeriodOfTime],
+  geometry: Option[Geometry],
+  
+  temporalCoverage: Option[PeriodOfTime],
+  
+  timePeriods: Seq[String],
   
   category: Option[PlaceCategory.Category],
   
   subjects: Seq[String],
+  
+  depictions: Seq[Image],
   
   closeMatches: Seq[String],
   
@@ -42,10 +49,13 @@ case class PlacePatch(
         label.getOrElse(place.label),
         { if (descriptions.size > 0) descriptions else place.descriptions },
         { if (names.size > 0) names else place.names },
-        { if (locations.size > 0) locations else place.locations },
-        { if (temporal.isDefined) temporal else place.temporal },
+        { if (location.isDefined) location else place.location },
+        { if (geometry.isDefined) geometry else place.geometry },
+        { if (temporalCoverage.isDefined) temporalCoverage else place.temporalCoverage },
+        { if (timePeriods.size > 0) timePeriods else place.timePeriods },
         { if (category.isDefined) category else place.category },
         { if (subjects.size > 0) subjects else place.subjects },
+        { if (depictions.size > 0) depictions else place.depictions },
         { if (closeMatches.size > 0) closeMatches else place.closeMatches },
         { if (exactMatches.size > 0) exactMatches else place.exactMatches }
       )
@@ -55,10 +65,13 @@ case class PlacePatch(
         label.getOrElse(place.label), // Label will be replaced in any case
         place.descriptions ++ descriptions,
         place.names ++ names,
-        place.locations ++ locations,
-        { if (temporal.isDefined) temporal else place.temporal }, // Temporal will be replaced in any case
-        { if (category.isDefined) category else place.category }, // Category will be replaced in any case
+        { if (location.isDefined) location else place.location }, // Optional values will be relaced in any case
+        { if (geometry.isDefined) geometry else place.geometry },
+        { if (temporalCoverage.isDefined) temporalCoverage else place.temporalCoverage },
+        place.timePeriods ++ timePeriods,
+        { if (category.isDefined) category else place.category },
         place.subjects ++ subjects,
+        place.depictions ++ depictions,
         place.closeMatches ++ closeMatches,
         place.exactMatches ++ exactMatches
       )
