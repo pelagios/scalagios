@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.apache.lucene.document.{ Document, Field, StringField, TextField }
 import org.apache.lucene.index.IndexableField
 import org.pelagios.api.PlainLiteral
-import org.pelagios.api.gazetteer.{ Place, PlaceCategory }
+import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON
@@ -40,9 +40,7 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
       })
   }
   
-  val geometry: Option[Geometry] = toOption(doc.get(PlaceIndex.FIELD_GEOMETRY)).map(json => Place.parseGeoJSON(json))
-  
-  val location: Option[Coordinate] = geometry.map(_.getCentroid.getCoordinate)
+  val location: Option[Location] = toOption(doc.get(PlaceIndex.FIELD_GEOMETRY)).flatMap(json => Location.fromGeoJSON(json))
   
   val temporalCoverage: Option[PeriodOfTime] = None // TODO implement
   
@@ -94,7 +92,7 @@ object PlaceDocument {
       doc.add(new StoredField(PlaceIndex.FIELD_NAME_LITERALS, literals.mkString("\n")))
     }
     
-    place.location.map(l => doc.add(new StoredField(PlaceIndex.FIELD_GEOMETRY, "POINT (" + l.x + " " + l.y + ")")))
+    place.location.map(l => doc.add(new StoredField(PlaceIndex.FIELD_GEOMETRY, l.asGeoJSON)))
     if (place.category.isDefined)
       doc.add(new StringField(PlaceIndex.FIELD_CATEGORY, place.category.get.toString, Field.Store.YES))
     place.subjects.foreach(subject => doc.add(new StringField(PlaceIndex.FIELD_SUBJECT, subject, Field.Store.YES)))

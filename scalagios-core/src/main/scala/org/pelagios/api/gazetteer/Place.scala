@@ -38,13 +38,7 @@ trait Place {
     *
     * A representative point location.
     */
-  def location: Option[Coordinate]
-
-  /** geosparql:hasGeometry
-    *
-    * A detail (line or polygon) geometry
-    */
-  def geometry: Option[Geometry]
+  def location: Option[Location]
 
   /** dcterms:temporal
     *
@@ -107,10 +101,8 @@ private[api] class DefaultPlace (
 
   val names: Seq[PlainLiteral],
 
-  val location: Option[Coordinate],
+  val location: Option[Location],
   
-  val geometry: Option[Geometry],
-
   val temporalCoverage: Option[PeriodOfTime],
   
   val timePeriods: Seq[String],
@@ -129,10 +121,6 @@ private[api] class DefaultPlace (
 
 /** Companion object with a pimped apply method for generating DefaultPlace instances **/
 object Place extends AbstractApiCompanion {
-
-  private val wktReader = new WKTReader()
-  
-  private val geoJson = new GeometryJSON()
   
   def apply(uri: String,
 
@@ -142,10 +130,8 @@ object Place extends AbstractApiCompanion {
 
             names: ObjOrSeq[PlainLiteral],
 
-            location: ObjOrOption[Coordinate],
+            location: ObjOrOption[Location],
             
-            geometry: ObjOrOption[Geometry],
-
             temporalCoverage: ObjOrOption[PeriodOfTime],
             
             timePeriods: ObjOrSeq[String],
@@ -160,15 +146,9 @@ object Place extends AbstractApiCompanion {
 
             exactMatches: ObjOrSeq[String]): Place = {
 
-    new DefaultPlace(uri, label, descriptions.seq, names.seq, location.option, geometry.option, temporalCoverage.option, timePeriods.seq,
+    new DefaultPlace(uri, label, descriptions.seq, names.seq, location.option,temporalCoverage.option, timePeriods.seq,
       placeCategory.option, subjects.seq, depictions.seq, closeMatches.seq, exactMatches.seq)
     
   }
-  
-  /** Helper to parse a WKT string **/
-  def parseWKT(wkt: String): Geometry = wktReader.read(wkt)
-  
-  /** Helper to parse GeoJSON **/
-  def parseGeoJSON(json: String) = geoJson.read(json.trim)
 
 }

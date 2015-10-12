@@ -1,7 +1,7 @@
 package org.pelagios.rdf.parser.gazetteer
 
 import org.openrdf.model.vocabulary.{ RDF, RDFS }
-import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.{ Location, Place }
 import org.pelagios.rdf.parser.{ ResourceCollector, ResourceStreamHandler }
 import org.pelagios.rdf.vocab.{ LAWD, GeoSPARQL, W3CGeo }
 import org.pelagios.rdf.vocab.FOAF
@@ -36,11 +36,11 @@ class PlaceStreamHandler(val onNextPlace: Place => Unit, lowMemoryMode: Boolean)
       if (isComplete) {
 		    // We notify the callback handler...
         val names = nameResources.map(_.getFirst(LAWD.primaryForm).map(ResourceCollector.toPlainLiteral(_)).get)
-        val location = locationResource.flatMap(PlaceResource.toCoordinate(_))
+        val coordinate = locationResource.flatMap(PlaceResource.toCoordinate(_))
         val geometry = geometryResource.flatMap(PlaceResource.toGeometry(_))
         val images = imageResources.map(PlaceResource.toImage(_))
         
-        val placeResource = new PlaceResource(resource, names, location, geometry, images)
+        val placeResource = new PlaceResource(resource, names, Location.create(coordinate, geometry), images)
         onNextPlace(placeResource)
         
         // ...clear the place (along with all linked resources) from the cache...

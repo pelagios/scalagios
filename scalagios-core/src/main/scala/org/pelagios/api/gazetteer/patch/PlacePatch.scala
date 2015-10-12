@@ -15,10 +15,8 @@ case class PlacePatch(
   
   names: Seq[PlainLiteral],
 
-  location: Option[Coordinate],
-  
-  geometry: Option[Geometry],
-  
+  location: Option[Location],
+    
   temporalCoverage: Option[PeriodOfTime],
   
   timePeriods: Seq[String],
@@ -50,7 +48,6 @@ case class PlacePatch(
         { if (descriptions.size > 0) descriptions else place.descriptions },
         { if (names.size > 0) names else place.names },
         { if (location.isDefined) location else place.location },
-        { if (geometry.isDefined) geometry else place.geometry },
         { if (temporalCoverage.isDefined) temporalCoverage else place.temporalCoverage },
         { if (timePeriods.size > 0) timePeriods else place.timePeriods },
         { if (category.isDefined) category else place.category },
@@ -66,7 +63,6 @@ case class PlacePatch(
         place.descriptions ++ descriptions,
         place.names ++ names,
         { if (location.isDefined) location else place.location }, // Optional values will be relaced in any case
-        { if (geometry.isDefined) geometry else place.geometry },
         { if (temporalCoverage.isDefined) temporalCoverage else place.temporalCoverage },
         place.timePeriods ++ timePeriods,
         { if (category.isDefined) category else place.category },

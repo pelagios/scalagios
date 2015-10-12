@@ -1,12 +1,15 @@
 package org.pelagios.rdf.parser.gazetteer
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
+import com.vividsolutions.jts.io.WKTReader
+import org.geotools.geojson.geom.GeometryJSON
 import org.openrdf.model.vocabulary.RDFS
 import org.pelagios.api.{ Image, PlainLiteral, PeriodOfTime }
-import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.{ Location, Place }
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.pelagios.rdf.vocab._
 import org.slf4j.LoggerFactory
+
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Gazetteer dump files.
   *
@@ -26,7 +29,7 @@ class PlaceCollector extends ResourceCollector {
       .map(resource => (resource.uri -> resource.getFirst(LAWD.primaryForm).map(ResourceCollector.toPlainLiteral(_)).get)).toMap
 
     logger.info("Building locations table")
-    val locationsTable = resourcesOfType(W3CGeo.SpatialThing, Seq(_.hasPredicate(W3CGeo.lat)))
+    val coordinatesTable = resourcesOfType(W3CGeo.SpatialThing, Seq(_.hasPredicate(W3CGeo.lat)))
       .map(resource => (resource.uri -> PlaceResource.toCoordinate(resource))).toMap
       
     logger.info("Building geometries table")
@@ -40,10 +43,10 @@ class PlaceCollector extends ResourceCollector {
     logger.info("Wrapping RDF to domain model")
     resourcesOfType(LAWD.Place).map(resource => {
       val names = resource.get(LAWD.hasName).flatMap(uri => namesTable.get(uri.stringValue))
-      val location = resource.getFirst(W3CGeo.location).flatMap(uri => locationsTable.get(uri.stringValue)).flatten
+      val coordinate = resource.getFirst(W3CGeo.location).flatMap(uri => coordinatesTable.get(uri.stringValue)).flatten
       val geometry = resource.getFirst(GeoSPARQL.hasGeometry).flatMap(uri => geometriesTable.get(uri.stringValue)).flatten
       val images = resource.get(FOAF.depiction).flatMap(uri => imagesTable.get(uri.stringValue))
-      new PlaceResource(resource, names, location, geometry, images)
+      new PlaceResource(resource, names, Location.create(coordinate, geometry), images)
     })
   }
 
@@ -56,8 +59,7 @@ class PlaceCollector extends ResourceCollector {
  *  @param names the names connected to the resource
  *  @param locations the locations connected to the resource
  */
-private[parser] class PlaceResource(val resource: Resource, val names: Seq[PlainLiteral], val location: Option[Coordinate],
-    val geometry: Option[Geometry], val depictions: Seq[Image]) extends Place {
+private[parser] class PlaceResource(val resource: Resource, val names: Seq[PlainLiteral], val location: Option[Location], val depictions: Seq[Image]) extends Place {
 
   val uri = resource.uri
 
@@ -95,6 +97,11 @@ private[parser] object PlaceResource {
   
   protected val logger = LoggerFactory.getLogger(classOf[PlaceResource])
   
+  private val wktReader = new WKTReader()
+  
+  private val geoJson = new GeometryJSON()
+  
+  /** Converts a W3C location resource to a coordinate **/
   def toCoordinate(resource: Resource): Option[Coordinate] = {
     val latStr = resource.getFirst(W3CGeo.lat).map(_.stringValue)
     val longStr = resource.getFirst(W3CGeo.long).map(_.stringValue)
@@ -117,15 +124,16 @@ private[parser] object PlaceResource {
     }
   }
   
+  /** Converts a GeoSPARQL geometry resource to a geometry **/ 
   def toGeometry(resource: Resource): Option[Geometry] = {
     val asWKT = resource.getFirst(GeoSPARQL.asWKT).map(_.stringValue)
     val asGeoJSON = resource.getFirst(OSGeo.asGeoJSON).map(_.stringValue)
     
     try {
       if (asWKT.isDefined) {
-        Some(Place.parseWKT(asWKT.get))
+        Some(wktReader.read(asWKT.get))
       } else if (asGeoJSON.isDefined) {
-        Some(Place.parseGeoJSON(asGeoJSON.get))
+        Some(geoJson.read(asGeoJSON.get))
       } else {
         logger.warn("Found geometry resource, but no geometry attached: " + resource.toString)
         None
@@ -138,6 +146,7 @@ private[parser] object PlaceResource {
     }
   }
   
+  /** Converts a foaf:Image resource to an Image object **/
   def toImage(resource: Resource): Image = {
     val title = resource.getFirst(DCTerms.title).map(_.stringValue)
     val license = resource.getFirst(DCTerms.license).map(_.stringValue)

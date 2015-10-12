@@ -51,12 +51,12 @@ class GeoResolver(index: PlaceIndex) {
     }}
     
     def distance(a: Place, b: Place): Double = {
-      def centroidA = a.location
-      def centroidB = b.location
+      def locationA = a.location
+      def locationB = b.location
       
-      if (centroidA.isDefined && centroidB.isDefined) {
-        val dX = Math.abs(centroidA.get.x - centroidB.get.x)
-        val dY = Math.abs(centroidA.get.y - centroidB.get.y)
+      if (locationA.isDefined && locationB.isDefined) {
+        val dX = Math.abs(locationA.get.pointLocation.x - locationB.get.pointLocation.x)
+        val dY = Math.abs(locationA.get.pointLocation.y - locationB.get.pointLocation.y)
         dX * dX + dY * dY
       } else {
         Double.MaxValue        

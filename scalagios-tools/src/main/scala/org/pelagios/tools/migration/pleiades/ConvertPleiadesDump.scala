@@ -5,7 +5,7 @@ import java.util.zip.GZIPInputStream
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
 import org.pelagios.api.{ Image, PlainLiteral }
-import org.pelagios.api.gazetteer.{ Place, PlaceCategory }
+import org.pelagios.api.gazetteer.{ Location, Place, PlaceCategory }
 import org.pelagios.legacy.LegacyInterop
 
 object ConvertPleiadesDump extends App {
@@ -58,8 +58,7 @@ object ConvertPleiadesDump extends App {
       legacy.label.getOrElse("[unnamed]"),
       descriptions, 
       names,
-      legacy.location.map(_.getCentroid.getCoordinate),
-      legacy.location,
+      legacy.location.flatMap(geom => Location.create(None, Some(geom))),
       None, // temporal coverage
       Seq.empty[String], // time periods
       placeCategory,

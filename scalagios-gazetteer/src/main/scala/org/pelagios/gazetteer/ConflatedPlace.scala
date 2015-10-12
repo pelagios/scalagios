@@ -65,8 +65,7 @@ class ConflatedPlace(network: Network,
       
       Place(uri, head.label, descriptions, 
           names.toSeq,
-          location, 
-          None,
+          location,
           (head.temporalCoverage +: tail.map(_.temporalCoverage)).flatten.headOption,
           Seq.empty[String],
           head.category, // TODO not sure how to handle different category definitions...

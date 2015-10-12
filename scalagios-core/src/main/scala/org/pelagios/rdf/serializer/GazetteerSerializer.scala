@@ -2,7 +2,7 @@ package org.pelagios.rdf.serializer
 
 import com.vividsolutions.jts.io.WKTWriter
 import java.io.{ File, PrintWriter }
-import org.pelagios.api.gazetteer.Place
+import org.pelagios.api.gazetteer.{ Location, Place } 
 import org.openrdf.rio.RDFFormat
 import org.pelagios.Scalagios
 import org.pelagios.rdf.vocab.PelagiosPlaceCategories
@@ -49,7 +49,7 @@ object GazetteerSerializer {
       })
       
       if (place.location.isDefined)
-        writer.println("  geo:location [ geo:lat " + place.location.get.y + " ; geo:long " + place.location.get.x + " ] ;")
+        writer.println("  geo:location [ geo:lat " + place.location.get.pointLocation.y + " ; geo:long " + place.location.get.pointLocation.x + " ] ;")
       
       writer.println("  .\n")
     })
