@@ -11,7 +11,7 @@ class PlaceStreamHandler(val onNextPlace: Place => Unit, lowMemoryMode: Boolean)
   private var placeCounter = 0
   
   override def pushToStream() = {
-	// Get all PlaceRecord resources from the cache
+	  // Get all PlaceRecord resources from the cache
     val placeResources = cache.values.filter(resource => {
       val types = resource.get(RDF.TYPE)
       types.contains(LAWD.Place)
