@@ -74,7 +74,7 @@ private[parser] abstract class ResourceStreamHandler(triggerType: URI) extends R
       cache.values.foreach(resource => logger.debug(resource.uri))
     }
     
-	cache.clear()
+	  cache.clear()
   }
 
 }

@@ -9,7 +9,7 @@ import org.openrdf.rio.turtle.TurtleParserFactory
   *
   * @author Rainer Simon <rainer.simon@ait.ac.at>  
   */
-object Scalagios extends ScalagiosReader with ScalagiosWriter {
+object Scalagios extends ScalagiosReader with ScalagiosWriter with ScalagiosCounter {
   
   private[pelagios] val TURTLE = "ttl"
   
