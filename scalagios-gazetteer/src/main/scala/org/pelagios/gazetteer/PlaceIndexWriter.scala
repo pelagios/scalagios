@@ -6,6 +6,7 @@ import org.apache.lucene.util.Version
 import org.pelagios.Scalagios
 import org.pelagios.api.gazetteer.Place
 import org.slf4j.Logger
+import org.openrdf.rio.UnsupportedRDFormatException
 
 trait PlaceIndexWriter extends PlaceIndexReader {
     
@@ -48,8 +49,12 @@ trait PlaceIndexWriter extends PlaceIndexReader {
   }
   
   def addPlaceStream(is: InputStream, filename: String, lowMemoryMode: Boolean = false) = {
-    val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_4_9, analyzer))    
-    Scalagios.streamPlaces(is, filename, (place: Place) => addPlace(place, writer), lowMemoryMode)
+    val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_4_9, analyzer))
+    val format = Scalagios.guessFormatFromFilename(filename)
+    if (format.isDefined)
+      Scalagios.readPlacesFromStream(is, format.get, place => addPlace(place, writer), lowMemoryMode)
+    else 
+      throw new UnsupportedRDFormatException("Cannot determine format for: " + filename)
     writer.close()
   }
     

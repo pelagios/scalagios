@@ -8,6 +8,7 @@ import org.pelagios.api.gazetteer.Place
 import org.pelagios.Scalagios
 import org.openrdf.rio.RDFFormat
 import java.util.zip.GZIPInputStream
+import org.openrdf.rio.UnsupportedRDFormatException
 
 
 @RunWith(classOf[JUnitRunner])
@@ -27,7 +28,12 @@ class StreamingGazetteerParserTest extends FunSuite with UsesTestData {
         println(languages.mkString(", "))
     }
     
-    Scalagios.streamPlaces(is, TEST_FILE.getName, streamHandler)
+    val format = Scalagios.guessFormatFromFilename(TEST_FILE.getName)
+    if (format.isDefined)
+      Scalagios.readPlacesFromStream(is, format.get, streamHandler, false)
+    else
+      throw new UnsupportedRDFormatException("No format found for: " + TEST_FILE.getName) // Should never happen
+    
     is.close()
   }
   
