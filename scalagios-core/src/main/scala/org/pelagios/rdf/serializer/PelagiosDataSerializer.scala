@@ -5,7 +5,7 @@ import org.callimachusproject.io.TurtleStreamWriterFactory
 import org.openrdf.model.{ URI, BNode, Model }
 import org.openrdf.model.impl.LinkedHashModel
 import org.openrdf.model.vocabulary.{ RDF, RDFS }
-import org.openrdf.rio.{ Rio, RDFFormat }
+import org.openrdf.rio.{ Rio, RDFFormat, UnsupportedRDFormatException }
 import org.pelagios.Scalagios
 import org.pelagios.api._
 import org.pelagios.api.annotation.{ AnnotatedThing, SpecificResource, Transcription, TranscriptionType }
@@ -173,7 +173,10 @@ object PelagiosDataSerializer {
       // A little hack - for turtle we'll use a custom serializer that handles blank nodes
       Rio.write(toRDF(annotatedThings), new TurtleStreamWriterFactory().createWriter(out, null))
     } else {
-      Rio.write(toRDF(annotatedThings), out, Scalagios.getFormat(format))
+      Scalagios.getFormatForExtension(format) match {
+        case Some(format) => Rio.write(toRDF(annotatedThings), out, format)
+        case _ => throw new UnsupportedRDFormatException("Cannot determine RDF format for " + format)   
+      }
     } 
   }
   

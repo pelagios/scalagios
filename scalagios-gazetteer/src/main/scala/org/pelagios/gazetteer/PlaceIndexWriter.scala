@@ -49,7 +49,7 @@ trait PlaceIndexWriter extends PlaceIndexReader {
   
   def addPlaceStream(is: InputStream, filename: String, lowMemoryMode: Boolean = false) = {
     val writer = new IndexWriter(index, new IndexWriterConfig(Version.LUCENE_4_9, analyzer))    
-    Scalagios.streamPlaces(is, filename, place => addPlace(place, writer), lowMemoryMode)
+    Scalagios.streamPlaces(is, filename, (place: Place) => addPlace(place, writer), lowMemoryMode)
     writer.close()
   }
     

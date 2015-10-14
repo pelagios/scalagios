@@ -19,20 +19,26 @@ object Scalagios extends ScalagiosReader with ScalagiosWriter {
   
   /** OpenRDF requires a 'base URI' for parsing RDF from file - but doesn't actually seem to do anything with it **/
   private[pelagios] val BASE_URI = "http://pelagios.org"
-    
-  /** Gets a parser for a file extension **/
-  private[pelagios] def getParser(format: String): RDFParser = format.toLowerCase match {
-    case f if f.endsWith(TURTLE) => new TurtleParserFactory().getParser()
-    case f if f.endsWith(RDFXML) => new RDFXMLParserFactory().getParser()
-    case f if f.endsWith(N3) => new N3ParserFactory().getParser()
-    case _ => throw new UnsupportedRDFormatException("Format not supported")
+  
+  /** Returns the RDF Format for the specified extension **/
+  def getFormatForExtension(extension: String): Option[RDFFormat] = extension.toLowerCase match {
+    case e if e.endsWith(TURTLE) => Some(RDFFormat.TURTLE)
+    case f if f.endsWith(RDFXML) => Some(RDFFormat.RDFXML)
+    case f if f.endsWith(N3) => Some(RDFFormat.N3)
+    case _ => None    
   }
   
-  private[pelagios] def getFormat(format: String): RDFFormat = format.toLowerCase match {
-    case f if f.endsWith(TURTLE) => RDFFormat.TURTLE
-    case f if f.endsWith(RDFXML) => RDFFormat.RDFXML
-    case f if f.endsWith(N3) => RDFFormat.N3
-    case _ => throw new UnsupportedRDFormatException("Format not supported")
-  }
+  /** 'Guesses' the format from the specified filename. 
+    *  
+    * TODO in the future we want to make this more clever. But for the time
+    * being, this function just distinguishes between uncompressed files and
+    * files with a .gz extension, and the decides based on the extension
+    * before the .gz suffix, if any.
+    */
+  def guessFormatFromFilename(filename: String): Option[RDFFormat] =
+    if (filename.endsWith(".gz"))
+      getFormatForExtension(filename.substring(0, filename.lastIndexOf('.')))
+    else
+      getFormatForExtension(filename)
   
 }
