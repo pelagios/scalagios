@@ -68,18 +68,20 @@ private[pelagios] trait ScalagiosReader {
     }
   
   /** Parses a Pelagios gazetteer patch file **/
-  def readPlacePatches(is: InputStream, filename: String): Iterable[PlacePatch] = {
-    val format = guessFormatFromFilename(filename)
-    if (format.isDefined) {
-      val parser = Rio.createParser(format.get)
-      val handler = new PlacePatchCollector()
-      parser.setRDFHandler(handler)
-      parser.parse(is, BASE_URI)
-      handler.patches
-    } else {
-      throw new UnsupportedRDFormatException("Cannot determine RDF format for " + filename)
-    }
+  def readPlacePatches(is: InputStream, format: RDFFormat): Iterable[PlacePatch] = {
+    val parser = Rio.createParser(format)
+    val handler = new PlacePatchCollector()
+    parser.setRDFHandler(handler)
+    parser.parse(is, BASE_URI)
+    handler.patches    
   }
+   
+  /** Just for convenience: tries to guess the format for the specified filename **/ 
+  def readPlacePatches(is: InputStream, filename: String): Iterable[PlacePatch] =
+    guessFormatFromFilename(filename) match {
+      case Some(format) => readPlacePatches(is, format)
+      case _ => throw new UnsupportedRDFormatException("Cannot determine RDF format for " + filename)
+    }
   
   /**  Parses a 'streamable' gazetteer dump file from an input stream **/  
   def readPlacesFromStream(is: InputStream, format: RDFFormat, streamHandler: Place => Unit, lowMemoryMode: Boolean = false): Unit = {
