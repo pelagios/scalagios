@@ -11,11 +11,11 @@ import org.openrdf.rio.turtle.TurtleParserFactory
   */
 object Scalagios extends ScalagiosReader with ScalagiosWriter {
   
-  val TURTLE = "ttl"
+  private[pelagios] val TURTLE = "ttl"
   
-  val RDFXML = "rdf"
+  private[pelagios] val RDFXML = "rdf"
   
-  val N3 = "n3"
+  private[pelagios] val N3 = "n3"
   
   /** OpenRDF requires a 'base URI' for parsing RDF from file - but doesn't actually seem to do anything with it **/
   private[pelagios] val BASE_URI = "http://pelagios.org"
