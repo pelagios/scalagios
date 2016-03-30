@@ -1,7 +1,7 @@
 package org.pelagios.api
 
 import java.text.SimpleDateFormat
-import java.util.{ Calendar, Date, GregorianCalendar }
+import java.util.{ Calendar, Date, GregorianCalendar, TimeZone }
 
 /** A period of time.
   *  
@@ -67,8 +67,9 @@ object PeriodOfTime {
       }
       dateFormat.parse(str)     
     } else {
-      val calendar = Calendar.getInstance()
-      calendar.set(Calendar.YEAR, abs.toInt * sgn)
+      val cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
+      cal.setTimeInMillis(0)
+      cal.set(Calendar.YEAR, abs.toInt * sgn)
       calendar.getTime
     }
   }
