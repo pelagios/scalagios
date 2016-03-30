@@ -70,7 +70,7 @@ object PeriodOfTime {
       val cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
       cal.setTimeInMillis(0)
       cal.set(Calendar.YEAR, abs.toInt * sgn)
-      calendar.getTime
+      cal.getTime
     }
   }
   
