@@ -2,7 +2,7 @@ name := "scalagios-core"
 
 version := "2.0.0"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.7"
 
 resolvers += "Open Source Geospatial Foundation Repository" at "http://download.osgeo.org/webdav/geotools/"
 

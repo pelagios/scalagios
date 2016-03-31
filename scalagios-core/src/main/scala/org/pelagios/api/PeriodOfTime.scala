@@ -2,6 +2,7 @@ package org.pelagios.api
 
 import java.text.SimpleDateFormat
 import java.util.{ Calendar, Date, GregorianCalendar, TimeZone }
+import org.slf4j.LoggerFactory
 
 /** A period of time.
   *  
@@ -67,15 +68,17 @@ object PeriodOfTime {
       }
       dateFormat.parse(str)     
     } else {
-      val cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
+      val cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"))
+      cal.setGregorianChange(new Date(Long.MinValue))
       cal.setTimeInMillis(0)
       cal.set(Calendar.YEAR, abs.toInt * sgn)
-      cal.getTime
+      val date = cal.getTime
+      date
     }
   }
   
   /** Note: we support DCMI Period Encoding scheme and <start>/<end> **/
-  def fromString(str: String): PeriodOfTime = {
+  def fromString(str: String): PeriodOfTime = {    
     if (str.contains(";")) {
       // DCMI
       val fields = str.split(";").map(_.trim)
