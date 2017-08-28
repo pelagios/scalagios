@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5",
   "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
   "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",   
-  "org.fusesource.scalate" % "scalate-core_2.10" % "1.6.1",           
+  "org.scalatra.scalate" % "scalate-core_2.11" % "1.7.0",           
   "com.vividsolutions" % "jts" % "1.13",
   "org.geotools" % "gt-geojson" % "10.5",
   "org.slf4j" % "slf4j-simple" % "1.7.7",
@@ -27,5 +27,5 @@ libraryDependencies ++= Seq(
 /** Test dependencies **/
 libraryDependencies ++= Seq(
   "junit" % "junit" % "4.11" % "test",
-  "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
+  "org.scalatest" % "scalatest_2.11" % "2.1.3" % "test"
 )

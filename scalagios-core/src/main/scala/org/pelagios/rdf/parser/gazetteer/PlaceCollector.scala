@@ -45,7 +45,17 @@ class PlaceCollector extends ResourceCollector {
       val names = resource.get(LAWD.hasName).flatMap(uri => namesTable.get(uri.stringValue))
       val coordinate = resource.getFirst(W3CGeo.location).flatMap(uri => coordinatesTable.get(uri.stringValue)).flatten
       val geometry = resource.getFirst(GeoSPARQL.hasGeometry).flatMap(uri => geometriesTable.get(uri.stringValue)).flatten
-      val images = resource.get(FOAF.depiction).flatMap(uri => imagesTable.get(uri.stringValue))
+      val images = resource.get(FOAF.depiction).map { uri => 
+        imagesTable.get(uri.stringValue) match {
+          case Some(image) =>
+            // The image is represented as a dedicated resource, with extra meta
+            image
+            
+          case None =>
+            // No image resource, just use the URL
+            Image(uri.toString)
+        }
+      }
       new PlaceResource(resource, names, Location.create(coordinate, geometry), images)
     })
   }

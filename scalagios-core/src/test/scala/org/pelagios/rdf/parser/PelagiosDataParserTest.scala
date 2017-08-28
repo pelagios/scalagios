@@ -11,7 +11,8 @@ import java.io.FileInputStream
 @RunWith(classOf[JUnitRunner])
 class PelagiosDataParserTest extends FunSuite with UsesTestData {
 
-  private val TEST_FILE = getFile("test-annotations-vicarello.ttl")
+  // private val TEST_FILE = getFile("test-annotations-vicarello.ttl")
+  private val TEST_FILE = getFile("opencontext.ttl")
     
   test("Pelagios Data Dump Import") {
     // Parse test data

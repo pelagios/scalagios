@@ -30,6 +30,9 @@ class GazetteerParserTest extends FunSuite with UsesTestData {
     val placesWithNames = places.filter(_.names.size > 0)
     assert(placesWithNames.size == 449, "invalid number of places with names")
     
+    val placesWithDepiction = places.filter(_.depictions.size > 0)
+    assert(placesWithDepiction.size == 1, "invalid number of places with depictions")
+    
     is.close()
   }
   
