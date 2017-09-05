@@ -1,24 +1,16 @@
 package org.pelagios.rdf.parser.annotation
 
 import java.util.Date
+import java.text.SimpleDateFormat
 import org.pelagios.api._
 import org.pelagios.rdf.vocab._
 import org.openrdf.model.URI
 import org.openrdf.model.vocabulary.RDF
 import org.openrdf.model.BNode
-import java.text.SimpleDateFormat
-import org.pelagios.api.annotation.Annotation
-import org.pelagios.api.annotation.AnnotatedThing
-import org.pelagios.api.annotation.AnnotationTarget
-import org.pelagios.api.annotation.Relation
-import org.pelagios.api.annotation.TranscriptionType
-import org.pelagios.api.annotation.Transcription
-import org.pelagios.api.annotation.Tag
-import org.pelagios.api.PeriodOfTime
-import org.pelagios.rdf.parser.Resource
-import org.pelagios.rdf.parser.Resource
-import org.pelagios.rdf.parser.ResourceCollector
+import org.pelagios.api.annotation._
+import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.slf4j.LoggerFactory
+import scala.collection.mutable.ListBuffer
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -33,9 +25,9 @@ class PelagiosDataParser extends ResourceCollector {
     val agents = resourcesOfType(FOAF.Organization).map(new AgentResource(_)).map(agent => (agent.uri.get, agent)).toMap
 
     // Resolve depiction resources
-    val depictions = resourcesOfType(FOAF.Image, Seq(_.hasAnyPredicate(Seq(DCTerms.isReferencedBy))))
-      // TODO include isReferencedBy as possible field in Image
-      .map(resource => (resource.uri -> Image(resource.uri))).toMap
+    val depictions = resourcesOfType(FOAF.Image, Seq(_.hasAnyPredicate(Seq(DCTerms.isReferencedBy)))).map { resource =>
+      (resource.uri -> Image(resource.uri, None, None, resource.getFirst(DCTerms.isReferencedBy).map(_.stringValue)))
+    }.toMap
     
     // Resolve transcriptions
     val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))
@@ -45,7 +37,6 @@ class PelagiosDataParser extends ResourceCollector {
                              .map(bnode => allTranscriptions.find(_.uri.equals(bnode.stringValue)))
                              .filter(_.isDefined).map(_.get)
         
-      
       if (rdfTranscriptions.size > 0) {
         // We only allow one transcription per annotation - so we'll discard additional ones, if any
         val transcription = rdfTranscriptions(0)
@@ -70,6 +61,14 @@ class PelagiosDataParser extends ResourceCollector {
         thing.isPartOf = work
         if (work.isDefined) {
           work.get.parts = thing +: work.get.parts
+        }
+      }
+      
+      thing.resource.get(FOAF.depiction).map { uriVal =>
+        val uri = uriVal.stringValue
+        depictions.get(uri) match {
+          case Some(image) => thing.depictions = thing.depictions :+ image
+          case None => thing.depictions = thing.depictions :+ Image(uri)
         }
       }
     })  
@@ -198,7 +197,7 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def thumbnails = resource.get(FOAF.thumbnail).map(_.stringValue)
   
-  def depictions = resource.get(FOAF.depiction).map(_.stringValue)
+  var depictions = Seq.empty[Image]
   
   def bibliographicCitations = resource.get(DCTerms.bibliographicCitation).map(_.stringValue)
   

@@ -1,7 +1,7 @@
 package org.pelagios.api.annotation
 
 import scala.collection.mutable.ListBuffer
-import org.pelagios.api.{ AbstractApiCompanion, Agent, PeriodOfTime }
+import org.pelagios.api.{ AbstractApiCompanion, Agent, Image, PeriodOfTime }
 
 /** 'AnnotatedThing' model entity.
   * 
@@ -105,7 +105,7 @@ trait AnnotatedThing extends AnnotationTarget {
     * in order to hold creator and license information along with the image URL
     * as well.   
     */
-  def depictions: Seq[String]
+  def depictions: Seq[Image]
   
   /** dcterms:biblographicCitation
     *  
@@ -163,7 +163,7 @@ private[api] class DefaultAnnotatedThing(
   
   val thumbnails: Seq[String] = Seq.empty[String],
   
-  val depictions: Seq[String] = Seq.empty[String],
+  val depictions: Seq[Image] = Seq.empty[Image],
   
   val bibliographicCitations: Seq[String] = Seq.empty[String],
   
@@ -212,7 +212,7 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             thumbnails: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
-            depictions: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            depictions: ObjOrSeq[Image] = new ObjOrSeq(Seq.empty),
             
             bibliographicCitations: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
