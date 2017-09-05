@@ -31,6 +31,11 @@ class PelagiosDataParser extends ResourceCollector {
     
     // Resolve foaf:Agents
     val agents = resourcesOfType(FOAF.Organization).map(new AgentResource(_)).map(agent => (agent.uri.get, agent)).toMap
+
+    // Resolve depiction resources
+    val depictions = resourcesOfType(FOAF.Image, Seq(_.hasAnyPredicate(Seq(DCTerms.isReferencedBy))))
+      // TODO include isReferencedBy as possible field in Image
+      .map(resource => (resource.uri -> Image(resource.uri))).toMap
     
     // Resolve transcriptions
     val allTranscriptions = resourcesOfType(Pelagios.Transcription, Seq(_.hasAnyType(Seq(Pelagios.Toponym, Pelagios.Metonym, Pelagios.Ethnonym))))

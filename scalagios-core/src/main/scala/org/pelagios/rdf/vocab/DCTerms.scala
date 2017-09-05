@@ -19,6 +19,8 @@ object DCTerms extends BaseVocab("http://purl.org/dc/terms/") {
   
   val isPartOf = createURI("isPartOf")
   
+  val isReferencedBy = createURI("isReferencedBy")
+  
   val language = createURI("language")
   
   val license = createURI("license")
