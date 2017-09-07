@@ -1892,7 +1892,8 @@
     dcterms:relation <http://opencontext.org/subjects/970D7F01-25AA-4528-EA53-83769A6F846B> ;
     dcterms:temporal "0330/0363" ;
     dcterms:title "dt5119ob1.JPG from Turkey/Domuztepe/VII/Lot 3930/DT# 5119" ;
-    foaf:depiction <https://merritt.cdlib.org/d/ark%3A%2F28722%2Fk2c53nc2n/0/artiraq.org/static/opencontext/domuztepe/preview/coins/dt5119/dt5119ob1.JPG> .
+    foaf:depiction <https://merritt.cdlib.org/d/ark%3A%2F28722%2Fk2c53nc2n/0/artiraq.org/static/opencontext/domuztepe/preview/coins/dt5119/dt5119ob1.JPG> ;
+    void:inDataset <http://www.example.com/datasets/00001> .
 
 <http://opencontext.org/media/00CA1D18-576A-4F90-9F6A-148B9D9258BA> a pelagios:AnnotatedThing ;
     dcterms:description "Image media item associated with the coin record: DT# 4954 from Turkey/Domuztepe/VII/Lot 3942; part of the \"Domuztepe Excavations\" data publication." ;
@@ -5462,4 +5463,3 @@
     dcterms:temporal "-6499/0400" ;
     dcterms:title "Domuztepe Excavations" ;
     foaf:depiction <http://artiraq.org/static/opencontext/domuztepe/heros/domuztepe-hero.jpg> .
-

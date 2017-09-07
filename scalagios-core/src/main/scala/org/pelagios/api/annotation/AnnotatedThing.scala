@@ -118,14 +118,20 @@ trait AnnotatedThing extends AnnotationTarget {
     * According to the DCMI definition: "the topic of the resource"
     */
   def subjects: Seq[String]  
- 
+
+  /** void:inDataset
+    * 
+    * Specific per-item dataset declaration (used by nomisma) 
+    */
+  def inDataset: Option[String]
+  
   /** Parts (as defined through dcterms:isPartOf)
     *   
     * If the annotated thing has parts, this method returns the parts
     * that belong to it.
     */ 
   def parts: Seq[AnnotatedThing]
-  
+    
   /** The annotations on the annotated thing (if any). **/
   def annotations: Seq[Annotation]
   
@@ -167,7 +173,9 @@ private[api] class DefaultAnnotatedThing(
   
   val bibliographicCitations: Seq[String] = Seq.empty[String],
   
-  val subjects: Seq[String] = Seq.empty[String]
+  val subjects: Seq[String] = Seq.empty[String],
+  
+  val inDataset: Option[String] = None
       
 ) extends AnnotatedThing {
 
@@ -216,11 +224,13 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             bibliographicCitations: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
-            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty)): AnnotatedThing = {
+            subjects: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
+            
+            inDataset: ObjOrOption[String] = new ObjOrOption(None)): AnnotatedThing = {
     
     new DefaultAnnotatedThing(uri, title, isPartOf.option, identifier.option, description.option, homepage.option, sources.seq, primaryTopicOf,
                               temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
-                              bibliographicCitations.seq, subjects.seq)
+                              bibliographicCitations.seq, subjects.seq, inDataset.option)
   }
   
 }

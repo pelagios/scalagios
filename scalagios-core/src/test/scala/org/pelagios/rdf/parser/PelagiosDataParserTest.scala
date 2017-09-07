@@ -24,6 +24,10 @@ class PelagiosDataParserTest extends FunSuite with UsesTestData {
     val thingsWithDepiction = things.filter(!_.depictions.isEmpty)
     assert(thingsWithDepiction.size == 214)
     
+    val thingsInDataset = things.filter(_.inDataset.isDefined)
+    assert(thingsInDataset.size === 1)
+    assert(thingsInDataset.head.inDataset == Some("http://www.example.com/datasets/00001"))
+    
     val iiifDepictions = thingsWithDepiction.flatMap(_.depictions).filter(_.iiifEndpoint.isDefined)
     assert(iiifDepictions.size == 1)
     assert(iiifDepictions.head.iiifEndpoint == Some("http://www.example.com/iiif/DSCN1459/info.json"))

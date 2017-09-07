@@ -203,6 +203,8 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def subjects = resource.get(DCTerms.subject).map(_.stringValue)
   
+  def inDataset = resource.getFirst(VoID.inDataset).map(_.stringValue)
+  
   var annotations = Seq.empty[AnnotationResource]
   
   var parts = Seq.empty[AnnotatedThingResource]
