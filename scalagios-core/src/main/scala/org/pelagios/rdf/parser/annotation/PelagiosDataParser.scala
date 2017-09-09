@@ -10,7 +10,6 @@ import org.openrdf.model.BNode
 import org.pelagios.api.annotation._
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.slf4j.LoggerFactory
-import scala.collection.mutable.ListBuffer
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -67,8 +66,8 @@ class PelagiosDataParser extends ResourceCollector {
       thing.resource.get(FOAF.depiction).map { uriVal =>
         val uri = uriVal.stringValue
         depictions.get(uri) match {
-          case Some(image) => thing.depictions = thing.depictions :+ image
-          case None => thing.depictions = thing.depictions :+ Image(uri)
+          case Some(image) => thing.depictions.append(image)
+          case None => thing.depictions.append(Image(uri))
         }
       }
     })  
@@ -197,7 +196,7 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   def thumbnails = resource.get(FOAF.thumbnail).map(_.stringValue)
   
-  var depictions = Seq.empty[Image]
+  val depictions = scala.collection.mutable.ListBuffer.empty[Image]
   
   def bibliographicCitations = resource.get(DCTerms.bibliographicCitation).map(_.stringValue)
   
