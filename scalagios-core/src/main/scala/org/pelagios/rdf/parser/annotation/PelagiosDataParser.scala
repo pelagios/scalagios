@@ -63,7 +63,8 @@ class PelagiosDataParser extends ResourceCollector {
         }
       }
       
-      thing.resource.get(FOAF.depiction).map { uriVal =>
+      val imageURIs = thing.resource.get(FOAF.depiction) ++ thing.resource.get(EDM.isShownBy) 
+      imageURIs.map { uriVal =>
         val uri = uriVal.stringValue
         depictions.get(uri) match {
           case Some(image) => thing.depictions.append(image)
