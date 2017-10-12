@@ -1,6 +1,6 @@
 name := "scalagios-core"
 
-version := "2.0.3"
+version := "2.0.4"
 
 scalaVersion := "2.11.7"
 
@@ -13,8 +13,8 @@ libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-parser-combinators" % "2.11.0-M4",
   "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5",
   "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
-  "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",   
-  "org.scalatra.scalate" % "scalate-core_2.11" % "1.7.0",           
+  "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",
+  "org.scalatra.scalate" % "scalate-core_2.11" % "1.7.0",
   "com.vividsolutions" % "jts" % "1.13",
   "org.geotools" % "gt-geojson" % "10.5",
   "org.slf4j" % "slf4j-simple" % "1.7.7",
