@@ -10,6 +10,7 @@ import org.openrdf.model.BNode
 import org.pelagios.api.annotation._
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.slf4j.LoggerFactory
+import scala.util.{ Try, Success, Failure }
 
 /** An implementation of [[org.pelagios.rdf.parser.ResourceCollector]] to handle Pelagios data dump files.
   * 
@@ -175,21 +176,24 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   val primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
   
-  val timeInterval: Option[TimeInterval] =
-    try {
-      resource.getFirst(DCTerms.temporal).map(literal => TimeInterval.fromString(literal.stringValue))
-    } catch {
-      case t: Throwable => {
-        // Vast majority of resources will be fine, so no need to create a logger, unless needed
-        val logger = LoggerFactory.getLogger(classOf[AnnotatedThingResource])
-        logger.warn("Error parsing dcterms:temporal on " + uri)
-        logger.warn(t.getMessage)
-        None
+  val (timeInterval, namedPeriods) = {
+    val temporal = resource.get(DCTerms.temporal).map(_.stringValue)
+    
+    val periods = temporal.filter(_.startsWith("http"))
+    val interval = temporal.filterNot(_.startsWith("http")).flatMap { str =>
+      Try(TimeInterval.fromString(str)) match {
+        case Success(t) => Some(t)
+        case Failure(e) =>
+          // Vast majority of resources will be fine, so no need to create a logger, unless needed
+          val logger = LoggerFactory.getLogger(classOf[AnnotatedThingResource])
+          logger.warn("Error parsing dcterms:temporal on " + uri)
+          logger.warn(e.getMessage)
+          None
       }
-    }
-  
-  // TODO implement
-  val namedPeriods = Seq.empty[String]
+    }.headOption
+        
+    (interval, periods)
+  }
 
   var creator: Option[Agent] = None
 
