@@ -9,7 +9,7 @@ import scala.collection.JavaConversions._
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON
 import org.apache.lucene.document.StoredField
-import org.pelagios.api.{ Image, PeriodOfTime }
+import org.pelagios.api.{ Image, TimeInterval }
 
 /** An implementation of the [[Place]] API primitive backed by a Lucene Document.
   *  
@@ -42,9 +42,9 @@ class PlaceDocument private[gazetteer] (doc: Document) extends Place {
   
   val location: Option[Location] = toOption(doc.get(PlaceIndex.FIELD_GEOMETRY)).flatMap(json => Location.fromGeoJSON(json))
   
-  val temporalCoverage: Option[PeriodOfTime] = None // TODO implement
+  val timeInterval: Option[TimeInterval] = None // TODO implement
   
-  val timePeriods: Seq[String] = Seq.empty[String]
+  val namedPeriods: Seq[String] = Seq.empty[String] // TODO implement
   
   val category: Option[PlaceCategory.Category] = toOption(doc.get(PlaceIndex.FIELD_CATEGORY)).map(PlaceCategory.withName(_))
   

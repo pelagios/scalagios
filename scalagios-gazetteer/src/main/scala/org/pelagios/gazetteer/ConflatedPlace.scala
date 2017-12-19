@@ -66,7 +66,7 @@ class ConflatedPlace(network: Network,
       Place(uri, head.label, descriptions, 
           names.toSeq,
           location,
-          (head.temporalCoverage +: tail.map(_.temporalCoverage)).flatten.headOption,
+          (head.timeInterval +: tail.map(_.timeInterval)).flatten.headOption,
           Seq.empty[String],
           head.category, // TODO not sure how to handle different category definitions...
           head.subjects ++ tail.flatMap(_.subjects), // Merge all subjects,
@@ -88,9 +88,9 @@ class ConflatedPlace(network: Network,
   
   def geometry = Option.empty[Geometry]
   
-  def temporalCoverage = place.temporalCoverage
+  def timeInterval = place.timeInterval
   
-  def timePeriods = Seq.empty[String]
+  def namedPeriods = Seq.empty[String]
   
   def category = place.category
   
