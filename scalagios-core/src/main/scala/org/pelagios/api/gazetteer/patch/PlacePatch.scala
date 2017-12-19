@@ -1,7 +1,7 @@
 package org.pelagios.api.gazetteer.patch
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
-import org.pelagios.api.{ Image, PlainLiteral, PeriodOfTime }
+import org.pelagios.api.{ Image, PlainLiteral, TimeInterval }
 import org.pelagios.api.gazetteer._
 
 /** A 'patch' with information to replace in (or append to) an existing gazetteer record **/
@@ -17,9 +17,9 @@ case class PlacePatch(
 
   location: Option[Location],
     
-  temporalCoverage: Option[PeriodOfTime],
+  timeInterval: Option[TimeInterval],
   
-  timePeriods: Seq[String],
+  namedPeriods: Seq[String],
   
   category: Option[PlaceCategory.Category],
   
@@ -48,8 +48,8 @@ case class PlacePatch(
         { if (descriptions.size > 0) descriptions else place.descriptions },
         { if (names.size > 0) names else place.names },
         { if (location.isDefined) location else place.location },
-        { if (temporalCoverage.isDefined) temporalCoverage else place.temporalCoverage },
-        { if (timePeriods.size > 0) timePeriods else place.timePeriods },
+        { if (timeInterval.isDefined) timeInterval else place.timeInterval },
+        { if (namedPeriods.size > 0) namedPeriods else place.namedPeriods },
         { if (category.isDefined) category else place.category },
         { if (subjects.size > 0) subjects else place.subjects },
         { if (depictions.size > 0) depictions else place.depictions },
@@ -63,8 +63,8 @@ case class PlacePatch(
         place.descriptions ++ descriptions,
         place.names ++ names,
         { if (location.isDefined) location else place.location }, // Optional values will be relaced in any case
-        { if (temporalCoverage.isDefined) temporalCoverage else place.temporalCoverage },
-        place.timePeriods ++ timePeriods,
+        { if (timeInterval.isDefined) timeInterval else place.timeInterval },
+        place.namedPeriods ++ namedPeriods,
         { if (category.isDefined) category else place.category },
         place.subjects ++ subjects,
         place.depictions ++ depictions,

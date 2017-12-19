@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
   * @param name an optional name for the period
   * @author Rainer Simon <rainer.simon@ait.ac.at>
   */
-trait PeriodOfTime {
+trait TimeInterval {
   
   private def getYear(date: Date) = {
     val calendar = Calendar.getInstance()
@@ -39,10 +39,10 @@ trait PeriodOfTime {
 }
 
 /** Default POJO-style implementation of 'PeriodOfTime' **/
-private[api] class DefaultPeriodOfTime(val start: Date, val end: Option[Date], val name: Option[String]) extends PeriodOfTime
+private[api] class DefaultTimeInterval(val start: Date, val end: Option[Date], val name: Option[String]) extends TimeInterval
 
 /** Companion object with a pimped apply method for generating DefaultPeriodOfTime instances **/
-object PeriodOfTime {
+object TimeInterval {
   
   private val yMdFormat = new SimpleDateFormat("yyyy-MM-dd")
   
@@ -50,7 +50,7 @@ object PeriodOfTime {
   
   private val MINUS = "-"
 
-  def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultPeriodOfTime(start, end, name)
+  def apply(start: Date, end: Option[Date] = None, name: Option[String] = None) = new DefaultTimeInterval(start, end, name)
   
   /** Parses the YYYY-MM-DD format. Month & days are optional **/
   private def parseYYYYMMDD(str: String): Date = {
@@ -78,7 +78,7 @@ object PeriodOfTime {
   }
   
   /** Note: we support DCMI Period Encoding scheme and <start>/<end> **/
-  def fromString(str: String): PeriodOfTime = {    
+  def fromString(str: String): TimeInterval = {    
     if (str.contains(";")) {
       // DCMI
       val fields = str.split(";").map(_.trim)
@@ -89,7 +89,7 @@ object PeriodOfTime {
       if (end.isDefined && end.get.before(start.get))
         throw new NumberFormatException("End date before start date: " + str) 
         
-      PeriodOfTime(start.get, end, name)
+      TimeInterval(start.get, end, name)
     } else {
       // <start>/<end>, with format YYYY[-MM-DD]
       val fields = str.split("/").map(_.trim)
@@ -99,7 +99,7 @@ object PeriodOfTime {
       if (end.isDefined && end.get.before(start))
         throw new NumberFormatException("End date before start date: " + str) 
       
-      PeriodOfTime(start, end)
+      TimeInterval(start, end)
     }
   }
   

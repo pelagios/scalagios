@@ -7,10 +7,10 @@ import org.scalatest.junit.JUnitRunner
 import org.slf4j.LoggerFactory
 
 @RunWith(classOf[JUnitRunner])
-class PeriodOfTimeTest extends FunSuite {
+class TimeIntervalTest extends FunSuite {
     
-  test("PeriodOfTime") {
-    val periodOfTime = PeriodOfTime.fromString("-20/630")
+  test("TimeInterval") {
+    val periodOfTime = TimeInterval.fromString("-20/630")
     assert(periodOfTime.start.getTime == -62798371200000l)
     assert(periodOfTime.end.get.getTime == -42286320000000l)
   }

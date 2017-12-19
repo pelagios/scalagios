@@ -175,9 +175,9 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
   
   val primaryTopicOf = resource.get(FOAF.primaryTopicOf).map(_.stringValue)
   
-  val temporal: Option[PeriodOfTime] =
+  val timeInterval: Option[TimeInterval] =
     try {
-      resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+      resource.getFirst(DCTerms.temporal).map(literal => TimeInterval.fromString(literal.stringValue))
     } catch {
       case t: Throwable => {
         // Vast majority of resources will be fine, so no need to create a logger, unless needed
@@ -187,10 +187,13 @@ private[parser] class AnnotatedThingResource(val resource: Resource) extends Ann
         None
       }
     }
+  
+  // TODO implement
+  val namedPeriods = Seq.empty[String]
 
   var creator: Option[Agent] = None
 
-  // TODO    
+  // TODO implement
   def contributors: Seq[Agent] = Seq.empty[Agent]
   
   def languages = resource.get(DCTerms.language).map(_.stringValue)

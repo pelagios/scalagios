@@ -3,7 +3,7 @@ package org.pelagios.api.gazetteer
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry, GeometryFactory }
 import com.vividsolutions.jts.io.WKTReader
 import org.geotools.geojson.geom.GeometryJSON
-import org.pelagios.api.{ AbstractApiCompanion, Image, PlainLiteral, PeriodOfTime }
+import org.pelagios.api.{ AbstractApiCompanion, Image, PlainLiteral, TimeInterval }
 
 /** Pelagios 'Place' model entity.
   *
@@ -40,19 +40,19 @@ trait Place {
     */
   def location: Option[Location]
 
-  /** dcterms:temporal
-    *
-    * According to the DCMI definition the "temporal coverage" or "temporal
-    * characteristics of the resource". We recommend using the DCMI
-    * Period Encoding Scheme: http://dublincore.org/documents/dcmi-period/
+  /** Time interval
+    *  
+    * In case dcterms:temporal contains a time interval, encoded e.g. according
+    * to the DCMI Period Encoding Scheme: http://dublincore.org/documents/dcmi-period/
     */
-  def temporalCoverage: Option[PeriodOfTime]
-
-  /** dcterms:temporal
-    *
-    * Alternatively - or in addition - temporal coverage expressed as period URIs.
+  def timeInterval: Option[TimeInterval]
+  
+  /** Named time periods
+    *  
+    * Derived from dcterms:temporal, as above, but in case the temporal coverage is
+    * expressed using a concept URI 
     */
-  def timePeriods: Seq[String]
+  def namedPeriods: Seq[String]
 
   /** dcterms:type
     *
@@ -103,9 +103,9 @@ private[api] class DefaultPlace (
 
   val location: Option[Location],
   
-  val temporalCoverage: Option[PeriodOfTime],
+  val timeInterval: Option[TimeInterval],
   
-  val timePeriods: Seq[String],
+  val namedPeriods: Seq[String],
 
   val category: Option[PlaceCategory.Category],
 
@@ -132,9 +132,9 @@ object Place extends AbstractApiCompanion {
 
             location: ObjOrOption[Location],
             
-            temporalCoverage: ObjOrOption[PeriodOfTime],
+            timeInterval: ObjOrOption[TimeInterval],
             
-            timePeriods: ObjOrSeq[String],
+            namedPeriods: ObjOrSeq[String],
 
             placeCategory: ObjOrOption[PlaceCategory.Category],
 
@@ -146,7 +146,7 @@ object Place extends AbstractApiCompanion {
 
             exactMatches: ObjOrSeq[String]): Place = {
 
-    new DefaultPlace(uri, label, descriptions.seq, names.seq, location.option,temporalCoverage.option, timePeriods.seq,
+    new DefaultPlace(uri, label, descriptions.seq, names.seq, location.option, timeInterval.option, namedPeriods.seq,
       placeCategory.option, subjects.seq, depictions.seq, closeMatches.seq, exactMatches.seq)
     
   }

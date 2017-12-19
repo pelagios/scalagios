@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import com.vividsolutions.jts.io.WKTReader
 import org.geotools.geojson.geom.GeometryJSON
 import org.openrdf.model.vocabulary.RDFS
-import org.pelagios.api.{ Image, PlainLiteral, PeriodOfTime }
+import org.pelagios.api.{ Image, PlainLiteral, TimeInterval }
 import org.pelagios.api.gazetteer.{ Location, Place }
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
 import org.pelagios.rdf.vocab._
@@ -78,9 +78,9 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
   val descriptions = (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_))
   
   // TODO support URIs as well as periods
-  val temporalCoverage: Option[PeriodOfTime] =
+  val timeInterval: Option[TimeInterval] =
     try {
-      resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue))
+      resource.getFirst(DCTerms.temporal).map(literal => TimeInterval.fromString(literal.stringValue))
     } catch {
       case t: Throwable => {
         // Vast majority of resources will be fine, so no need to create a logger, unless needed
@@ -91,7 +91,7 @@ private[parser] class PlaceResource(val resource: Resource, val names: Seq[Plain
       }
     }
     
-  val timePeriods = Seq.empty[String] // TODO implement
+  val namedPeriods = Seq.empty[String] // TODO implement
     
   val category = resource.getFirst(DCTerms.typ).flatMap(uri => PelagiosPlaceCategories.toCategory(uri))
 

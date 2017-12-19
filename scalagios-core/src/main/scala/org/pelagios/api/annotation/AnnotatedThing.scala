@@ -1,7 +1,7 @@
 package org.pelagios.api.annotation
 
 import scala.collection.mutable.ListBuffer
-import org.pelagios.api.{ AbstractApiCompanion, Agent, Image, PeriodOfTime }
+import org.pelagios.api.{ AbstractApiCompanion, Agent, Image, TimeInterval }
 
 /** 'AnnotatedThing' model entity.
   * 
@@ -68,13 +68,19 @@ trait AnnotatedThing extends AnnotationTarget {
     */
   def primaryTopicOf: Seq[String]
   
-  /** dcterms:temporal
-    * 
-    * According to the DCMI definition the "temporal coverage" or "temporal
-    * characteristics of the resource". We recommend using the DCMI
-    * Period Encoding Scheme: http://dublincore.org/documents/dcmi-period/
+  /** Time interval
+    *  
+    * In case dcterms:temporal contains a time interval, encoded e.g. according
+    * to the DCMI Period Encoding Scheme: http://dublincore.org/documents/dcmi-period/
     */
-  def temporal: Option[PeriodOfTime]
+  def timeInterval: Option[TimeInterval]
+  
+  /** Named time periods
+    *  
+    * Derived from dcterms:temporal, as above, but in case the temporal coverage is
+    * expressed using a concept URI 
+    */
+  def namedPeriods: Seq[String]
   
   /** dcterms:creator
     *
@@ -159,7 +165,9 @@ private[api] class DefaultAnnotatedThing(
   
   val primaryTopicOf: Seq[String] = Seq.empty[String],
   
-  val temporal: Option[PeriodOfTime] = None,
+  val timeInterval: Option[TimeInterval] = None,
+  
+  val namedPeriods: Seq[String] = Seq.empty[String],
 
   val creator: Option[Agent] = None,
   
@@ -210,7 +218,9 @@ object AnnotatedThing extends AbstractApiCompanion {
             
             primaryTopicOf: Seq[String] = Seq.empty[String],
             
-            temporal: PeriodOfTime = null,
+            timeInterval: TimeInterval = null,
+            
+            namedPeriods: ObjOrSeq[String] = new ObjOrSeq(Seq.empty),
             
             creator: Agent = null,
             
@@ -229,7 +239,7 @@ object AnnotatedThing extends AbstractApiCompanion {
             inDataset: ObjOrOption[String] = new ObjOrOption(None)): AnnotatedThing = {
     
     new DefaultAnnotatedThing(uri, title, isPartOf.option, identifier.option, description.option, homepage.option, sources.seq, primaryTopicOf,
-                              temporal, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
+                              timeInterval, namedPeriods.seq, creator, contributors, languages.seq, thumbnails.seq, depictions.seq,
                               bibliographicCitations.seq, subjects.seq, inDataset.option)
   }
   

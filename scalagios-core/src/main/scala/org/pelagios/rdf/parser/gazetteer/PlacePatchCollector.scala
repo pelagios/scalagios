@@ -2,7 +2,7 @@ package org.pelagios.rdf.parser.gazetteer
 
 import com.vividsolutions.jts.geom.{ Coordinate, Geometry }
 import org.openrdf.model.vocabulary.RDFS
-import org.pelagios.api.{ Image, PlainLiteral, PeriodOfTime }
+import org.pelagios.api.{ Image, PlainLiteral, TimeInterval }
 import org.pelagios.api.gazetteer.Location
 import org.pelagios.api.gazetteer.patch.PlacePatch
 import org.pelagios.rdf.parser.{ Resource, ResourceCollector }
@@ -49,7 +49,7 @@ class PlacePatchCollector extends ResourceCollector {
     (resource.get(RDFS.COMMENT) ++ resource.get(DCTerms.description)).map(ResourceCollector.toPlainLiteral(_)),
     names,
     location,
-    resource.getFirst(DCTerms.temporal).map(literal => PeriodOfTime.fromString(literal.stringValue)),
+    resource.getFirst(DCTerms.temporal).map(literal => TimeInterval.fromString(literal.stringValue)),
     Seq.empty[String], // TODO support period URIs as well as time periods 
     resource.getFirst(DCTerms.typ).flatMap(uri => PelagiosPlaceCategories.toCategory(uri)),
     Seq.empty[String], // TODO subjects
