@@ -1,6 +1,6 @@
 name := "scalagios-core"
 
-version := "2.0.5"
+version := "2.0.6"
 
 scalaVersion := "2.11.7"
 
@@ -12,8 +12,11 @@ resolvers += "typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-parser-combinators" % "2.11.0-M4",
   "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.5",
-  "org.openrdf.sesame" % "sesame-rio-n3" % "2.7.5",
-  "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.7.5",
+  "org.openrdf.sesame" % "sesame-rio-n3" % "2.8.5",
+  "org.openrdf.sesame" % "sesame-rio-rdfxml" % "2.8.5",
+  "org.openrdf.sesame" % "sesame-rio-turtle" % "2.8.5",
+  "org.openrdf.sesame" % "sesame-rio-jsonld" % "2.8.5",
+  "com.github.jsonld-java" % "jsonld-java" % "0.12.0",
   "org.scalatra.scalate" % "scalate-core_2.11" % "1.7.0",
   "com.vividsolutions" % "jts" % "1.13",
   "org.geotools" % "gt-geojson" % "10.5",

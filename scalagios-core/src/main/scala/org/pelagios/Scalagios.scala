@@ -17,14 +17,17 @@ object Scalagios extends ScalagiosReader with ScalagiosWriter with ScalagiosCoun
   
   val N3 = "n3"
   
+  val JSONLD = "json"
+  
   /** OpenRDF requires a 'base URI' for parsing RDF from file - but doesn't actually seem to do anything with it **/
   private[pelagios] val BASE_URI = "http://pelagios.org"
   
   /** Returns the RDF Format for the specified extension **/
   def getFormatForExtension(extension: String): Option[RDFFormat] = extension.toLowerCase match {
-    case e if e.endsWith(TURTLE) => Some(RDFFormat.TURTLE)
+    case f if f.endsWith(TURTLE) => Some(RDFFormat.TURTLE)
     case f if f.endsWith(RDFXML) => Some(RDFFormat.RDFXML)
     case f if f.endsWith(N3) => Some(RDFFormat.N3)
+    case f if f.endsWith(JSONLD) => Some(RDFFormat.JSONLD)
     case _ => None    
   }
   

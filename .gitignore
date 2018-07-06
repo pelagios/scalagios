@@ -1,5 +1,6 @@
 /index
-/target
+target
+**target/*
 .classpath
 .project
 *.core.prefs
