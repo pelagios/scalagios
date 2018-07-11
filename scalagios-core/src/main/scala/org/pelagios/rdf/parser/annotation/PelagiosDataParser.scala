@@ -126,7 +126,7 @@ private[parser] class AnnotationResource(val resource: Resource) extends Annotat
   
   var hasTarget: AnnotationTarget = null // resource.getFirst(OA.hasTarget).map(_.stringValue).getOrElse("_:empty")
   
-  val places = resource.get(OA.hasBody).filter(_.isInstanceOf[URI]).map(_.stringValue)
+  val places = resource.get(OA.hasBody).map(_.stringValue)
   
   var transcription: Option[Transcription] = None
   
